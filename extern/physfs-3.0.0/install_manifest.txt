@@ -1,0 +1,7 @@
+/usr/local/lib/libphysfs.a
+/usr/local/lib/libphysfs.3.0.0.dylib
+/usr/local/lib/libphysfs.1.dylib
+/usr/local/lib/libphysfs.dylib
+/usr/local/bin/test_physfs
+/usr/local/include/physfs.h
+/usr/local/lib/pkgconfig/physfs.pc

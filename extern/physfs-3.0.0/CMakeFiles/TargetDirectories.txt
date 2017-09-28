@@ -1,0 +1,12 @@
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/install/strip.dir
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/rebuild_cache.dir
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/edit_cache.dir
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/dist.dir
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/install.dir
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/physfs-static.dir
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/uninstall.dir
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/docs.dir
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/install/local.dir
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/physfs.dir
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/list_install_components.dir
+/Users/jmartin/Projects/slots/extern/physfs-3.0.0/CMakeFiles/test_physfs.dir

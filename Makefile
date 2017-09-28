@@ -6,7 +6,7 @@ TARGET = bin/slots
 SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 OBJECTS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=.o))
 CXXFLAGS =-std=c++11 -g # -Wall
-LIB = $(shell sdl2-config --libs) -lconfig++ -lSDL2_image -lSDL2_ttf -lSDL2_mixer -ltinyxml2
+LIB = $(shell sdl2-config --libs) -lconfig++ -lSDL2_image -lSDL2_ttf -lSDL2_mixer -ltinyxml2 -lphysfs
 INC = -Iinclude $(shell sdl2-config --cflags) -I/usr/local/include
 
 $(TARGET): $(OBJECTS)

@@ -16,7 +16,7 @@ static const bool SHOW_FPS = false;
 static const int WINDOW_WIDTH = 1024;
 static const int WINDOW_HEIGHT = 768;
 
-void Engine::Init() {
+void Engine::Init(int argc, char** argv) {
   int sdl_flags = 0;
   if (FULLSCREEN) {
     sdl_flags += SDL_WINDOW_FULLSCREEN;
@@ -52,6 +52,11 @@ void Engine::Init() {
   if (TTF_Init() != 0){
     std::cerr << "TTF_Init: " << TTF_GetError() << std::endl;
   }
+
+  assets = new AssetManager();
+  assets->Init(argv[0]);
+
+
   running_ = true;
 }
 
@@ -60,6 +65,9 @@ void Engine::Cleanup() {
     states_.back()->Cleanup();
     states_.pop_back();
   }
+
+  assets->Cleanup();
+  
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
