@@ -1,0 +1,4 @@
+build/*.o
+tbuild/*
+bin/slots
+bin/test
