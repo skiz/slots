@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(AssetManagerTest, ReadFile) {
+  AssetManager a;
+  a.Init("foo");
   ASSERT_EQ(1, 1);
 }
 

@@ -5,7 +5,11 @@ void AssetManager::Init(const char *path) {
  PHYSFS_init(path);
 }
 
-bool AssetManager::AddSearchPath(char* path) {
+void AssetManager::Cleanup() {
+  PHYSFS_deinit();
+}
+
+bool AssetManager::AddSearchPath(const char* path) {
   int err = PHYSFS_mount(path, "/", 1);
   return (err == 0);
 }
@@ -20,6 +24,3 @@ char* AssetManager::ReadBytes(char* filename) {
   return buf;
 }
 
-void AssetManager::Cleanup() {
-  PHYSFS_deinit();
-}
