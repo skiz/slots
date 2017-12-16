@@ -5,6 +5,7 @@
 
 void EventManager::Init() {
   AddMapping(SDLK_ESCAPE, POP_STATE);
+  AddMapping(SDLK_1, COIN_IN);
 }
 
 void EventManager::Cleanup() {}

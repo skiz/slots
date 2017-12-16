@@ -1,5 +1,6 @@
 #include "asset_manager.h"
 #include <physfs.h>
+#include <iostream>
 
 void AssetManager::Init(const char *path) {
  PHYSFS_init(path);
@@ -14,39 +15,44 @@ bool AssetManager::Mount(const char* path, const char* target) {
   return (err != 0);
 }
 
+/*
 char* AssetManager::ReadBytes(const char* filename) {
   if (!PHYSFS_exists(filename)) {
+    std::cerr << filename << " does not exist." << std::endl;
     return nullptr;
   }
   PHYSFS_file* assetFile = PHYSFS_openRead(filename);
   PHYSFS_sint64 filesize = PHYSFS_fileLength(assetFile);
   PHYSFS_seek(assetFile, 0);
-  char* buf;
-  buf = new char[filesize+1];
+  char* buf = new char[filesize+1];
   buf[filesize] = 0;
-  PHYSFS_readBytes(assetFile, buf, filesize);
+  int bytesRead = PHYSFS_readBytes(assetFile, buf, filesize);
+  std::cout << bytesRead << " " << filename << std::endl;
   PHYSFS_close(assetFile);
   return buf;
 }
+*/
 
 SDL_Surface* AssetManager::LoadSurface(const char* filename) {
-  if (surface_cache_.count(filename) > 0) {
-    return surface_cache_[filename];
+  if (!PHYSFS_exists(filename)) {
+    std::cerr << filename << " does not exist." << std::endl;
+    return nullptr;
   }
 
-  char* buf;
-  buf = ReadBytes(filename);
-  SDL_RWops *rw = SDL_RWFromMem(buf, sizeof(buf));
+  PHYSFS_file* assetFile = PHYSFS_openRead(filename);
+  PHYSFS_sint64 filesize = PHYSFS_fileLength(assetFile);
+  PHYSFS_seek(assetFile, 0);
+  char* buf = new char[filesize+1];
+  buf[filesize] = 0;
+  int bytesRead = PHYSFS_readBytes(assetFile, buf, filesize);
+  std::cout << bytesRead << " " << filename << std::endl;
+  PHYSFS_close(assetFile);
+  SDL_RWops *rw = SDL_RWFromConstMem(buf, filesize);
   SDL_Surface* s = IMG_Load_RW(rw, 0);
-  surface_cache_[filename] = s;
   return s;
 }
 
 const char* AssetManager::GetLastError() {
   return PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode());
-}
-
-int AssetManager::SurfaceCacheSize() {
-  return surface_cache_.size();
 }
 

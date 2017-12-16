@@ -13,12 +13,9 @@ class AssetManager {
     void Init(const char* path);
     void Cleanup();
     bool Mount(const char* path, const char* target);
-    char* ReadBytes(const char* filename);
+    //char* ReadBytes(const char* filename);
     SDL_Surface* LoadSurface(const char* filename);
     const char* GetLastError();
-    int SurfaceCacheSize();
-  private:
-    std::unordered_map<const char*, SDL_Surface*> surface_cache_;
 };
 
 #endif

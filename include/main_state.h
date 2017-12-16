@@ -7,10 +7,12 @@ class MainState : public State {
   public:
     void Init(Engine* e);
     void Cleanup();
+    void LoadAssets();
     void Pause();
     void Resume();
     void Update();
     void Draw();
+    void HandleEvent(SystemEvent e);
     static MainState* Instance() {
       return &state;
     }
@@ -20,7 +22,7 @@ class MainState : public State {
   private:
     Engine* engine_; // not owned
     static MainState state;
-    SDL_Surface* facade_;
+    SDL_Texture* bg_;
 };
 
 
