@@ -56,6 +56,7 @@ void Engine::Init(int argc, char** argv) {
 
   assets = new AssetManager();
   assets->Init(argv[0]);
+  assets->Mount("assets", "/");
 
   events = new EventManager();
   events->Init();

@@ -29,8 +29,24 @@ char* AssetManager::ReadBytes(const char* filename) {
   return buf;
 }
 
+SDL_Surface* AssetManager::LoadSurface(const char* filename) {
+  if (surface_cache_.count(filename) > 0) {
+    return surface_cache_[filename];
+  }
+
+  char* buf;
+  buf = ReadBytes(filename);
+  SDL_RWops *rw = SDL_RWFromMem(buf, sizeof(buf));
+  SDL_Surface* s = IMG_Load_RW(rw, 0);
+  surface_cache_[filename] = s;
+  return s;
+}
+
 const char* AssetManager::GetLastError() {
   return PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode());
 }
 
+int AssetManager::SurfaceCacheSize() {
+  return surface_cache_.size();
+}
 

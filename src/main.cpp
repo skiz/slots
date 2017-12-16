@@ -1,12 +1,12 @@
 #include "engine.h"
-#include "blank_state.h"
+#include "main_state.h"
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
   Engine e;
   e.Init(argc, argv);
-  e.ChangeState(BlankState::Instance());
+  e.ChangeState(MainState::Instance());
   e.StartFPSTimer();
   while (e.Running()) {
     e.HandleEvents();

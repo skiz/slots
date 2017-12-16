@@ -1,6 +1,9 @@
 #ifndef ASSET_MANAGER_H
 #define ASSET_MANAGER_H
 
+#include <unordered_map>
+#include "SDL_Image.h"
+
 /**
  * Handles loading of asset files in both the filesystem and
  * archives.  Things such as music, images, etc are handled here.
@@ -11,7 +14,11 @@ class AssetManager {
     void Cleanup();
     bool Mount(const char* path, const char* target);
     char* ReadBytes(const char* filename);
-    const char* GetLastError(); 
+    SDL_Surface* LoadSurface(const char* filename);
+    const char* GetLastError();
+    int SurfaceCacheSize();
+  private:
+    std::unordered_map<const char*, SDL_Surface*> surface_cache_;
 };
 
 #endif
