@@ -19,7 +19,7 @@ char* AssetManager::ReadBytes(char* filename) {
   PHYSFS_sint64 filesize = PHYSFS_fileLength(assetFile);
   char* buf;
   buf = new char[filesize];
-  int len = PHYSFS_readBytes(assetFile, buf, filesize);
+  PHYSFS_readBytes(assetFile, buf, filesize);
   PHYSFS_close(assetFile);
   return buf;
 }

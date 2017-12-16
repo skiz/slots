@@ -6,6 +6,7 @@
 #include "sound_system.h"
 #include "asset_manager.h"
 #include "timer.h"
+#include "facade.h"
 
 class State;
 
@@ -27,6 +28,7 @@ class Engine {
     SDL_Renderer* renderer;
     SoundSystem* audio;
     AssetManager* assets;
+    Facade* facade;
   private:
     Timer fpsTimer_;
     float fps_ = 0.0;
