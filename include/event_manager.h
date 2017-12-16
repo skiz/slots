@@ -1,8 +1,10 @@
 #ifndef EVENT_MANAGER_H
 #define EVENT_MANAGER_H
 
-#include "engine.h"
 #include "SDL.h"
+#include <unordered_map>
+#include <vector>
+#include "signal.h"
 
 /**
  * The EventManager handles key presses and other SDL input events through 
@@ -10,41 +12,44 @@
  *
  * It takes a SDL_Event, and fires defined events within the current state.
  *
- * ie:
- *  Register(COIN_IN, SDLK_1);
- *  Fire(SDLK_1);
- *
- *  The current state will receive a COIN_IN event.
- *
  */
 
-#define COIN_IN 1
-#define BILL_IN 2
-#define CASH_OUT_BUTTON 3
-#define SERVICE_BUTTON 4
-#define SPIN_BUTTON 5
-#define LINE_BUTTON 6
-#define MAX_BET_BUTTON 7
-#define LINE_BUTTON_1 8
-#define LINE_BUTTON_2 9
-#define LINE_BUTTON_3 10
-#define LINE_BUTTON_4 11
-#define LINE_BUTTON_5 12
-#define CREDIT_BUTTON_1 13
-#define CREDIT_BUTTON_2 14
-#define CREDIT_BUTTON_3 15
-#define CREDIT_BUTTON_4 16
-#define CREDIT_BUTTON_5 17
+enum KeyEvent : int {
+  COIN_IN = 1,
+  BILL_IN,
+  CASH_OUT,
+  SERVICE,
+  SPIN,
+  MAX_BET,
+  LINE_1,
+  LINE_2,
+  LINE_3,
+  LINE_4,
+  LINE_5,
+  BET_1,
+  BET_2,
+  BET_3,
+  BET_4,
+  BET_5,
+  AUX_1,
+  AUX_2,
+  AUX_3,
+  AUX_4,
+  AUX_5,
+  VOL_UP,
+  VOL_DOWN
+};
+
 
 class EventManager {
   public:
-    void Init(Engine* e);
+    void Init();
     void Cleanup();
-    void Register(int ref, SDL_Event* event);
-    void Fire(SDL_Event* event);
+    void AddMapping(int sdlkey, KeyEvent ref);
+    void KeyPressed(int sdlkey);
+    Signal<KeyEvent> KeyPress;
   private:
-    Engine* engine_; // not owned
-    
+    std::unordered_map<int, std::vector<KeyEvent>> map_;
 };
 
 #endif
