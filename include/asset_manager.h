@@ -5,8 +5,9 @@ class AssetManager {
   public:
     void Init(const char* path);
     void Cleanup();
-    bool AddSearchPath(const char* path);
+    bool Mount(const char* path, const char* target);
     char* ReadBytes(const char* filename);
+    const char* GetLastError(); 
   private:
 };
 

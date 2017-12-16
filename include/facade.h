@@ -3,10 +3,7 @@
 
 /**
  * Facade is the screen that is overlayed on the play field.
- *
- * It may have buttons, transparent areas for the wheels, etc
- *
- * How da fuck do we deal with buttons?
+ * It should be able to have animations, transparencies, etc.
  */
 class Facade {
   public:

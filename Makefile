@@ -36,9 +36,11 @@ clean:
 	  $(BINDIR)/test \
 	  $(TESTDIR)/*.o \
 	  $(TESTDIR)/*.a 
-fuck:
-	echo $(OBJS)
-	echo $(TESTS)
+
+# Generate required test files
+golden:
+	zip -r $(TESTSRC)/golden.zip ${TESTSRC}/golden
+
 # Run tests
 test: $(TESTS) ${OBJS} $(TESTDIR)/gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $(LIB) $^ -o $(BINDIR)/$@
