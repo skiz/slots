@@ -9,9 +9,9 @@ class BlankState : public State {
     void Cleanup();
     void Pause();
     void Resume();
-    void HandleEvents(Engine* e);
-    void Update(Engine* e);
-    void Draw(Engine* e);
+    void HandleEvents();
+    void Update();
+    void Draw();
     static BlankState* Instance() {
       return &state;
     }

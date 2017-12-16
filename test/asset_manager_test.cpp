@@ -1,12 +1,12 @@
 #include "asset_manager.h"
 #include <gtest/gtest.h>
 
-TEST(AssetManagerTest, ReadFile) {
+TEST(AssetManagerTest, ReadMissingFile) {
   AssetManager a;
   a.Init("foo");
-  ASSERT_EQ(1, 1);
+  const char *fn = "missing-file";
+  ASSERT_EQ(NULL, a.ReadBytes(fn));
 }
-
 
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);

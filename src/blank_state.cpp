@@ -18,24 +18,24 @@ void BlankState::Resume() {
   engine_->audio->ResumeMusic();  
 }
 
-void BlankState::Update(Engine* e) {
+void BlankState::Update() {
 }
 
-void BlankState::Draw(Engine* e) {
+void BlankState::Draw() {
 }
 
 
-void BlankState::HandleEvents(Engine* e) {
+void BlankState::HandleEvents() {
   SDL_Event event;
   if (SDL_PollEvent(&event)) {
     switch (event.type) {
       case SDL_QUIT:
-	e->Quit();
+	engine_->Quit();
 	break;
       case SDL_KEYDOWN:
 	switch (event.key.keysym.sym) {
 	  case SDLK_ESCAPE:
-	    e->PopState();
+	    engine_->PopState();
 	    break;
 	}
 	break;

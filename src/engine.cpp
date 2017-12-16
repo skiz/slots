@@ -105,13 +105,13 @@ void Engine::PopState() {
 
 void Engine::HandleEvents() {
   if (running_) {
-    states_.back()->HandleEvents(this);
+    states_.back()->HandleEvents();
   }
 }
 
 void Engine::Update() {
   if (running_) {
-    states_.back()->Update(this);
+    states_.back()->Update();
   }
 
   if (SHOW_FPS) {
@@ -123,7 +123,7 @@ void Engine::Update() {
 
 void Engine::Draw() {
   if (running_) {
-    states_.back()->Draw(this);
+    states_.back()->Draw();
   }
   ++frameCount;
 }

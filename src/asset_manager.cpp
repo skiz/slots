@@ -14,7 +14,10 @@ bool AssetManager::AddSearchPath(const char* path) {
   return (err == 0);
 }
 
-char* AssetManager::ReadBytes(char* filename) {
+char* AssetManager::ReadBytes(const char* filename) {
+  if (!PHYSFS_exists(filename)) {
+    return nullptr;
+  }
   PHYSFS_file* assetFile = PHYSFS_openRead(filename);
   PHYSFS_sint64 filesize = PHYSFS_fileLength(assetFile);
   char* buf;

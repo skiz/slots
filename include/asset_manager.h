@@ -6,7 +6,7 @@ class AssetManager {
     void Init(const char* path);
     void Cleanup();
     bool AddSearchPath(const char* path);
-    char* ReadBytes(char* filename);
+    char* ReadBytes(const char* filename);
   private:
 };
 
