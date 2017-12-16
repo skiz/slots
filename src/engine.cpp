@@ -56,8 +56,24 @@ void Engine::Init(int argc, char** argv) {
   assets = new AssetManager();
   assets->Init(argv[0]);
 
+  events = new EventManager();
+  events->Init();
+  events->SystemSignal.connect_member(this, &Engine::HandleEvent);
 
   running_ = true;
+}
+
+void Engine::HandleEvent(SystemEvent e) {
+  switch (e) {
+    case QUIT:
+      Quit();
+      break;
+    case POP_STATE:
+      PopState();
+      break;
+    default:
+      break;
+  }
 }
 
 void Engine::Cleanup() {
@@ -67,6 +83,7 @@ void Engine::Cleanup() {
   }
 
   assets->Cleanup();
+  events->Cleanup();
   
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
@@ -102,10 +119,9 @@ void Engine::PopState() {
   }
 }
 
-
 void Engine::HandleEvents() {
   if (running_) {
-    states_.back()->HandleEvents();
+    events->HandleEvents();
   }
 }
 

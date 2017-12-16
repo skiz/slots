@@ -14,7 +14,7 @@
  *
  */
 
-enum KeyEvent : int {
+enum SystemEvent : int {
   COIN_IN = 1,
   BILL_IN,
   CASH_OUT,
@@ -37,19 +37,21 @@ enum KeyEvent : int {
   AUX_4,
   AUX_5,
   VOL_UP,
-  VOL_DOWN
+  VOL_DOWN,
+  QUIT,
+  POP_STATE
 };
-
 
 class EventManager {
   public:
     void Init();
     void Cleanup();
-    void AddMapping(int sdlkey, KeyEvent ref);
-    void KeyPressed(int sdlkey);
-    Signal<KeyEvent> KeyPress;
+    void AddMapping(int sdlkey, SystemEvent ref);
+    void HandleKeyPress(int sdlkey);
+    void HandleEvents();
+    Signal<SystemEvent> SystemSignal;
   private:
-    std::unordered_map<int, std::vector<KeyEvent>> map_;
+    std::unordered_map<int, std::vector<SystemEvent>> map_;
 };
 
 #endif

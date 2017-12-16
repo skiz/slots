@@ -1,31 +1,38 @@
-#include "event_manager.h"
 #include <vector>
 #include <unordered_map>
 
-// Events should be handled here, and states should register slots
-// for events handled here.  SDL events should be handled by event
-// manager outside of the state, and simply trigger here.
-
-// can we decouple the keyscan and have engine.HandleEvents wrap
-// up the SDL input check?  much cleaner
+#include "event_manager.h"
 
 void EventManager::Init() {
+  AddMapping(SDLK_ESCAPE, POP_STATE);
 }
 
-void EventManager::Cleanup() {
-}
+void EventManager::Cleanup() {}
 
-void EventManager::KeyPressed(int sdlkey) {
+void EventManager::HandleKeyPress(int sdlkey) {
   if (map_.count(sdlkey) > 0) {
     for (auto& e : map_[sdlkey]) {
-      KeyPress.emit(e);
+      SystemSignal.emit(e);
     }
   }
 }
 
-void EventManager::AddMapping(int sdlkey, KeyEvent ref) {
+void EventManager::AddMapping(int sdlkey, SystemEvent ref) {
   if (map_.count(sdlkey) == 0) {
-    map_[sdlkey] = std::vector<KeyEvent>();
+    map_[sdlkey] = std::vector<SystemEvent>();
   }
   map_[sdlkey].push_back(ref);
+}
+
+void EventManager::HandleEvents() {
+  SDL_Event event;
+  if (SDL_PollEvent(&event)) {
+    switch (event.type) {
+      case SDL_QUIT:
+	SystemSignal.emit(QUIT);
+	break;
+      case SDL_KEYDOWN:
+	HandleKeyPress(event.key.keysym.sym);
+    }
+  }
 }

@@ -5,6 +5,7 @@
 #include "SDL.h"
 #include "sound_system.h"
 #include "asset_manager.h"
+#include "event_manager.h"
 #include "timer.h"
 #include "facade.h"
 
@@ -24,11 +25,14 @@ class Engine {
     void StartFPSTimer();
     void UpdateFPS();
     bool Running();
+    void HandleEvent(SystemEvent);
+    
     SDL_Window* window;
     SDL_Renderer* renderer;
     SoundSystem* audio;
     AssetManager* assets;
     Facade* facade;
+    EventManager* events;
   private:
     Timer fpsTimer_;
     float fps_ = 0.0;

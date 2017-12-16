@@ -8,7 +8,6 @@ class AssetManager {
     bool Mount(const char* path, const char* target);
     char* ReadBytes(const char* filename);
     const char* GetLastError(); 
-  private:
 };
 
 #endif
