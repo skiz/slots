@@ -18,7 +18,7 @@ class Signal {
   Signal() : current_id_(0) {}
 
   // copy creates new signal
-  Signal(Signal const& other) : current_id_(0) {}
+  Signal(Signal const&) : current_id_(0) {}
 
   // connects a member function to this Signal
   template <typename T>
@@ -61,7 +61,7 @@ class Signal {
   }
 
   // assignment creates new Signal
-  Signal& operator=(Signal const& other) {
+  Signal& operator=(Signal const&) {
     disconnect_all();
   }
 

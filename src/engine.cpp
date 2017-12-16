@@ -17,6 +17,7 @@ static const int WINDOW_WIDTH = 1024;
 static const int WINDOW_HEIGHT = 768;
 
 void Engine::Init(int argc, char** argv) {
+  argc_ = argc;
   int sdl_flags = 0;
   if (FULLSCREEN) {
     sdl_flags += SDL_WINDOW_FULLSCREEN;
@@ -131,7 +132,7 @@ void Engine::Update() {
   }
 
   if (SHOW_FPS) {
-    if (frameCount % 1000 == 0) {
+    if (frameCount_ % 1000 == 0) {
       std::cout << "FPS:" << fps_ << std::endl;
     }
   }
@@ -141,7 +142,7 @@ void Engine::Draw() {
   if (running_) {
     states_.back()->Draw();
   }
-  ++frameCount;
+  ++frameCount_;
 }
 
 bool Engine::Running() {
@@ -153,7 +154,7 @@ void Engine::StartFPSTimer() {
 }
 
 void Engine::UpdateFPS() {
-  fps_ = frameCount / (fpsTimer_.GetTicks() / 1000.f);
+  fps_ = frameCount_ / (fpsTimer_.GetTicks() / 1000.f);
 }
 
 void Engine::Quit() {

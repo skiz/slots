@@ -11,6 +11,10 @@
 
 class State;
 
+/**
+ * The engine is the core component.  It handles state changes,
+ * and manages and owns all subsystems.
+ */
 class Engine {
   public:
     void Init(int argc, char** argv);
@@ -36,10 +40,10 @@ class Engine {
   private:
     Timer fpsTimer_;
     float fps_ = 0.0;
-    int frameCount;
+    int frameCount_;
+    int argc_;
     std::vector<State*> states_;
     bool running_;
-    bool fullscreen_;
 };
 
 #endif

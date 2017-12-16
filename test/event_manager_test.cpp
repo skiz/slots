@@ -43,4 +43,3 @@ TEST(EventManagerTest, SupportsMultipleSlots) {
   ASSERT_EQ(c.cnt, 2);
 }
 
-
