@@ -21,6 +21,10 @@ class Accounting {
     void HandleEvent(SystemEvent e);
     void MoneyInserted(unsigned int amount);
     unsigned int Credits();
+    /*
+     * WriteLog
+     * ReadLog
+     */
   private:
     Engine* engine_;
     unsigned int cents_ = 0;

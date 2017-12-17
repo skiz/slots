@@ -7,7 +7,7 @@ MainState MainState::state;
 
 void MainState::Init(Engine* e) {
   engine_ = e;
-  LoadAssets(); 
+  LoadAssets();
 
   // subscribe to system events
   // TODO: unsubscribe on pop/cleanup
