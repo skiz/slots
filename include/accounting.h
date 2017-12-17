@@ -23,15 +23,23 @@ class Accounting {
     void HandleEvent(SystemEvent e);
     void MoneyInserted(unsigned int amount);
     void TriggerCreditUpdate();
+    void TriggerPaidUpdate();
+    void TriggerTextUpdate();
+    void TriggerBetUpdate();
     unsigned int Credits();
-    /*
-     * WriteLog
-     * ReadLog
-     */
+    unsigned int Paid();
+    unsigned int Bet();
+    const char* Text();
     Signal<const unsigned int &> CreditUpdate;
+    Signal<const unsigned int &> PaidUpdate;
+    Signal<const unsigned int &> BetUpdate;
+    Signal<const char*>TextUpdate;
   private:
     Engine* engine_;
     unsigned int cents_ = 0;
+    unsigned int paid_credits_ = 0;
+    unsigned int bet_ = 0;
+    char* text_;
 };
 
 #endif

@@ -18,7 +18,12 @@ class MainState : public State {
       return &state;
     }
     void UpdateCredits(const unsigned int &amount);
+    void UpdatePaid(const unsigned int &amount);
     void RenderCredits();
+    void RenderPaid();
+
+    void UpdateText(const char* text);
+    void RenderText();
   protected:
     MainState() {}
   private:
@@ -27,8 +32,13 @@ class MainState : public State {
     //SDL_Texture* screen_;
     SDL_Texture* bg_;
     SDL_Texture* credits_;
-    
+    SDL_Texture* paid_;
+    SDL_Texture* text_;
     TTF_Font* credit_font_;
+
+    int credit_width_, credit_height_;
+    int paid_width_, paid_height_;
+    int text_width_, text_height_;
 };
 
 

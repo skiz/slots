@@ -11,11 +11,11 @@
 #include "timer.h"
 
 static const char* WINDOW_TITLE = "Slot Machine";
-static const bool FULLSCREEN = false;
-static const bool USE_OPENGL = false;
-static const bool SHOW_FPS = false;
-static const int WINDOW_WIDTH = 1024;
-static const int WINDOW_HEIGHT = 768;
+static const bool FULLSCREEN = true;
+static const bool USE_OPENGL = true;
+static const bool SHOW_FPS = true;
+static const int WINDOW_WIDTH = 1920;
+static const int WINDOW_HEIGHT = 1080;
 
 void Engine::Init(int argc, char** argv) {
   argc_ = argc;
@@ -27,6 +27,8 @@ void Engine::Init(int argc, char** argv) {
     sdl_flags += SDL_WINDOW_OPENGL;
   }
 
+  sdl_flags += SDL_WINDOW_RESIZABLE;
+
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cerr << "SDL Error: " << SDL_GetError();
   } else {
@@ -37,7 +39,6 @@ void Engine::Init(int argc, char** argv) {
                               WINDOW_HEIGHT,
                               sdl_flags);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    SDL_RenderSetLogicalSize(renderer, 1024, 768);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);

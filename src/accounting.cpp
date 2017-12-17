@@ -8,6 +8,9 @@
 void Accounting::Init(Engine* e) {
   engine_ = e;
   cents_ = 0;
+  bet_ = 0;
+  paid_credits_ = 0;
+  text_ = const_cast<char*>("Ready");
   std::cout << "Initializing Accounting... " << cents_ << std::endl;
   engine_->events->SystemSignal.connect_member(this, &Accounting::HandleEvent);
   // TODO: Load last credit state from play log (optional) in case of reset/power/etc.
@@ -29,22 +32,54 @@ void Accounting::HandleEvent(SystemEvent e) {
 }
 
 void Accounting::MoneyInserted(unsigned int amount) {
+  char txtbuf[50];
+  float famt = static_cast<float>(amount) / 100;
+
   if (amount > COIN_AMOUNT) {
     engine_->audio->PlaySound("assets/main/sound/chime2.ogg");
+    sprintf(txtbuf, "Bill Accepted $%2.2f", famt);
   } else {
     engine_->audio->PlaySound("assets/main/sound/coin.wav");
+    sprintf(txtbuf, "Coin Accepted $%2.2f", famt);
   }
+
+  text_ = txtbuf;
 
   cents_ += amount;
   std::cout << cents_ << " (" << Credits() << " credits)" << std::endl;
 
   TriggerCreditUpdate();
+  TriggerTextUpdate();
 }
 
 void Accounting::TriggerCreditUpdate() {
   CreditUpdate.emit(Credits());
 }
 
+void Accounting::TriggerTextUpdate() {
+  TextUpdate.emit(text_);
+}
+
+void Accounting::TriggerPaidUpdate() {
+  PaidUpdate.emit(Paid());
+}
+
+void Accounting::TriggerBetUpdate() {
+  BetUpdate.emit(Bet());
+}
+
 unsigned int Accounting::Credits() {
   return cents_ * CENTS_PER_CREDIT;
+}
+
+unsigned int Accounting::Paid() {
+  return paid_credits_;
+}
+
+unsigned int Accounting::Bet() {
+  return bet_;
+}
+
+const char* Accounting::Text() {
+  return text_;
 }
