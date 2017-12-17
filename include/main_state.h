@@ -2,6 +2,7 @@
 #define MAIN_STATE_H
 
 #include "state.h"
+#include "sdl_ttf.h"
 
 class MainState : public State {
   public:
@@ -16,13 +17,18 @@ class MainState : public State {
     static MainState* Instance() {
       return &state;
     }
+    void UpdateCredits(const unsigned int &amount);
+    void RenderCredits();
   protected:
     MainState() {}
-
   private:
     Engine* engine_; // not owned
     static MainState state;
+    //SDL_Texture* screen_;
     SDL_Texture* bg_;
+    SDL_Texture* credits_;
+    
+    TTF_Font* credit_font_;
 };
 
 

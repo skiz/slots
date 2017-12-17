@@ -90,6 +90,8 @@ void Engine::Cleanup() {
   assets->Cleanup();
   events->Cleanup();
   accounting->Cleanup();
+
+  TTF_Quit();
   
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);

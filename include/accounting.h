@@ -2,6 +2,8 @@
 #define ACCOUNTING_H
 
 #include "system_event.h"
+#include "signal.h"
+
 
 class Engine;
 
@@ -20,11 +22,13 @@ class Accounting {
     void Cleanup();
     void HandleEvent(SystemEvent e);
     void MoneyInserted(unsigned int amount);
+    void TriggerCreditUpdate();
     unsigned int Credits();
     /*
      * WriteLog
      * ReadLog
      */
+    Signal<const unsigned int &> CreditUpdate;
   private:
     Engine* engine_;
     unsigned int cents_ = 0;
