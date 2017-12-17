@@ -16,6 +16,10 @@ bool AssetManager::Mount(const char* path, const char* target) {
 }
 
 /*
+ * This is commented due to not having filesize available after.
+ * sizeof(buf) is always 8....
+ * ....
+
 char* AssetManager::ReadBytes(const char* filename) {
   if (!PHYSFS_exists(filename)) {
     std::cerr << filename << " does not exist." << std::endl;

@@ -3,11 +3,11 @@
 
 #include <vector>
 #include "SDL.h"
+#include "accounting.h"
 #include "sound_system.h"
 #include "asset_manager.h"
 #include "event_manager.h"
 #include "timer.h"
-#include "facade.h"
 
 class State;
 
@@ -33,10 +33,11 @@ class Engine {
     
     SDL_Window* window;
     SDL_Renderer* renderer;
+
     SoundSystem* audio;
     AssetManager* assets;
-    Facade* facade;
     EventManager* events;
+    Accounting* accounting;
   private:
     Timer fpsTimer_;
     float fps_ = 0.0;

@@ -6,6 +6,7 @@
 #include "SDL_mixer.h"
 #include "SDL_ttf.h"
 #include "engine.h"
+#include "engine.h"
 #include "state.h"
 #include "timer.h"
 
@@ -56,11 +57,13 @@ void Engine::Init(int argc, char** argv) {
 
   assets = new AssetManager();
   assets->Init(argv[0]);
-  assets->Mount("assets", "/");
 
   events = new EventManager();
   events->Init();
   events->SystemSignal.connect_member(this, &Engine::HandleEvent);
+
+  accounting = new Accounting();
+  accounting->Init(this);
 
   running_ = true;
 }
@@ -86,6 +89,7 @@ void Engine::Cleanup() {
 
   assets->Cleanup();
   events->Cleanup();
+  accounting->Cleanup();
   
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);

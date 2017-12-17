@@ -10,6 +10,7 @@ void MainState::Init(Engine* e) {
   LoadAssets(); 
 
   // subscribe to system events
+  // TODO: unsubscribe on pop/cleanup
   engine_->events->SystemSignal.connect_member(this, &MainState::HandleEvent);
 }
 
@@ -18,11 +19,6 @@ void MainState::Cleanup() {
 
 void MainState::HandleEvent(SystemEvent e) {
   switch (e) {
-    // TODO: This is a higher level thing than for a specific state, 
-    // so it should probably be handled in the accounting subsystem.
-    case COIN_IN:
-      engine_->audio->PlaySound("assets/main/sound/coin.wav");
-      break;
     default:
       break;
   }
