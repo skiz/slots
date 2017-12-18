@@ -24,10 +24,13 @@ void MainState::Init(Engine* e) {
   UpdateCredits(engine_->accounting->Credits());
   UpdatePaid(engine_->accounting->Paid());
   UpdateText(engine_->accounting->Text());
+  
+  UpdateSpinText();
 }
 
 void MainState::Cleanup() {
   TTF_CloseFont(credit_font_);
+  TTF_CloseFont(font_);
 }
 
 void MainState::HandleEvent(SystemEvent e) {
@@ -35,6 +38,70 @@ void MainState::HandleEvent(SystemEvent e) {
     default:
       break;
   }
+}
+
+void MainState::UpdateSpinText() {
+  const char* text = "SPIN";
+  SDL_Surface* textSurface = NULL;
+  SDL_Color textColor = {255, 255, 255, 50};
+  TTF_SizeText(font_, text, &spin_text_width_, &spin_text_height_);
+  textSurface = TTF_RenderText_Blended(font_, text, textColor);
+  spin_text_ = SDL_CreateTextureFromSurface(engine_->renderer, textSurface);
+  SDL_FreeSurface(textSurface);
+}
+
+void MainState::RenderCashBtn() {
+  int w, h;
+
+  int tx = 260;
+  int ty = 530;
+
+  SDL_QueryTexture(cash_btn_, NULL, NULL, &w, &h);
+  SDL_Rect cash_pos;
+  cash_pos.w = w;
+  cash_pos.h = h;
+  cash_pos.x = tx;
+  cash_pos.y = ty;
+  SDL_RenderCopy(engine_->renderer, cash_btn_, NULL, &cash_pos);
+}
+
+void MainState::RenderMaxBtn() {
+  int w, h;
+
+  int tx = 1000;
+  int ty = 580;
+
+  SDL_QueryTexture(max_btn_, NULL, NULL, &w, &h);
+  SDL_Rect max_pos;
+  max_pos.w = w;
+  max_pos.h = h;
+  max_pos.x = tx;
+  max_pos.y = ty;
+  SDL_RenderCopy(engine_->renderer, max_btn_, NULL, &max_pos);
+
+}
+
+void MainState::RenderSpinBtn() {
+  int w, h;
+
+  int tx = 1200;
+  int ty = 580;
+
+  SDL_QueryTexture(spin_btn_, NULL, NULL, &w, &h);
+  SDL_Rect spin_pos;
+  spin_pos.w = w;
+  spin_pos.h = h;
+  spin_pos.x = tx;
+  spin_pos.y = ty;
+
+  SDL_Rect text_pos;
+  text_pos.w = spin_text_width_;
+  text_pos.h = spin_text_height_;
+  text_pos.x = tx + w - (w / 2) - spin_text_width_ / 2 ;
+  text_pos.y = ty + h - (h / 2) - spin_text_height_ / 2;
+
+  SDL_RenderCopy(engine_->renderer, spin_btn_, NULL, &spin_pos);
+  SDL_RenderCopy(engine_->renderer, spin_text_, NULL, &text_pos);
 }
 
 
@@ -50,6 +117,19 @@ void MainState::LoadAssets() {
 
   // TODO: Add font loading support to asset manager
   credit_font_ = TTF_OpenFont("assets/main/fonts/digital.ttf", 65);
+  font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 50);
+
+  s = engine_->assets->LoadSurface("/main/images/green_button.png");
+  spin_btn_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
+  SDL_FreeSurface(s);
+
+  s = engine_->assets->LoadSurface("/main/images/red_button.png");
+  max_btn_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
+  SDL_FreeSurface(s);
+
+  s = engine_->assets->LoadSurface("/main/images/cashout.png");
+  cash_btn_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
+  SDL_FreeSurface(s);
 }
 
 void MainState::Pause() {
@@ -78,6 +158,9 @@ void MainState::Draw() {
   RenderCredits();
   RenderPaid();
   RenderText();
+  RenderSpinBtn();
+  RenderMaxBtn();
+  RenderCashBtn();
   SDL_RenderPresent(engine_->renderer);
   SDL_Delay(20);
 }
@@ -87,7 +170,7 @@ void MainState::UpdateCredits(const unsigned int &amount) {
   SDL_Surface* textSurface = NULL;
   SDL_Color textColor = {255, 25, 25, 0};
   TTF_SizeText(credit_font_, text, &credit_width_, &credit_height_);
-  textSurface = TTF_RenderText_Solid(credit_font_, text, textColor);
+  textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
   credits_ = SDL_CreateTextureFromSurface(engine_->renderer, textSurface);
   SDL_FreeSurface(textSurface);
 }
@@ -97,7 +180,7 @@ void MainState::UpdatePaid(const unsigned int &amount) {
   SDL_Surface* textSurface = NULL;
   SDL_Color textColor = {255, 25, 25, 0};
   TTF_SizeText(credit_font_, text, &paid_width_, &paid_height_);
-  textSurface = TTF_RenderText_Solid(credit_font_, text, textColor);
+  textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
   paid_ = SDL_CreateTextureFromSurface(engine_->renderer, textSurface);
   SDL_FreeSurface(textSurface);
 }
@@ -115,9 +198,9 @@ void MainState::RenderPaid() {
 
 void MainState::UpdateText(const char* text) {
   SDL_Surface* textSurface = NULL;
-  SDL_Color textColor = {255, 25, 25, 0};
-  TTF_SizeText(credit_font_, text, &text_width_, &text_height_);
-  textSurface = TTF_RenderText_Solid(credit_font_, text, textColor);
+  SDL_Color textColor = {255, 255, 255, 0};
+  TTF_SizeText(font_, text, &text_width_, &text_height_);
+  textSurface = TTF_RenderText_Blended(font_, text, textColor);
   text_ = SDL_CreateTextureFromSurface(engine_->renderer, textSurface);
   SDL_FreeSurface(textSurface);
 }

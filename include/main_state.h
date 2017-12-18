@@ -22,6 +22,11 @@ class MainState : public State {
     void RenderCredits();
     void RenderPaid();
 
+    void UpdateSpinText();
+    void RenderSpinBtn();
+    void RenderMaxBtn();
+    void RenderCashBtn();
+
     void UpdateText(const char* text);
     void RenderText();
   protected:
@@ -34,11 +39,17 @@ class MainState : public State {
     SDL_Texture* credits_;
     SDL_Texture* paid_;
     SDL_Texture* text_;
+    SDL_Texture* spin_btn_;
+    SDL_Texture* spin_text_;
+    SDL_Texture* max_btn_;
+    SDL_Texture* cash_btn_;
     TTF_Font* credit_font_;
+    TTF_Font* font_;
 
     int credit_width_, credit_height_;
     int paid_width_, paid_height_;
     int text_width_, text_height_;
+    int spin_text_width_, spin_text_height_;
 };
 
 
