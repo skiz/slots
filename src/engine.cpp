@@ -56,8 +56,7 @@ void Engine::Init(int argc, char** argv) {
     std::cerr << "TTF_Init: " << TTF_GetError() << std::endl;
   }
 
-  assets = new AssetManager();
-  assets->Init(argv[0]);
+  assets = &AssetManager::GetInstance();
 
   events = new EventManager();
   events->Init();
@@ -88,7 +87,7 @@ void Engine::Cleanup() {
     states_.pop_back();
   }
 
-  assets->Cleanup();
+  //assets->Cleanup();
   events->Cleanup();
   accounting->Cleanup();
 

@@ -31,11 +31,15 @@ void EventManager::HandleEvents() {
   SDL_Event event;
   if (SDL_PollEvent(&event)) {
     switch (event.type) {
+      case SDL_MOUSEBUTTONDOWN:
+	break;
       case SDL_QUIT:
 	SystemSignal.emit(QUIT);
 	break;
       case SDL_KEYDOWN:
 	HandleKeyPress(event.key.keysym.sym);
+      default:
+	break;
     }
   }
 }

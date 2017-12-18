@@ -1,21 +1,33 @@
 #ifndef ASSET_MANAGER_H
 #define ASSET_MANAGER_H
 
-#include <unordered_map>
 #include "SDL_Image.h"
 
 /**
- * Handles loading of asset files in both the filesystem and
- * archives.  Things such as music, images, etc are handled here.
+ * Handles loading and caching of assets from the filesystem
+ *
+ * DONE: surfaces, textures
+ * TODO: music, sound, fonts
  */
 class AssetManager {
   public:
-    void Init(const char* path);
-    void Cleanup();
-    bool Mount(const char* path, const char* target);
-    //char* ReadBytes(const char* filename);
-    SDL_Surface* LoadSurface(const char* filename);
+    static AssetManager& GetInstance() {
+      static AssetManager instance;
+      return instance;
+    };
+    ~AssetManager();
+    
+    bool Mount(const char* src, const char* dest);
     const char* GetLastError();
+    SDL_Surface* LoadSurface(const char* filename);
+    SDL_Texture* LoadTexture(const char* filename, SDL_Renderer* r);
+    
+    AssetManager(AssetManager const&) = delete;
+    void operator=(AssetManager const&) = delete;
+
+  private:
+    AssetManager();
+    static AssetManager* instance;
 };
 
 #endif

@@ -2,11 +2,11 @@
 #include <physfs.h>
 #include <iostream>
 
-void AssetManager::Init(const char *path) {
- PHYSFS_init(path);
+AssetManager::AssetManager() {
+  PHYSFS_init(NULL);
 }
 
-void AssetManager::Cleanup() {
+AssetManager::~AssetManager() {
   PHYSFS_deinit();
 }
 
@@ -15,31 +15,9 @@ bool AssetManager::Mount(const char* path, const char* target) {
   return (err != 0);
 }
 
-/*
- * This is commented due to not having filesize available after.
- * sizeof(buf) is always 8....
- * ....
-
-char* AssetManager::ReadBytes(const char* filename) {
-  if (!PHYSFS_exists(filename)) {
-    std::cerr << filename << " does not exist." << std::endl;
-    return nullptr;
-  }
-  PHYSFS_file* assetFile = PHYSFS_openRead(filename);
-  PHYSFS_sint64 filesize = PHYSFS_fileLength(assetFile);
-  PHYSFS_seek(assetFile, 0);
-  char* buf = new char[filesize+1];
-  buf[filesize] = 0;
-  int bytesRead = PHYSFS_readBytes(assetFile, buf, filesize);
-  std::cout << bytesRead << " " << filename << std::endl;
-  PHYSFS_close(assetFile);
-  return buf;
-}
-*/
-
 SDL_Surface* AssetManager::LoadSurface(const char* filename) {
   if (!PHYSFS_exists(filename)) {
-    std::cerr << filename << " does not exist." << std::endl;
+    std::cerr << "AssetManager: " << filename << " does not exist." << std::endl;
     return nullptr;
   }
 
@@ -56,7 +34,13 @@ SDL_Surface* AssetManager::LoadSurface(const char* filename) {
   return s;
 }
 
+SDL_Texture* AssetManager::LoadTexture(const char* filename, SDL_Renderer* r) {
+  SDL_Surface* s = LoadSurface(filename);
+  SDL_Texture* t = SDL_CreateTextureFromSurface(r, s);
+  SDL_FreeSurface(s);
+  return t;
+}
+
 const char* AssetManager::GetLastError() {
   return PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode());
 }
-

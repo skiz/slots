@@ -1,7 +1,7 @@
 #include <iostream>
 #include "engine.h"
 #include "main_state.h"
-#include "sdl_ttf.h"
+#include "SDL_ttf.h"
 
 MainState MainState::state;
 
@@ -10,7 +10,6 @@ void MainState::Init(Engine* e) {
   LoadAssets();
 
   // subscribe to system events
-  // TODO: unsubscribe on pop/cleanup
   engine_->events->SystemSignal.connect_member(this, &MainState::HandleEvent);
 
   // handle credit updates
@@ -24,13 +23,12 @@ void MainState::Init(Engine* e) {
   UpdateCredits(engine_->accounting->Credits());
   UpdatePaid(engine_->accounting->Paid());
   UpdateText(engine_->accounting->Text());
-  
-  UpdateSpinText();
 }
 
 void MainState::Cleanup() {
   TTF_CloseFont(credit_font_);
   TTF_CloseFont(font_);
+  // TODO: disconnect slots
 }
 
 void MainState::HandleEvent(SystemEvent e) {
@@ -38,70 +36,6 @@ void MainState::HandleEvent(SystemEvent e) {
     default:
       break;
   }
-}
-
-void MainState::UpdateSpinText() {
-  const char* text = "SPIN";
-  SDL_Surface* textSurface = NULL;
-  SDL_Color textColor = {255, 255, 255, 50};
-  TTF_SizeText(font_, text, &spin_text_width_, &spin_text_height_);
-  textSurface = TTF_RenderText_Blended(font_, text, textColor);
-  spin_text_ = SDL_CreateTextureFromSurface(engine_->renderer, textSurface);
-  SDL_FreeSurface(textSurface);
-}
-
-void MainState::RenderCashBtn() {
-  int w, h;
-
-  int tx = 260;
-  int ty = 530;
-
-  SDL_QueryTexture(cash_btn_, NULL, NULL, &w, &h);
-  SDL_Rect cash_pos;
-  cash_pos.w = w;
-  cash_pos.h = h;
-  cash_pos.x = tx;
-  cash_pos.y = ty;
-  SDL_RenderCopy(engine_->renderer, cash_btn_, NULL, &cash_pos);
-}
-
-void MainState::RenderMaxBtn() {
-  int w, h;
-
-  int tx = 1000;
-  int ty = 580;
-
-  SDL_QueryTexture(max_btn_, NULL, NULL, &w, &h);
-  SDL_Rect max_pos;
-  max_pos.w = w;
-  max_pos.h = h;
-  max_pos.x = tx;
-  max_pos.y = ty;
-  SDL_RenderCopy(engine_->renderer, max_btn_, NULL, &max_pos);
-
-}
-
-void MainState::RenderSpinBtn() {
-  int w, h;
-
-  int tx = 1200;
-  int ty = 580;
-
-  SDL_QueryTexture(spin_btn_, NULL, NULL, &w, &h);
-  SDL_Rect spin_pos;
-  spin_pos.w = w;
-  spin_pos.h = h;
-  spin_pos.x = tx;
-  spin_pos.y = ty;
-
-  SDL_Rect text_pos;
-  text_pos.w = spin_text_width_;
-  text_pos.h = spin_text_height_;
-  text_pos.x = tx + w - (w / 2) - spin_text_width_ / 2 ;
-  text_pos.y = ty + h - (h / 2) - spin_text_height_ / 2;
-
-  SDL_RenderCopy(engine_->renderer, spin_btn_, NULL, &spin_pos);
-  SDL_RenderCopy(engine_->renderer, spin_text_, NULL, &text_pos);
 }
 
 
@@ -112,24 +46,44 @@ void MainState::LoadAssets() {
   bg_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
   SDL_FreeSurface(s);
 
-  // TODO: Audio system doesn't use Asset Manager currently
   engine_->audio->PlayMusic("assets/main/sound/music.ogg");
 
-  // TODO: Add font loading support to asset manager
+  font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 40);
   credit_font_ = TTF_OpenFont("assets/main/fonts/digital.ttf", 65);
-  font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 50);
 
-  s = engine_->assets->LoadSurface("/main/images/green_button.png");
-  spin_btn_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
-  SDL_FreeSurface(s);
+  SetupButtons();
+}
 
-  s = engine_->assets->LoadSurface("/main/images/red_button.png");
-  max_btn_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
-  SDL_FreeSurface(s);
+void MainState::SetupButtons() {
+  button_font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 30);
+  button_font_color_ = {255, 255, 255, 0};
 
-  s = engine_->assets->LoadSurface("/main/images/cashout.png");
-  cash_btn_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
-  SDL_FreeSurface(s);
+
+  int bx = 755;
+  int by = 580;
+  int bs = 170;
+
+  const char* btnFile =  "/main/images/green_button.png";
+
+  maxBtn = new UIButton(engine_->renderer, btnFile);
+  maxBtn->SetPosition(bx, by);
+  maxBtn->SetFont(button_font_, button_font_color_);
+  maxBtn->SetText("Bet Max");
+
+  betBtn = new UIButton(engine_->renderer, btnFile);
+  betBtn->SetPosition(bx+bs, by);
+  betBtn->SetFont(button_font_, button_font_color_);
+  betBtn->SetText("Bet 1");
+
+  cashBtn = new UIButton(engine_->renderer, btnFile);
+  cashBtn->SetPosition(bx+bs*2, by);
+  cashBtn->SetFont(button_font_, button_font_color_);
+  cashBtn->SetText("Cashout");
+
+  spinBtn = new UIButton(engine_->renderer, btnFile);
+  spinBtn->SetPosition(bx+bs*3, by);
+  spinBtn->SetFont(button_font_, button_font_color_);
+  spinBtn->SetText("Spin");
 }
 
 void MainState::Pause() {
@@ -157,12 +111,13 @@ void MainState::Draw() {
   SDL_RenderCopy(engine_->renderer, bg_, NULL, NULL);
   RenderCredits();
   RenderPaid();
-  RenderText();
-  RenderSpinBtn();
-  RenderMaxBtn();
-  RenderCashBtn();
+  RenderMessageText();
+  maxBtn->Render();
+  betBtn->Render();
+  spinBtn->Render();
+  cashBtn->Render();
   SDL_RenderPresent(engine_->renderer);
-  SDL_Delay(20);
+  //SDL_Delay(10);
 }
 
 void MainState::UpdateCredits(const unsigned int &amount) {
@@ -205,7 +160,7 @@ void MainState::UpdateText(const char* text) {
   SDL_FreeSurface(textSurface);
 }
 
-void MainState::RenderText() {
+void MainState::RenderMessageText() {
   int rw, rh;
   SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
   SDL_Rect text_pos;
