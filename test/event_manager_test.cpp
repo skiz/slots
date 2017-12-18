@@ -13,7 +13,6 @@ class KeyCounter {
 TEST(EventManagerTest, KeyMappingEmitter) {
   EventManager em;
   KeyCounter c;
-  em.Init();
   em.AddMapping(SDLK_1, VOL_UP);
   em.SystemSignal.connect_member(&c, &KeyCounter::Add);
   em.HandleKeyPress(SDLK_1);
@@ -24,7 +23,6 @@ TEST(EventManagerTest, KeyMappingEmitter) {
 TEST(EventManagerTest, SupportsMultipleBinds) {
   EventManager em;
   KeyCounter c;
-  em.Init();
   em.AddMapping(SDLK_1, VOL_UP);
   em.AddMapping(SDLK_1, VOL_DOWN);
   em.SystemSignal.connect_member(&c, &KeyCounter::Add);
@@ -35,7 +33,6 @@ TEST(EventManagerTest, SupportsMultipleBinds) {
 TEST(EventManagerTest, SupportsMultipleSlots) {
   EventManager em;
   KeyCounter c;
-  em.Init();
   em.AddMapping(SDLK_1, VOL_UP);
   em.SystemSignal.connect_member(&c, &KeyCounter::Add);
   em.SystemSignal.connect_member(&c, &KeyCounter::Add);
@@ -43,3 +40,14 @@ TEST(EventManagerTest, SupportsMultipleSlots) {
   ASSERT_EQ(c.cnt, 2);
 }
 
+TEST(EventManagerTest, InitDefaultMappings) {
+  EventManager em;
+  KeyCounter c;
+  em.Init();
+  em.SystemSignal.connect_member(&c, &KeyCounter::Add);
+  em.HandleKeyPress(SDLK_1);
+  em.HandleKeyPress(SDLK_2);
+  em.HandleKeyPress(SDLK_ESCAPE);
+  em.HandleKeyPress(SDLK_SPACE);
+  ASSERT_EQ(c.cnt, 4);
+}

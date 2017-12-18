@@ -162,3 +162,59 @@ The positions of a near miss are calculated.
 ----------------------------------------
 Why? fukifIknow...
 
+
+
+
+/*
+    TODO: make a payout table for each winning combination
+     ie:
+
+	3A = 50 * Bet, 4A = 100 * Bet, 5A = 500 * Bet
+	3K = 20 * Bet, 4K = 50 * Bet, 5K = 100 * Bet
+	
+
+  BUILDING THE REELS:
+
+    Each stage uses a weighted list to determine the wheel(s) and their
+    target position.
+
+
+    Stage 1:  Predefined Outcome with target positions (all reels defined)
+      Jackpot       1
+      Bonus        50
+      Near Miss    70
+      Standard  10000
+
+    Stage 2:  Predefined Reel without target positions (1 for each reel)
+      Jackpot       5
+      Bonus       400
+      All A       500
+      All K       600
+      All Q       700
+      Standard  10000
+
+    Stage 3:  Standard Wheel Generation (each face is weighted and selected)
+       JACKPOT:   50
+         BONUS: 1000
+	  WILD: 1200
+	     A: 3000
+             K: 3100
+	     Q: 3200
+	     J: 3450
+	    10: 3450
+	CHERRY: 3450
+	   BAR: 3450
+
+	calculate sum of all weights
+	pick random number between 0 and sum
+	loop through lookup
+	    if sum > weight
+	      sum -= weight
+	    else
+	      select this one
+
+
+    Stage 4:  Define stop positions for all reels that don't have them
+
+*/
+

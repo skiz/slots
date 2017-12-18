@@ -14,8 +14,6 @@
  * It takes a SDL_Event, and fires defined events within the current state.
  *
  */
-
-
 class EventManager {
   public:
     void Init();
@@ -23,6 +21,7 @@ class EventManager {
     void AddMapping(int sdlkey, SystemEvent ref);
     void HandleKeyPress(int sdlkey);
     void HandleEvents();
+    void AddDefaultMappings();
     Signal<SystemEvent> SystemSignal;
   private:
     std::unordered_map<int, std::vector<SystemEvent>> map_;

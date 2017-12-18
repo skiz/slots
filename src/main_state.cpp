@@ -42,7 +42,7 @@ void MainState::HandleEvent(SystemEvent e) {
 void MainState::LoadAssets() {
   engine_->assets->Mount("assets/main", "/main");
 
-  SDL_Surface* s = engine_->assets->LoadSurface("/main/images/background.jpg");
+  SDL_Surface* s = engine_->assets->LoadSurface("/main/images/b.png");
   bg_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
   SDL_FreeSurface(s);
 
@@ -55,35 +55,51 @@ void MainState::LoadAssets() {
 }
 
 void MainState::SetupButtons() {
-  button_font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 30);
-  button_font_color_ = {255, 255, 255, 0};
+  button_font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 20);
+  button_font_color_ = {0,0,0,0}; //255, 255, 255, 0};
 
 
-  int bx = 755;
-  int by = 580;
-  int bs = 170;
+  int bx = 20;
+  int by = 810;
+  int bs = 150;
 
-  const char* btnFile =  "/main/images/green_button.png";
-
-  maxBtn = new UIButton(engine_->renderer, btnFile);
-  maxBtn->SetPosition(bx, by);
-  maxBtn->SetFont(button_font_, button_font_color_);
-  maxBtn->SetText("Bet Max");
-
-  betBtn = new UIButton(engine_->renderer, btnFile);
-  betBtn->SetPosition(bx+bs, by);
-  betBtn->SetFont(button_font_, button_font_color_);
-  betBtn->SetText("Bet 1");
+  const char* btnFile =  "/main/images/btn.png";
 
   cashBtn = new UIButton(engine_->renderer, btnFile);
-  cashBtn->SetPosition(bx+bs*2, by);
+  cashBtn->SetPosition(70, by);
   cashBtn->SetFont(button_font_, button_font_color_);
-  cashBtn->SetText("Cashout");
+  cashBtn->SetText("CASHOUT");
+
+  helpBtn = new UIButton(engine_->renderer, btnFile);
+  helpBtn->SetPosition(370, 717);
+  helpBtn->SetFont(button_font_, button_font_color_);
+  helpBtn->SetText("HELP");
+
+  paysBtn = new UIButton(engine_->renderer, btnFile);
+  paysBtn->SetPosition(220, by);
+  paysBtn->SetFont(button_font_, button_font_color_);
+  paysBtn->SetText("PAYLINES");
+
+  linesBtn = new UIButton(engine_->renderer, btnFile);
+  linesBtn->SetPosition(520, by);
+  linesBtn->SetFont(button_font_, button_font_color_);
+  linesBtn->SetText("LINES");
+
+  betBtn = new UIButton(engine_->renderer, btnFile);
+  betBtn->SetPosition(718, by);
+  betBtn->SetFont(button_font_, button_font_color_);
+  betBtn->SetText("BET");
 
   spinBtn = new UIButton(engine_->renderer, btnFile);
-  spinBtn->SetPosition(bx+bs*3, by);
+  spinBtn->SetPosition(910, by);
   spinBtn->SetFont(button_font_, button_font_color_);
-  spinBtn->SetText("Spin");
+  spinBtn->SetText("SPIN");
+
+  maxBtn = new UIButton(engine_->renderer, btnFile);
+  maxBtn->SetPosition(1252, by);
+  maxBtn->SetFont(button_font_, button_font_color_);
+  maxBtn->SetText("BET MAX");
+
 }
 
 void MainState::Pause() {
@@ -102,8 +118,8 @@ void MainState::RenderCredits() {
   SDL_Rect credit_pos;
   credit_pos.w = credit_width_;
   credit_pos.h = credit_height_;
-  credit_pos.x = 285 - credit_width_; //250; //rw - credit_pos.w - 30;
-  credit_pos.y = rh - credit_pos.h - 25;
+  credit_pos.x = 270 - credit_width_;
+  credit_pos.y = rh - credit_pos.h - 120;
   SDL_RenderCopy(engine_->renderer, credits_, NULL, &credit_pos);
 }
 
@@ -116,8 +132,11 @@ void MainState::Draw() {
   betBtn->Render();
   spinBtn->Render();
   cashBtn->Render();
+  linesBtn->Render();
+  //helpBtn->Render();
+  //paysBtn->Render();
   SDL_RenderPresent(engine_->renderer);
-  //SDL_Delay(10);
+  SDL_Delay(1);
 }
 
 void MainState::UpdateCredits(const unsigned int &amount) {
@@ -146,8 +165,8 @@ void MainState::RenderPaid() {
   SDL_Rect paid_pos;
   paid_pos.w = paid_width_;
   paid_pos.h = paid_height_;
-  paid_pos.x = rw - paid_pos.w - 30;
-  paid_pos.y = rh - paid_pos.h - 25;
+  paid_pos.x = rw - paid_pos.w - 130;
+  paid_pos.y = rh - paid_pos.h - 120;
   SDL_RenderCopy(engine_->renderer, paid_, NULL, &paid_pos);
 }
 
@@ -167,7 +186,7 @@ void MainState::RenderMessageText() {
   text_pos.w = text_width_;
   text_pos.h = text_height_;
   text_pos.x = rw/2 - text_width_/2;
-  text_pos.y = rh - text_pos.h - 135;
+  text_pos.y = 10;
   SDL_RenderCopy(engine_->renderer, text_, NULL, &text_pos);
 }
 

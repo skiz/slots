@@ -44,6 +44,7 @@ class MainState : public State {
     int text_width_, text_height_;
 
     UIButton *maxBtn, *betBtn, *spinBtn, *cashBtn;
+    UIButton *linesBtn, *helpBtn, *paysBtn;
     
 };
 
