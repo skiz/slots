@@ -104,7 +104,7 @@ void Accounting::InitiateSpin() {
     TriggerTextUpdate();
     cents_ += won * CENTS_PER_CREDIT;
     //std::cout << "Winnings (cents): " << won << std::endl;
-    reel_.DumpLines();
+    //reel_.DumpLines();
   }
   paid_credits_ = won;
   BetUpdate.emit(Bet());

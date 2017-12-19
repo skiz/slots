@@ -60,7 +60,6 @@ class Accounting {
     // Actual accounting info
     unsigned long credits_played_ = 0;
     unsigned long credits_lost_   = 0;
-
 };
 
 #endif
