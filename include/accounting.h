@@ -57,9 +57,11 @@ class Accounting {
     unsigned int paid_credits_ = 0;  // amount paid for last spin
     char* text_;                     // text to send as message
 
-    // Actual accounting info
+    // TODO: Actual accounting info, for ya know... accounting...
     unsigned long credits_played_ = 0;
     unsigned long credits_lost_   = 0;
+    unsigned long games_played_   = 0;
+    // TODO: Add play log in a signed, reloadable format
 };
 
 #endif

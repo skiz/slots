@@ -28,11 +28,14 @@ class MainState : public State {
     void RenderBet();
     void RenderLines();
     void RenderTotal();
+    void LoadReelSymbols();
     void UpdateText(const char* text);
     void RenderMessageText();
     void SetupButtons();
   protected:
     MainState() {}
+
+    void LoadSymbol(Symbol type, const char* filename);
   private:
     Engine* engine_; // not owned
     static MainState state;
@@ -47,6 +50,8 @@ class MainState : public State {
     TTF_Font* button_font_;
     SDL_Color button_font_color_;
     TTF_Font* font_;
+ 
+    std::map<Symbol, SDL_Texture*> reel_symbols_;
 
     int credit_width_, credit_height_;
     int paid_width_, paid_height_;

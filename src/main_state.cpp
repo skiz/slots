@@ -56,8 +56,41 @@ void MainState::LoadAssets() {
   font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 40);
   credit_font_ = TTF_OpenFont("assets/main/fonts/digital.ttf", 65);
 
+  LoadReelSymbols();
+
   SetupButtons();
 }
+
+void MainState::LoadReelSymbols() {
+  engine_->assets->Mount("assets/reels", "/reels");
+  LoadSymbol(CHERRY, "/reels/cherry.png");
+  LoadSymbol(BAR, "/reels/bar.png");
+  LoadSymbol(DOUBLE_BAR, "/reels/bars.png");
+  LoadSymbol(TEN, "/reels/banana.png");
+  LoadSymbol(JACK, "/reels/heart.png");
+  LoadSymbol(QUEEN, "/reels/crown.png");
+  LoadSymbol(KING, "/reels/ruby.png");
+  LoadSymbol(ACE, "/reels/diamond.png");
+  LoadSymbol(WILD, "/reels/clover.png");
+  LoadSymbol(BONUS, "/reels/bonus.png");
+  LoadSymbol(JACKPOT, "/reels/bigwin.png");
+  LoadSymbol(ALT1, "/reels/gem.png");
+  LoadSymbol(ALT2, "/reels/money.png");
+  LoadSymbol(ALT3, "/reels/lemon.png");
+  LoadSymbol(ALT4, "/reels/orange.png");
+  LoadSymbol(ALT5, "/reels/melon.png");
+  LoadSymbol(ALT6, "/reels/sberry.png");
+  LoadSymbol(ALT7, "/reels/bell.png");
+  LoadSymbol(ALT8, "/reels/grape.png");
+  LoadSymbol(ALT9, "/reels/melon2.png");
+}
+
+void MainState::LoadSymbol(Symbol type, const char* filename) {
+  SDL_Surface* s = engine_->assets->LoadSurface(filename);
+  reel_symbols_[type] = SDL_CreateTextureFromSurface(engine_->renderer, s);
+  SDL_FreeSurface(s);
+}
+
 
 void MainState::SetupButtons() {
   button_font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 20);
