@@ -13,7 +13,6 @@ std::map<Symbol, int> Reel::standardReelWeights = {
   {WILD,        2200},
   {BONUS,       5500},
   {JACKPOT,      500},
-  {NOTHING,        0},
   {ALT1,        1000},
   {ALT2,       13000},
   {ALT3,       13000},
@@ -22,7 +21,8 @@ std::map<Symbol, int> Reel::standardReelWeights = {
   {ALT6,       13000},
   {ALT7,       13000},
   {ALT8,           0},
-  {ALT9,           0}
+  {ALT9,           0},
+  {NOTHING,        0},
 };
 
 // Standard payout table  <count, <num, payout>>
@@ -44,7 +44,7 @@ std::map<Symbol, std::map<int, int>> Reel::payoutTable = {
   {ALT6,                        {{3,    2},{4,     4},{5,     6}}},
   {ALT7,                        {{3,    2},{4,     4},{5,     6}}},
   {ALT8,                        {{3,    2},{4,     4},{5,     6}}},
-  {ALT9,                        {{3,    2},{4,     4},{5,     6}}}
+  {ALT9,                        {{3,    2},{4,     4},{5,     6}}},
 };
 
 

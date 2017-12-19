@@ -16,7 +16,6 @@ enum Symbol {
   WILD,               //8
   BONUS,              //9
   JACKPOT,            //10
-  NOTHING,            //11
   ALT1,
   ALT2,
   ALT3,
@@ -25,7 +24,8 @@ enum Symbol {
   ALT6,
   ALT7,
   ALT8,
-  ALT9
+  ALT9,
+  NOTHING,
 };
 
 class Reel {
