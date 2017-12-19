@@ -11,7 +11,7 @@ class Engine;
 // TODO: make this configurable
 const unsigned int COIN_AMOUNT = 25;
 const unsigned int BILL_AMOUNT = 10000;
-const unsigned int CENTS_PER_CREDIT = 1; // DO NOT CHANGE THIS, DRAGONS!
+const unsigned int CENTS_PER_CREDIT = 5;
 
 /**
  * Accounting is responsible for all monetary transactions.
@@ -45,7 +45,7 @@ class Accounting {
     Engine* engine_;
     Reel reel_;
     
-    unsigned int cents_ = 0;         // available funds
+    unsigned int cents_ = 0;         // available funds in cents
     
     unsigned int bet_ = 0;           // visual counter
     unsigned int lines_ = 0;         // visual counter

@@ -60,7 +60,7 @@ void Accounting::BetMax() {
   bet_ = max_bet_;
 
   int new_bet = bet_ * lines_;
-  cents_ += current_bet_ - new_bet;
+  cents_ += (current_bet_ - new_bet) * CENTS_PER_CREDIT;
   current_bet_ = new_bet;
 
   InitiateSpin();
@@ -102,8 +102,8 @@ void Accounting::InitiateSpin() {
     sprintf(txtbuf, "You won %d credits!", won);
     text_ = txtbuf;
     TriggerTextUpdate();
-    cents_ += won;
-    std::cout << "Winnings: " << won << std::endl;
+    cents_ += won * CENTS_PER_CREDIT;
+    std::cout << "Winnings (cents): " << won << std::endl;
     reel_.DumpLines();
   }
 
@@ -139,7 +139,7 @@ void Accounting::TriggerBetUpdate(int num) {
   }
 
   int new_bet = bet_ * lines_;
-  cents_ += current_bet_ - new_bet;
+  cents_ += (current_bet_ - new_bet) * CENTS_PER_CREDIT;
   current_bet_ = new_bet;
 
   std::cout << "Bet updated: " << bet_ << std::endl;
@@ -159,7 +159,7 @@ void Accounting::TriggerLinesUpdate(int num) {
   }
   
   int new_bet = bet_ * lines_;
-  cents_ += current_bet_ - new_bet;
+  cents_ += (current_bet_ - new_bet) * CENTS_PER_CREDIT;
   current_bet_ = new_bet;
 
   std::cout << "Lines updated: " << lines_ << std::endl;
@@ -173,7 +173,7 @@ bool Accounting::InsufficientFunds(int bet, int lines, int offset) {
 }
 
 unsigned int Accounting::Credits() {
-  return cents_ * CENTS_PER_CREDIT;
+  return cents_ / CENTS_PER_CREDIT;
 }
 
 unsigned int Accounting::Paid() {
