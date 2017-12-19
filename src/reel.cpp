@@ -132,7 +132,7 @@ void Reel::GenerateWinningLines(int maxLines) {
       line_payout = it->second;              // We have a winner!
     }
     if (line_payout > 0) {
-      winningLines[line.first] = payout;   // Add the winning line to the result
+      winningLines[line.first] = line_payout; // Add the winning line to the result
       payout += line_payout;
     }
   }

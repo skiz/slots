@@ -99,7 +99,8 @@ TEST(ReelTest, WildWildCherry) {
   r.symbols[13] = WILD;
   r.symbols[14] = CHERRY;
  
-  r.GenerateWinningLines(17);
-  r.DumpLines();
-  ASSERT_EQ(150, r.GetCreditsWon());
+  r.GenerateWinningLines(20);
+  //r.DumpLines();
+  ASSERT_EQ(3, r.winningLines.size());
+  ASSERT_EQ(350, r.GetCreditsWon());
 }
