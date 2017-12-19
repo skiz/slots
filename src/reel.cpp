@@ -10,7 +10,7 @@ std::map<Symbol, int> Reel::standardReelWeights = {
   {QUEEN,      13200},
   {KING,       13100},
   {ACE,        13000},
-  {WILD,       11200},
+  {WILD,        1200},
   {BONUS,       5500},
   {JACKPOT,     1500},
   {NOTHING,        0},
@@ -129,11 +129,11 @@ void Reel::GenerateWinningLines(int maxLines) {
     Symbol sym = Symbol(symbol);             // Get the actual symbol reference
     std::map<int, int>::iterator it = payoutTable[sym].find(matches);
     if(it != payoutTable[sym].end()) {
-      line_payout = it->second;                   // We have a winner!
+      line_payout = it->second;              // We have a winner!
     }
     if (line_payout > 0) {
-        winningLines[line.first] = payout;  // Add the winning line to the result
-	payout += line_payout;
+      winningLines[line.first] = payout;   // Add the winning line to the result
+      payout += line_payout;
     }
   }
 }
@@ -141,8 +141,9 @@ void Reel::GenerateWinningLines(int maxLines) {
 void Reel::DumpLines() {
   std::cout << "Winning Lines: " << winningLines.size() << std::endl;
   for (auto w : winningLines) {
-    std::cout << "Line #: " << w.first << " Credits: " << w.second << std::endl;
+    std::cout << "Payline " << w.first << ": " << w.second << " Credits"<< std::endl;
   }
+  std::cout << "Total Payout: " << GetCreditsWon() << std::endl;;
   std::cout << symbols[0] << "\t" << symbols[1] << "\t" << symbols[2] << "\t" << symbols[3] << "\t" << symbols[4] << std::endl;
   std::cout << symbols[5] << "\t" << symbols[6] << "\t" << symbols[7] << "\t" << symbols[8] << "\t" << symbols[9] << std::endl;
   std::cout << symbols[10] << "\t" << symbols[11] << "\t" << symbols[12] << "\t" << symbols[13] << "\t" << symbols[14] << std::endl;

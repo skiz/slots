@@ -3,6 +3,7 @@
 
 #include "system_event.h"
 #include "signal.h"
+#include "reel.h"
 
 
 class Engine;
@@ -22,6 +23,7 @@ class Accounting {
     void Cleanup();
     void HandleEvent(SystemEvent e);
     void MoneyInserted(unsigned int amount);
+    void InitiateSpin();
     void TriggerCreditUpdate();
     void TriggerPaidUpdate();
     void TriggerTextUpdate();
@@ -40,6 +42,8 @@ class Accounting {
     Signal<const char*>TextUpdate;
   private:
     Engine* engine_;
+    Reel reel_;
+    
     unsigned int cents_ = 0;
     unsigned int paid_credits_ = 0;
     unsigned int bet_ = 0;

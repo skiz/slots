@@ -24,6 +24,9 @@ void Accounting::Cleanup() {}
 
 void Accounting::HandleEvent(SystemEvent e) {
   switch (e) {
+    case SPIN:
+      InitiateSpin();
+      break;
     case COIN_IN:
       MoneyInserted(COIN_AMOUNT);
       break;
@@ -66,6 +69,32 @@ void Accounting::MoneyInserted(unsigned int amount) {
 
   TriggerCreditUpdate();
   TriggerTextUpdate();
+}
+
+void Accounting::InitiateSpin() {
+  if (bet_ == 0) return;
+  char txtbuf[50];
+  sprintf(txtbuf, "Good Luck!");
+  TriggerTextUpdate();
+
+  reel_.GenerateSymbols(5, 3);
+  reel_.GenerateWinningLines(lines_);
+
+  int won = reel_.GetCreditsWon() * bet_;
+  if (won > 0) {
+    sprintf(txtbuf, "You won %d credits!", won);
+    TriggerTextUpdate();
+    cents_ += won;
+    std::cout << "Winnings: " << won << std::endl;
+    reel_.DumpLines();
+  }
+
+  bet_ = 0;
+  current_bet_ = 0;
+  lines_ = 0;
+  BetUpdate.emit(Bet());
+  LinesUpdate.emit(Lines());
+  CreditUpdate.emit(Credits());
 }
 
 void Accounting::TriggerCreditUpdate() {
