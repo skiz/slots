@@ -18,6 +18,7 @@ void MainState::Init(Engine* e) {
   engine_->accounting->PaidUpdate.connect_member(this, &MainState::UpdatePaid);
   engine_->accounting->TextUpdate.connect_member(this, &MainState::UpdateText);
   engine_->accounting->BetUpdate.connect_member(this, &MainState::UpdateBet);
+  engine_->accounting->TotalUpdate.connect_member(this, &MainState::UpdateTotal);
   engine_->accounting->LinesUpdate.connect_member(this, &MainState::UpdateLines);
 
   // request credits (TODO: use signals)
@@ -25,6 +26,7 @@ void MainState::Init(Engine* e) {
   UpdatePaid(engine_->accounting->Paid());
   UpdateText(engine_->accounting->Text());
   UpdateBet(engine_->accounting->Bet());
+  UpdateTotal(engine_->accounting->Total());
   UpdateLines(engine_->accounting->Lines());
 }
 
@@ -74,7 +76,7 @@ void MainState::SetupButtons() {
   cashBtn->SetText("CASHOUT");
 
   helpBtn = new UIButton(engine_->renderer, btnFile);
-  helpBtn->SetPosition(370, 717);
+  helpBtn->SetPosition(220, by);
   helpBtn->SetFont(button_font_, button_font_color_);
   helpBtn->SetText("HELP");
 
@@ -89,12 +91,12 @@ void MainState::SetupButtons() {
   linesBtn->SetText("LINES");
 
   betBtn = new UIButton(engine_->renderer, btnFile);
-  betBtn->SetPosition(718, by);
+  betBtn->SetPosition(680, by);
   betBtn->SetFont(button_font_, button_font_color_);
   betBtn->SetText("BET");
 
   spinBtn = new UIButton(engine_->renderer, btnFile);
-  spinBtn->SetPosition(910, by);
+  spinBtn->SetPosition(1110, by);
   spinBtn->SetFont(button_font_, button_font_color_);
   spinBtn->SetText("SPIN");
 
@@ -134,7 +136,7 @@ void MainState::RenderBet() {
   SDL_Rect bet_pos;
   bet_pos.w = bet_width_;
   bet_pos.h = bet_height_;
-  bet_pos.x = 800 - bet_width_;
+  bet_pos.x = 755 - bet_width_;
   bet_pos.y = rh - bet_pos.h - 120;
   SDL_RenderCopy(engine_->renderer, bet_, NULL, &bet_pos);
 }
@@ -156,13 +158,14 @@ void MainState::Draw() {
   RenderPaid();
   RenderBet();
   RenderLines();
+  RenderTotal();
   RenderMessageText();
   maxBtn->Render();
   betBtn->Render();
   spinBtn->Render();
   cashBtn->Render();
   linesBtn->Render();
-  //helpBtn->Render();
+  helpBtn->Render();
   //paysBtn->Render();
   SDL_RenderPresent(engine_->renderer);
   SDL_Delay(1);
@@ -208,6 +211,16 @@ void MainState::UpdateLines(const unsigned int &amount) {
   SDL_FreeSurface(textSurface);
 }
 
+void MainState::UpdateTotal(const unsigned int &amount) {
+  const char* text = std::to_string(amount).c_str();
+  SDL_Surface* textSurface = NULL;
+  SDL_Color textColor = {255, 25, 25, 0};
+  TTF_SizeText(credit_font_, text, &total_width_, &total_height_);
+  textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
+  total_ = SDL_CreateTextureFromSurface(engine_->renderer, textSurface);
+  SDL_FreeSurface(textSurface);
+}
+
 void MainState::RenderPaid() {
   int rw, rh;
   SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
@@ -218,6 +231,18 @@ void MainState::RenderPaid() {
   paid_pos.y = rh - paid_pos.h - 120;
   SDL_RenderCopy(engine_->renderer, paid_, NULL, &paid_pos);
 }
+
+void MainState::RenderTotal() {
+  int rw, rh;
+  SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
+  SDL_Rect total_pos;
+  total_pos.w = total_width_;
+  total_pos.h = total_height_;
+  total_pos.x = rw - total_pos.w - 490;
+  total_pos.y = rh - total_pos.h - 120;
+  SDL_RenderCopy(engine_->renderer, total_, NULL, &total_pos);
+}
+
 
 void MainState::UpdateText(const char* text) {
   SDL_Surface* textSurface = NULL;

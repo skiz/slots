@@ -8,7 +8,6 @@
 
 class Engine;
 
-// TODO: make this configurable
 const unsigned int COIN_AMOUNT = 25;
 const unsigned int BILL_AMOUNT = 10000;
 const unsigned int CENTS_PER_CREDIT = 5;
@@ -27,6 +26,7 @@ class Accounting {
     void InitiateSpin();
     void TriggerCreditUpdate();
     void TriggerPaidUpdate();
+    void TriggerTotalUpdate();
     void TriggerTextUpdate();
     void TriggerBetUpdate(int num);
     void TriggerLinesUpdate(int num);
@@ -35,11 +35,13 @@ class Accounting {
     unsigned int Paid();
     unsigned int Bet();
     unsigned int Lines();
+    unsigned int Total();
     const char* Text();
     Signal<const unsigned int &> CreditUpdate;
     Signal<const unsigned int &> PaidUpdate;
     Signal<const unsigned int &> BetUpdate;
     Signal<const unsigned int &> LinesUpdate;
+    Signal<const unsigned int &> TotalUpdate;
     Signal<const char*>TextUpdate;
   private:
     Engine* engine_;
@@ -53,7 +55,12 @@ class Accounting {
     unsigned int max_lines_ = 0;
     unsigned int current_bet_ = 0;   // current wager
     unsigned int paid_credits_ = 0;  // amount paid for last spin
-    char* text_;
+    char* text_;                     // text to send as message
+
+    // Actual accounting info
+    unsigned long credits_played_ = 0;
+    unsigned long credits_lost_   = 0;
+
 };
 
 #endif

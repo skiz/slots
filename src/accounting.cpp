@@ -106,14 +106,15 @@ void Accounting::InitiateSpin() {
     std::cout << "Winnings (cents): " << won << std::endl;
     reel_.DumpLines();
   }
-
+  paid_credits_ = won;
   bet_ = 0;
   current_bet_ = 0;
   lines_ = 0;
   BetUpdate.emit(Bet());
   LinesUpdate.emit(Lines());
   CreditUpdate.emit(Credits());
-  //TextUpdate.emit(Text());
+  TotalUpdate.emit(Total());
+  PaidUpdate.emit(Paid());
 }
 
 void Accounting::TriggerCreditUpdate() {
@@ -126,6 +127,10 @@ void Accounting::TriggerTextUpdate() {
 
 void Accounting::TriggerPaidUpdate() {
   PaidUpdate.emit(Paid());
+}
+
+void Accounting::TriggerTotalUpdate() {
+  TotalUpdate.emit(Total());
 }
 
 void Accounting::TriggerBetUpdate(int num) {
@@ -146,6 +151,7 @@ void Accounting::TriggerBetUpdate(int num) {
   BetUpdate.emit(Bet());
   LinesUpdate.emit(Lines());
   CreditUpdate.emit(Credits());
+  TotalUpdate.emit(Total());
 }
 
 void Accounting::TriggerLinesUpdate(int num) {
@@ -166,6 +172,7 @@ void Accounting::TriggerLinesUpdate(int num) {
   BetUpdate.emit(Bet());
   LinesUpdate.emit(Lines());
   CreditUpdate.emit(Credits());
+  TotalUpdate.emit(Total());
 }
 
 bool Accounting::InsufficientFunds(int bet, int lines, int offset) {
@@ -186,6 +193,10 @@ unsigned int Accounting::Bet() {
 
 unsigned int Accounting::Lines() {
   return lines_;
+}
+
+unsigned int Accounting::Total() {
+  return bet_ * lines_;
 }
 
 const char* Accounting::Text() {
