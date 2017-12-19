@@ -19,7 +19,7 @@ TEST(ReelTest, WeightedSet) {
   }
 }
 
-TEST(ReelTest, GenerateReels) {
+TEST(ReelTest, GenerateSymbols) {
   Reel r;
   r.GenerateSymbols(5, 3);
   ASSERT_EQ(r.symbols.size(), 15);
@@ -31,4 +31,52 @@ TEST(ReelTest, GenerateReels) {
 
 TEST(ReelTest, PayoutTable) {
   Reel r;
+  ASSERT_EQ(r.payoutTable[CHERRY][5], 250);
+  ASSERT_EQ(r.payoutTable[JACKPOT][4], 10000);
+}
+
+TEST(ReelTest, VerifyAllCherriesWin) {
+  Reel r;
+  for (int i = 0; i < 15; i++) {
+    r.symbols[i] = CHERRY;
+  }
+  r.GenerateWinningLines(20);
+  ASSERT_EQ(250*20, r.GetCreditsWon());
+}
+
+TEST(ReelTest, VerifyAllNothing) {
+  Reel r;
+  for (int i = 0; i < 15; i++) {
+    r.symbols[i] = NOTHING;
+  }
+  r.GenerateWinningLines(20);
+  ASSERT_EQ(0, r.GetCreditsWon());
+}
+
+TEST(ReelTest, VerifyMissedJackpot) {
+  Reel r;
+  for (int i = 0; i < 15; i++) {
+    r.symbols[i] = NOTHING;
+  }
+  r.symbols[0] = JACKPOT;
+  r.symbols[1] = JACKPOT;
+  r.symbols[2] = JACKPOT;
+  r.symbols[3] = JACKPOT;
+  r.symbols[4] = JACKPOT;
+  r.GenerateWinningLines(1);
+  ASSERT_EQ(0, r.GetCreditsWon());
+}
+
+TEST(ReelTest, VerifyJackpot) {
+  Reel r;
+  for (int i = 0; i < 15; i++) {
+    r.symbols[i] = NOTHING;
+  }
+  r.symbols[0] = JACKPOT;
+  r.symbols[1] = JACKPOT;
+  r.symbols[2] = JACKPOT;
+  r.symbols[3] = JACKPOT;
+  r.symbols[4] = JACKPOT;
+  r.GenerateWinningLines(2);
+  ASSERT_EQ(50000, r.GetCreditsWon());
 }
