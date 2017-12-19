@@ -20,7 +20,8 @@ enum SystemEvent {
   VOL_UP,
   VOL_DOWN,
   QUIT,
-  POP_STATE
+  POP_STATE,
+  UPDATE_REELS,
 };
 
 #endif

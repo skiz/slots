@@ -23,11 +23,13 @@ class MainState : public State {
     void UpdateBet(const unsigned int &amount);
     void UpdateLines(const unsigned int &amount);
     void UpdateTotal(const unsigned int &amount);
+    void UpdateReels();
     void RenderCredits();
     void RenderPaid();
     void RenderBet();
     void RenderLines();
     void RenderTotal();
+    void RenderSymbols();
     void LoadReelSymbols();
     void UpdateText(const char* text);
     void RenderMessageText();
@@ -50,8 +52,11 @@ class MainState : public State {
     TTF_Font* button_font_;
     SDL_Color button_font_color_;
     TTF_Font* font_;
+
+    Reel *reel_; // not owned
  
     std::map<Symbol, SDL_Texture*> reel_symbols_;
+    std::map<int, Symbol> reel_position_;
 
     int credit_width_, credit_height_;
     int paid_width_, paid_height_;

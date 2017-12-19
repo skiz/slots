@@ -9,6 +9,8 @@ void MainState::Init(Engine* e) {
   engine_ = e;
   LoadAssets();
 
+  reel_ = engine_->accounting->GetReel();
+
   // subscribe to system events
   engine_->events->SystemSignal.connect_member(this, &MainState::HandleEvent);
 
@@ -20,6 +22,7 @@ void MainState::Init(Engine* e) {
   engine_->accounting->BetUpdate.connect_member(this, &MainState::UpdateBet);
   engine_->accounting->TotalUpdate.connect_member(this, &MainState::UpdateTotal);
   engine_->accounting->LinesUpdate.connect_member(this, &MainState::UpdateLines);
+  engine_->accounting->ReelsUpdate.connect_member(this, &MainState::UpdateReels);
 
   // request credits (TODO: use signals)
   UpdateCredits(engine_->accounting->Credits());
@@ -38,6 +41,8 @@ void MainState::Cleanup() {
 
 void MainState::HandleEvent(SystemEvent e) {
   switch (e) {
+    case UPDATE_REELS:
+      std::cout << "UPDATE REELS!" << std::endl;
     default:
       break;
   }
@@ -97,46 +102,46 @@ void MainState::SetupButtons() {
   button_font_color_ = {0,0,0,0}; //255, 255, 255, 0};
 
 
-  int bx = 20;
-  int by = 810;
-  int bs = 150;
+int bx = 20;
+int by = 810;
+int bs = 150;
 
-  const char* btnFile =  "/main/images/btn.png";
+const char* btnFile =  "/main/images/btn.png";
 
-  cashBtn = new UIButton(engine_->renderer, btnFile);
-  cashBtn->SetPosition(70, by);
-  cashBtn->SetFont(button_font_, button_font_color_);
-  cashBtn->SetText("CASHOUT");
+cashBtn = new UIButton(engine_->renderer, btnFile);
+cashBtn->SetPosition(70, by);
+cashBtn->SetFont(button_font_, button_font_color_);
+cashBtn->SetText("CASHOUT");
 
-  helpBtn = new UIButton(engine_->renderer, btnFile);
-  helpBtn->SetPosition(220, by);
-  helpBtn->SetFont(button_font_, button_font_color_);
-  helpBtn->SetText("HELP");
+helpBtn = new UIButton(engine_->renderer, btnFile);
+helpBtn->SetPosition(220, by);
+helpBtn->SetFont(button_font_, button_font_color_);
+helpBtn->SetText("HELP");
 
-  paysBtn = new UIButton(engine_->renderer, btnFile);
-  paysBtn->SetPosition(220, by);
-  paysBtn->SetFont(button_font_, button_font_color_);
-  paysBtn->SetText("PAYLINES");
+paysBtn = new UIButton(engine_->renderer, btnFile);
+paysBtn->SetPosition(220, by);
+paysBtn->SetFont(button_font_, button_font_color_);
+paysBtn->SetText("PAYLINES");
 
-  linesBtn = new UIButton(engine_->renderer, btnFile);
-  linesBtn->SetPosition(520, by);
-  linesBtn->SetFont(button_font_, button_font_color_);
-  linesBtn->SetText("LINES");
+linesBtn = new UIButton(engine_->renderer, btnFile);
+linesBtn->SetPosition(520, by);
+linesBtn->SetFont(button_font_, button_font_color_);
+linesBtn->SetText("LINES");
 
-  betBtn = new UIButton(engine_->renderer, btnFile);
-  betBtn->SetPosition(680, by);
-  betBtn->SetFont(button_font_, button_font_color_);
-  betBtn->SetText("BET");
+betBtn = new UIButton(engine_->renderer, btnFile);
+betBtn->SetPosition(680, by);
+betBtn->SetFont(button_font_, button_font_color_);
+betBtn->SetText("BET");
 
-  spinBtn = new UIButton(engine_->renderer, btnFile);
-  spinBtn->SetPosition(1110, by);
-  spinBtn->SetFont(button_font_, button_font_color_);
-  spinBtn->SetText("SPIN");
+spinBtn = new UIButton(engine_->renderer, btnFile);
+spinBtn->SetPosition(1110, by);
+spinBtn->SetFont(button_font_, button_font_color_);
+spinBtn->SetText("SPIN");
 
-  maxBtn = new UIButton(engine_->renderer, btnFile);
-  maxBtn->SetPosition(1252, by);
-  maxBtn->SetFont(button_font_, button_font_color_);
-  maxBtn->SetText("BET MAX");
+maxBtn = new UIButton(engine_->renderer, btnFile);
+maxBtn->SetPosition(1252, by);
+maxBtn->SetFont(button_font_, button_font_color_);
+maxBtn->SetText("BET MAX");
 
 }
 
@@ -148,8 +153,12 @@ void MainState::Resume() {
   engine_->audio->ResumeMusic();
 }
 
+// Reels were updated, lets render them.
+void MainState::UpdateReels() {
+}
+
 void MainState::Update() {
-	// This is where we will set up animations and reel contents
+  // This is where we will set up animations
 }
 
 void MainState::RenderCredits() {
@@ -192,6 +201,7 @@ void MainState::Draw() {
   RenderBet();
   RenderLines();
   RenderTotal();
+  RenderSymbols();
   RenderMessageText();
   maxBtn->Render();
   betBtn->Render();
@@ -252,6 +262,17 @@ void MainState::UpdateTotal(const unsigned int &amount) {
   textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
   total_ = SDL_CreateTextureFromSurface(engine_->renderer, textSurface);
   SDL_FreeSurface(textSurface);
+}
+
+void MainState::RenderSymbols() {
+  SDL_Rect pos;
+  for (auto s : reel_->symbols) {
+    pos.w = 220;
+    pos.h = 220;
+    pos.x = 87 + s.first % 5 * 263;
+    pos.y = 80 + s.first / 5 * 200;
+    SDL_RenderCopy(engine_->renderer, reel_symbols_[s.second], NULL, &pos);
+  }
 }
 
 void MainState::RenderPaid() {

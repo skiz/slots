@@ -17,9 +17,9 @@ std::map<Symbol, int> Reel::standardReelWeights = {
   {ALT2,        1500},
   {ALT3,       13000},
   {ALT4,       13000},
-  {ALT5,       13000},
-  {ALT6,       13000},
-  {ALT7,       13000},
+  {ALT5,           0},
+  {ALT6,           0},
+  {ALT7,           0},
   {ALT8,           0},
   {ALT9,           0},
   {NOTHING,        0},
@@ -27,7 +27,7 @@ std::map<Symbol, int> Reel::standardReelWeights = {
 
 // Standard payout table  <count, <num, payout>>
 std::map<Symbol, std::map<int, int>> Reel::payoutTable = {
-  {CHERRY,      {{1, 10}, {2,20},{3,   30},{4,    40},{5,    50}}},
+  {CHERRY,      {{1,  1}, {2, 1},{3,    2},{4,     4},{5,     5}}},
   {BAR,                         {{3,    1},{4,     2},{5,    10}}},
   {DOUBLE_BAR,                  {{3,    2},{4,     4},{5,    25}}},
   {TEN,			        {{3,    5},{4,    10},{5,    50}}},
@@ -83,6 +83,7 @@ std::map<int, std::array<int,5>> Reel::payLines = {
 
 Reel::Reel() {
   random_ = &Random::GetInstance();
+  GenerateSymbols(5, 3);
 }
 
 Symbol Reel::GetSymbol(std::map<Symbol, int> *weightedSet) {

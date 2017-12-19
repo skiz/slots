@@ -53,6 +53,11 @@ void Accounting::HandleEvent(SystemEvent e) {
       break;
   }
 }
+
+Reel* Accounting::GetReel() {
+  return &reel_;
+}
+
 void Accounting::BetMax() {
   if (InsufficientFunds(max_bet_, max_lines_)) return;
   lines_ = max_lines_;
@@ -112,6 +117,7 @@ void Accounting::InitiateSpin() {
   CreditUpdate.emit(Credits());
   TotalUpdate.emit(Total());
   PaidUpdate.emit(Paid());
+  ReelsUpdate.emit();
 }
 
 void Accounting::TriggerCreditUpdate() {
@@ -128,6 +134,10 @@ void Accounting::TriggerPaidUpdate() {
 
 void Accounting::TriggerTotalUpdate() {
   TotalUpdate.emit(Total());
+}
+
+void Accounting::TriggerUpdateReels() {
+  ReelsUpdate.emit();
 }
 
 void Accounting::TriggerBetUpdate(int num) {

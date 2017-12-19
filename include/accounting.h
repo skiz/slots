@@ -28,6 +28,7 @@ class Accounting {
     void TriggerPaidUpdate();
     void TriggerTotalUpdate();
     void TriggerTextUpdate();
+    void TriggerUpdateReels();
     void TriggerBetUpdate(int num);
     void TriggerLinesUpdate(int num);
     bool InsufficientFunds(int bet, int lines);
@@ -42,10 +43,12 @@ class Accounting {
     Signal<const unsigned int &> BetUpdate;
     Signal<const unsigned int &> LinesUpdate;
     Signal<const unsigned int &> TotalUpdate;
+    Signal<>ReelsUpdate;
     Signal<const char*>TextUpdate;
+    Reel *GetReel();
   private:
-    Engine* engine_;
     Reel reel_;
+    Engine* engine_;
     
     unsigned int cents_ = 0;         // available funds in cents
     
