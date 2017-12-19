@@ -28,3 +28,7 @@ TEST(ReelTest, GenerateReels) {
     std::cout << t.first << " = " << t.second << std::endl;
   }
 }
+
+TEST(ReelTest, PayoutTable) {
+  Reel r;
+}
