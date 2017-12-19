@@ -12,7 +12,7 @@ enum SystemEvent {
   CASH_OUT,
   SERVICE,
   SPIN,
-  MAX_BET,
+  BET_MAX,
   BET_UP,
   BET_DOWN,
   LINE_UP,

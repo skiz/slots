@@ -17,6 +17,15 @@ enum Symbol {
   BONUS,              //9
   JACKPOT,            //10
   NOTHING,            //11
+  ALT1,
+  ALT2,
+  ALT3,
+  ALT4,
+  ALT5,
+  ALT6,
+  ALT7,
+  ALT8,
+  ALT9
 };
 
 class Reel {

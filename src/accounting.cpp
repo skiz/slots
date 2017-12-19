@@ -5,6 +5,7 @@
 #include "engine.h"
 #include "signal.h"
 
+// TODO add tests for this as it should be the most tested...
 void Accounting::Init(Engine* e) {
   engine_ = e;
   cents_ = 0;
@@ -27,6 +28,9 @@ void Accounting::HandleEvent(SystemEvent e) {
     case SPIN:
       InitiateSpin();
       break;
+    case BET_MAX:
+      BetMax();
+      break;
     case COIN_IN:
       MoneyInserted(COIN_AMOUNT);
       break;
@@ -48,6 +52,18 @@ void Accounting::HandleEvent(SystemEvent e) {
     default:
       break;
   }
+}
+void Accounting::BetMax() {
+  if (InsufficientFunds(max_bet_, max_lines_, current_bet_)) return;
+
+  lines_ = max_lines_;
+  bet_ = max_bet_;
+
+  int new_bet = bet_ * lines_;
+  cents_ += current_bet_ - new_bet;
+  current_bet_ = new_bet;
+
+  InitiateSpin();
 }
 
 void Accounting::MoneyInserted(unsigned int amount) {
@@ -72,9 +88,10 @@ void Accounting::MoneyInserted(unsigned int amount) {
 }
 
 void Accounting::InitiateSpin() {
-  if (bet_ == 0) return;
+  if (bet_ == 0 || lines_ == 0) return;
   char txtbuf[50];
   sprintf(txtbuf, "Good Luck!");
+  text_ = txtbuf;
   TriggerTextUpdate();
 
   reel_.GenerateSymbols(5, 3);
@@ -83,6 +100,7 @@ void Accounting::InitiateSpin() {
   int won = reel_.GetCreditsWon() * bet_;
   if (won > 0) {
     sprintf(txtbuf, "You won %d credits!", won);
+    text_ = txtbuf;
     TriggerTextUpdate();
     cents_ += won;
     std::cout << "Winnings: " << won << std::endl;
@@ -95,6 +113,7 @@ void Accounting::InitiateSpin() {
   BetUpdate.emit(Bet());
   LinesUpdate.emit(Lines());
   CreditUpdate.emit(Credits());
+  //TextUpdate.emit(Text());
 }
 
 void Accounting::TriggerCreditUpdate() {
@@ -111,7 +130,7 @@ void Accounting::TriggerPaidUpdate() {
 
 void Accounting::TriggerBetUpdate(int num) {
   if (num == 1) { // increase
-    if (InsufficientFunds(bet_+1, lines_)) return;
+    if (InsufficientFunds(bet_+1, lines_, 0)) return;
     if (bet_ == max_bet_) return;
     bet_++;
   } else { // decrease
@@ -131,7 +150,7 @@ void Accounting::TriggerBetUpdate(int num) {
 
 void Accounting::TriggerLinesUpdate(int num) {
   if (num == 1) { //increase
-    if (InsufficientFunds(bet_, lines_+1)) return;
+    if (InsufficientFunds(bet_, lines_+1, 0)) return;
     if (lines_ == max_lines_) return;
     lines_++;
   } else {
@@ -149,8 +168,8 @@ void Accounting::TriggerLinesUpdate(int num) {
   CreditUpdate.emit(Credits());
 }
 
-bool Accounting::InsufficientFunds(int bet, int lines) {
-  return Credits() == 0 || uint(bet*lines) > Credits();
+bool Accounting::InsufficientFunds(int bet, int lines, int offset) {
+  return Credits() == 0 || uint(bet*lines + offset) > Credits();
 }
 
 unsigned int Accounting::Credits() {

@@ -23,13 +23,14 @@ class Accounting {
     void Cleanup();
     void HandleEvent(SystemEvent e);
     void MoneyInserted(unsigned int amount);
+    void BetMax();
     void InitiateSpin();
     void TriggerCreditUpdate();
     void TriggerPaidUpdate();
     void TriggerTextUpdate();
     void TriggerBetUpdate(int num);
     void TriggerLinesUpdate(int num);
-    bool InsufficientFunds(int bet, int lines);
+    bool InsufficientFunds(int bet, int lines, int offset);
     unsigned int Credits();
     unsigned int Paid();
     unsigned int Bet();
@@ -44,13 +45,14 @@ class Accounting {
     Engine* engine_;
     Reel reel_;
     
-    unsigned int cents_ = 0;
-    unsigned int paid_credits_ = 0;
-    unsigned int bet_ = 0;
+    unsigned int cents_ = 0;         // available funds
+    
+    unsigned int bet_ = 0;           // visual counter
+    unsigned int lines_ = 0;         // visual counter
     unsigned int max_bet_ = 0;
-    unsigned int lines_ = 0;
     unsigned int max_lines_ = 0;
-    unsigned int current_bet_ = 0;
+    unsigned int current_bet_ = 0;   // current wager
+    unsigned int paid_credits_ = 0;  // amount paid for last spin
     char* text_;
 };
 

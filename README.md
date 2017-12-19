@@ -4,6 +4,10 @@ Multi reel slot machine designed for Raspberry Pi
 
 Written in SDL C++
 
+Completed Features
+------------------
+* Full 1080p
+
 
 Hopeful Features
 ----------------
@@ -166,7 +170,11 @@ Why? fukifIknow...
 
 
 /*
-    TODO: make a payout table for each winning combination
+
+This will be the way I would like to set it up:
+
+
+    TODO: make a payout table for each winning combination *DONE
      ie:
 
 	3A = 50 * Bet, 4A = 100 * Bet, 5A = 500 * Bet
@@ -193,7 +201,7 @@ Why? fukifIknow...
       All Q       700
       Standard  10000
 
-    Stage 3:  Standard Wheel Generation (each face is weighted and selected)
+    Stage 3:  Standard Wheel Generation (each face is weighted and selected) *DONE
        JACKPOT:   50
          BONUS: 1000
 	  WILD: 1200
@@ -205,14 +213,8 @@ Why? fukifIknow...
 	CHERRY: 3450
 	   BAR: 3450
 
-	calculate sum of all weights
-	pick random number between 0 and sum
-	loop through lookup
-	    if sum > weight
-	      sum -= weight
-	    else
-	      select this one
 
+      Use weighted results for each type.
 
     Stage 4:  Define stop positions for all reels that don't have them
 
