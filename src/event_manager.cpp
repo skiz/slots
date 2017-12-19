@@ -7,8 +7,10 @@ void EventManager::Init() {
   AddMapping(SDLK_ESCAPE, POP_STATE);
   AddMapping(SDLK_1, COIN_IN);
   AddMapping(SDLK_2, BILL_IN);
-  AddMapping(SDLK_3, LINE);
-  AddMapping(SDLK_4, BET);
+  AddMapping(SDLK_3, LINE_UP);
+  AddMapping(SDLK_4, LINE_DOWN);
+  AddMapping(SDLK_5, BET_UP);
+  AddMapping(SDLK_6, BET_DOWN);
   AddMapping(SDLK_RETURN, MAX_BET);
   AddMapping(SDLK_SPACE, SPIN);
 }

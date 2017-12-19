@@ -30,11 +30,17 @@ void Accounting::HandleEvent(SystemEvent e) {
     case BILL_IN:
       MoneyInserted(BILL_AMOUNT);
       break;
-    case BET:
-      TriggerBetUpdate();
+    case BET_UP:
+      TriggerBetUpdate(1);
       break;
-    case LINE:
-      TriggerLinesUpdate();
+    case BET_DOWN:
+      TriggerBetUpdate(-1);
+      break;
+    case LINE_UP:
+      TriggerLinesUpdate(1);
+      break;
+    case LINE_DOWN:
+      TriggerLinesUpdate(-1);
       break;
     default:
       break;
@@ -74,27 +80,42 @@ void Accounting::TriggerPaidUpdate() {
   PaidUpdate.emit(Paid());
 }
 
-void Accounting::TriggerBetUpdate() {
-  if (lines_ == 0) ++lines_;
-  if (InsufficientFunds(bet_+1, lines_)) return;
-  if (bet_ == max_bet_) return;
-  bet_++;
-  current_bet_ = bet_ * lines_;
-  cents_ -= current_bet_;
+void Accounting::TriggerBetUpdate(int num) {
+  if (num == 1) { // increase
+    if (InsufficientFunds(bet_+1, lines_)) return;
+    if (bet_ == max_bet_) return;
+    bet_++;
+  } else { // decrease
+    if (bet_ == 0) return;
+    bet_--;
+  }
+
+  int new_bet = bet_ * lines_;
+  cents_ += current_bet_ - new_bet;
+  current_bet_ = new_bet;
+
   std::cout << "Bet updated: " << bet_ << std::endl;
   BetUpdate.emit(Bet());
   LinesUpdate.emit(Lines());
   CreditUpdate.emit(Credits());
 }
 
-void Accounting::TriggerLinesUpdate() {
-  if (InsufficientFunds(bet_, lines_+1)) return;
-  if (lines_ == max_lines_) return;
+void Accounting::TriggerLinesUpdate(int num) {
+  if (num == 1) { //increase
+    if (InsufficientFunds(bet_, lines_+1)) return;
+    if (lines_ == max_lines_) return;
+    lines_++;
+  } else {
+    if (lines_ == 0) return;
+    lines_--;
+  }
   
-  lines_++;
-  current_bet_ = bet_ * lines_;
-  cents_ -= current_bet_;
+  int new_bet = bet_ * lines_;
+  cents_ += current_bet_ - new_bet;
+  current_bet_ = new_bet;
+
   std::cout << "Lines updated: " << lines_ << std::endl;
+  BetUpdate.emit(Bet());
   LinesUpdate.emit(Lines());
   CreditUpdate.emit(Credits());
 }

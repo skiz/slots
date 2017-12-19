@@ -25,8 +25,8 @@ class Accounting {
     void TriggerCreditUpdate();
     void TriggerPaidUpdate();
     void TriggerTextUpdate();
-    void TriggerBetUpdate();
-    void TriggerLinesUpdate();
+    void TriggerBetUpdate(int num);
+    void TriggerLinesUpdate(int num);
     bool InsufficientFunds(int bet, int lines);
     unsigned int Credits();
     unsigned int Paid();
