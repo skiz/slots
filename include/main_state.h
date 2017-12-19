@@ -20,8 +20,12 @@ class MainState : public State {
     }
     void UpdateCredits(const unsigned int &amount);
     void UpdatePaid(const unsigned int &amount);
+    void UpdateBet(const unsigned int &amount);
+    void UpdateLines(const unsigned int &amount);
     void RenderCredits();
     void RenderPaid();
+    void RenderBet();
+    void RenderLines();
     void UpdateText(const char* text);
     void RenderMessageText();
     void SetupButtons();
@@ -33,6 +37,8 @@ class MainState : public State {
     SDL_Texture* bg_;
     SDL_Texture* credits_;
     SDL_Texture* paid_;
+    SDL_Texture* bet_;
+    SDL_Texture* lines_;
     SDL_Texture* text_;
     TTF_Font* credit_font_;
     TTF_Font* button_font_;
@@ -41,11 +47,12 @@ class MainState : public State {
 
     int credit_width_, credit_height_;
     int paid_width_, paid_height_;
+    int bet_width_, bet_height_;
+    int lines_width_, lines_height_;
     int text_width_, text_height_;
 
     UIButton *maxBtn, *betBtn, *spinBtn, *cashBtn;
     UIButton *linesBtn, *helpBtn, *paysBtn;
-    
 };
 
 

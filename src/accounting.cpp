@@ -10,6 +10,9 @@ void Accounting::Init(Engine* e) {
   cents_ = 0;
   bet_ = 0;
   paid_credits_ = 0;
+  lines_ = 0;
+  max_bet_ = 5;
+  max_lines_ = 20;
   text_ = const_cast<char*>("Ready");
   std::cout << "Initializing Accounting... " << cents_ << std::endl;
   engine_->events->SystemSignal.connect_member(this, &Accounting::HandleEvent);
@@ -25,6 +28,12 @@ void Accounting::HandleEvent(SystemEvent e) {
       break;
     case BILL_IN:
       MoneyInserted(BILL_AMOUNT);
+      break;
+    case BET:
+      TriggerBetUpdate();
+      break;
+    case LINE:
+      TriggerLinesUpdate();
       break;
     default:
       break;
@@ -65,7 +74,23 @@ void Accounting::TriggerPaidUpdate() {
 }
 
 void Accounting::TriggerBetUpdate() {
+  if (bet_ == max_bet_) {
+    bet_ = 0;
+  } else {
+    bet_++;
+  }
+  std::cout << "Bet updated: " << bet_ << std::endl;
   BetUpdate.emit(Bet());
+}
+
+void Accounting::TriggerLinesUpdate() {
+  if (lines_ == max_lines_) {
+    lines_ = 0;
+  } else {
+    lines_++;
+  }
+  std::cout << "Lines updated: " << lines_ << std::endl;
+  LinesUpdate.emit(Lines());
 }
 
 unsigned int Accounting::Credits() {
@@ -78,6 +103,10 @@ unsigned int Accounting::Paid() {
 
 unsigned int Accounting::Bet() {
   return bet_;
+}
+
+unsigned int Accounting::Lines() {
+  return lines_;
 }
 
 const char* Accounting::Text() {

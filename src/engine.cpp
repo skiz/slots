@@ -13,7 +13,7 @@
 static const char* WINDOW_TITLE = "Slot Machine";
 static const bool FULLSCREEN = true;
 static const bool USE_OPENGL = true;
-static const bool SHOW_FPS = true;
+static const bool SHOW_FPS = false;
 static const int WINDOW_WIDTH = 1920;
 static const int WINDOW_HEIGHT = 1080;
 

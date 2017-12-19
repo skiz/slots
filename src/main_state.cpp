@@ -13,16 +13,19 @@ void MainState::Init(Engine* e) {
   engine_->events->SystemSignal.connect_member(this, &MainState::HandleEvent);
 
   // handle credit updates
+  // Text notifications should probably be outside accounting in their own module...
   engine_->accounting->CreditUpdate.connect_member(this, &MainState::UpdateCredits);
   engine_->accounting->PaidUpdate.connect_member(this, &MainState::UpdatePaid);
-
-  // Text notifications should probably be outside accounting in their own module...
   engine_->accounting->TextUpdate.connect_member(this, &MainState::UpdateText);
+  engine_->accounting->BetUpdate.connect_member(this, &MainState::UpdateBet);
+  engine_->accounting->LinesUpdate.connect_member(this, &MainState::UpdateLines);
 
   // request credits (TODO: use signals)
   UpdateCredits(engine_->accounting->Credits());
   UpdatePaid(engine_->accounting->Paid());
   UpdateText(engine_->accounting->Text());
+  UpdateBet(engine_->accounting->Bet());
+  UpdateLines(engine_->accounting->Lines());
 }
 
 void MainState::Cleanup() {
@@ -110,7 +113,9 @@ void MainState::Resume() {
   engine_->audio->ResumeMusic();
 }
 
-void MainState::Update() {}
+void MainState::Update() {
+	// This is where we will set up animations and reel contents
+}
 
 void MainState::RenderCredits() {
   int rw, rh;
@@ -123,10 +128,34 @@ void MainState::RenderCredits() {
   SDL_RenderCopy(engine_->renderer, credits_, NULL, &credit_pos);
 }
 
+void MainState::RenderBet() {
+  int rw, rh;
+  SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
+  SDL_Rect bet_pos;
+  bet_pos.w = bet_width_;
+  bet_pos.h = bet_height_;
+  bet_pos.x = 800 - bet_width_;
+  bet_pos.y = rh - bet_pos.h - 120;
+  SDL_RenderCopy(engine_->renderer, bet_, NULL, &bet_pos);
+}
+
+void MainState::RenderLines() {
+  int rw, rh;
+  SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
+  SDL_Rect lines_pos;
+  lines_pos.w = lines_width_;
+  lines_pos.h = lines_height_;
+  lines_pos.x = 600 - lines_width_;
+  lines_pos.y = rh - lines_pos.h - 120;
+  SDL_RenderCopy(engine_->renderer, lines_, NULL, &lines_pos);	
+}
+
 void MainState::Draw() {
   SDL_RenderCopy(engine_->renderer, bg_, NULL, NULL);
   RenderCredits();
   RenderPaid();
+  RenderBet();
+  RenderLines();
   RenderMessageText();
   maxBtn->Render();
   betBtn->Render();
@@ -156,6 +185,26 @@ void MainState::UpdatePaid(const unsigned int &amount) {
   TTF_SizeText(credit_font_, text, &paid_width_, &paid_height_);
   textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
   paid_ = SDL_CreateTextureFromSurface(engine_->renderer, textSurface);
+  SDL_FreeSurface(textSurface);
+}
+
+void MainState::UpdateBet(const unsigned int &amount) {
+  const char* text = std::to_string(amount).c_str();
+  SDL_Surface* textSurface = NULL;
+  SDL_Color textColor = {255, 25, 25, 0};
+  TTF_SizeText(credit_font_, text, &bet_width_, &bet_height_);
+  textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
+  bet_ = SDL_CreateTextureFromSurface(engine_->renderer, textSurface);
+  SDL_FreeSurface(textSurface);
+}
+
+void MainState::UpdateLines(const unsigned int &amount) {
+  const char* text = std::to_string(amount).c_str();
+  SDL_Surface* textSurface = NULL;
+  SDL_Color textColor = {255, 25, 25, 0};
+  TTF_SizeText(credit_font_, text, &lines_width_, &lines_height_);
+  textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
+  lines_ = SDL_CreateTextureFromSurface(engine_->renderer, textSurface);
   SDL_FreeSurface(textSurface);
 }
 
