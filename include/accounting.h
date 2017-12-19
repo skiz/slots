@@ -30,7 +30,7 @@ class Accounting {
     void TriggerTextUpdate();
     void TriggerBetUpdate(int num);
     void TriggerLinesUpdate(int num);
-    bool InsufficientFunds(int bet, int lines, int offset);
+    bool InsufficientFunds(int bet, int lines);
     unsigned int Credits();
     unsigned int Paid();
     unsigned int Bet();
