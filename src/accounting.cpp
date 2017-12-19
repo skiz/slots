@@ -13,6 +13,7 @@ void Accounting::Init(Engine* e) {
   lines_ = 0;
   max_bet_ = 5;
   max_lines_ = 20;
+  current_bet_ = 0;
   text_ = const_cast<char*>("Ready");
   std::cout << "Initializing Accounting... " << cents_ << std::endl;
   engine_->events->SystemSignal.connect_member(this, &Accounting::HandleEvent);
@@ -74,23 +75,32 @@ void Accounting::TriggerPaidUpdate() {
 }
 
 void Accounting::TriggerBetUpdate() {
-  if (bet_ == max_bet_) {
-    bet_ = 0;
-  } else {
-    bet_++;
-  }
+  if (lines_ == 0) ++lines_;
+  if (InsufficientFunds(bet_+1, lines_)) return;
+  if (bet_ == max_bet_) return;
+  bet_++;
+  current_bet_ = bet_ * lines_;
+  cents_ -= current_bet_;
   std::cout << "Bet updated: " << bet_ << std::endl;
   BetUpdate.emit(Bet());
+  LinesUpdate.emit(Lines());
+  CreditUpdate.emit(Credits());
 }
 
 void Accounting::TriggerLinesUpdate() {
-  if (lines_ == max_lines_) {
-    lines_ = 0;
-  } else {
-    lines_++;
-  }
+  if (InsufficientFunds(bet_, lines_+1)) return;
+  if (lines_ == max_lines_) return;
+  
+  lines_++;
+  current_bet_ = bet_ * lines_;
+  cents_ -= current_bet_;
   std::cout << "Lines updated: " << lines_ << std::endl;
   LinesUpdate.emit(Lines());
+  CreditUpdate.emit(Credits());
+}
+
+bool Accounting::InsufficientFunds(int bet, int lines) {
+  return Credits() == 0 || uint(bet*lines) > Credits();
 }
 
 unsigned int Accounting::Credits() {

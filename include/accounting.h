@@ -10,7 +10,7 @@ class Engine;
 // TODO: make this configurable
 const unsigned int COIN_AMOUNT = 25;
 const unsigned int BILL_AMOUNT = 10000;
-const unsigned int CENTS_PER_CREDIT = 1;
+const unsigned int CENTS_PER_CREDIT = 1; // DO NOT CHANGE THIS, DRAGONS!
 
 /**
  * Accounting is responsible for all monetary transactions.
@@ -27,6 +27,7 @@ class Accounting {
     void TriggerTextUpdate();
     void TriggerBetUpdate();
     void TriggerLinesUpdate();
+    bool InsufficientFunds(int bet, int lines);
     unsigned int Credits();
     unsigned int Paid();
     unsigned int Bet();
@@ -45,6 +46,7 @@ class Accounting {
     unsigned int max_bet_ = 0;
     unsigned int lines_ = 0;
     unsigned int max_lines_ = 0;
+    unsigned int current_bet_ = 0;
     char* text_;
 };
 
