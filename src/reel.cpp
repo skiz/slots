@@ -47,6 +47,13 @@ std::map<Symbol, std::map<int, int>> Reel::payoutTable = {
   {ALT9,                        {{3,    2},{4,     4},{5,     6}}},
 };
 
+// Compatible symbols with selected payout.  Used for matching bars and
+// lowering the winning amount to only bar.
+std::map<Symbol, std::map<Symbol, Symbol>> Reel::compatibleSymbols = {
+  {BAR, {{DOUBLE_BAR, BAR}}},
+  {DOUBLE_BAR, {{BAR, BAR}}},
+};
+
 
 // Paylines are mapped on a 5x3 grid starting at the top left
 // and continuing to the right and are zero indexed.
@@ -114,7 +121,8 @@ void Reel::GenerateWinningLines(int maxLines) {
    *   (this includes wild, and if first is wild, account for this)
    *   if there is a matching result in the payout table, apply each
    *   winning line to an internal map of line -> payout.
-   *   Also tODO:
+   *
+   *   Also TODO:
    *	provide a method to get the total paid.
    *	trigger update to accounting system.
    *	Support one offs like a full house or a straight
@@ -137,36 +145,45 @@ void Reel::GenerateWinningLines(int maxLines) {
 	    symbols[target] == WILD) {       // We have another match
 	  matches++;			     // Increment our match counter
 	} else {
-	  break;                             // We are all out of incremental matches
+	  int m = matches;
+	  for (auto s : compatibleSymbols) {
+	    if (symbols[symbol] == s.first) {  // does the current symbol match 
+	      matches++;                       // Increment out match counter
+	      symbol = s.second[symbols[target]]; // Set the symbol to desired symbol
+	      break;
+	    }
+	  }
+	  if (m == matches) {                // no compatible symbol found
+     	    break;
+	  }
 	}
       }
-    }
 
-    //check for matching pay table entry
-    int line_payout = 0;
-    Symbol sym = Symbol(symbol);             // Get the actual symbol reference
-    std::map<int, int>::iterator it = payoutTable[sym].find(matches);
-    if(it != payoutTable[sym].end()) {
-      line_payout = it->second;              // We have a winner!
+      //check for matching pay table entry
+      int line_payout = 0;
+      Symbol sym = Symbol(symbol);             // Get the actual symbol reference
+      std::map<int, int>::iterator it = payoutTable[sym].find(matches);
+      if(it != payoutTable[sym].end()) {
+	line_payout = it->second;              // We have a winner!
+      }
+      if (line_payout > 0) {
+	winningLines[line.first] = line_payout; // Add the winning line to the result
+	payout += line_payout;
+      }
     }
-    if (line_payout > 0) {
-      winningLines[line.first] = line_payout; // Add the winning line to the result
-      payout += line_payout;
+  }}
+
+  void Reel::DumpLines() {
+    std::cout << "Winning Lines: " << winningLines.size() << std::endl;
+    for (auto w : winningLines) {
+      std::cout << "Payline " << w.first << ": " << w.second << " Credits"<< std::endl;
     }
+    std::cout << "Total Payout: " << GetCreditsWon() << std::endl;;
+    std::cout << symbols[0] << "\t" << symbols[1] << "\t" << symbols[2] << "\t" << symbols[3] << "\t" << symbols[4] << std::endl;
+    std::cout << symbols[5] << "\t" << symbols[6] << "\t" << symbols[7] << "\t" << symbols[8] << "\t" << symbols[9] << std::endl;
+    std::cout << symbols[10] << "\t" << symbols[11] << "\t" << symbols[12] << "\t" << symbols[13] << "\t" << symbols[14] << std::endl;
   }
-}
 
-void Reel::DumpLines() {
-  std::cout << "Winning Lines: " << winningLines.size() << std::endl;
-  for (auto w : winningLines) {
-    std::cout << "Payline " << w.first << ": " << w.second << " Credits"<< std::endl;
+  int Reel::GetCreditsWon() {
+    return payout;
   }
-  std::cout << "Total Payout: " << GetCreditsWon() << std::endl;;
-  std::cout << symbols[0] << "\t" << symbols[1] << "\t" << symbols[2] << "\t" << symbols[3] << "\t" << symbols[4] << std::endl;
-  std::cout << symbols[5] << "\t" << symbols[6] << "\t" << symbols[7] << "\t" << symbols[8] << "\t" << symbols[9] << std::endl;
-  std::cout << symbols[10] << "\t" << symbols[11] << "\t" << symbols[12] << "\t" << symbols[13] << "\t" << symbols[14] << std::endl;
-}
-
-int Reel::GetCreditsWon() {
-  return payout;
-}

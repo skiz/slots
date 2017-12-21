@@ -39,6 +39,7 @@ class Reel {
     void DumpLines();
     static std::map<Symbol, int> standardReelWeights;
     static std::map<Symbol, std::map<int, int>> payoutTable;
+    static std::map<Symbol, std::map<Symbol, Symbol>> compatibleSymbols;
     static std::map<int, std::array<int,5>> payLines;
     std::map<int, Symbol> symbols;
     std::map<int, int> winningLines;
