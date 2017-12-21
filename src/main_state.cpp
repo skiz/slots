@@ -56,7 +56,7 @@ void MainState::LoadAssets() {
   bg_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
   SDL_FreeSurface(s);
 
-  engine_->audio->PlayMusic("assets/main/sound/music.ogg");
+  engine_->audio->PlayMusic("assets/main/sound/music2.ogg");
 
   font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 40);
   credit_font_ = TTF_OpenFont("assets/main/fonts/digital.ttf", 65);
@@ -90,6 +90,19 @@ void MainState::LoadReelSymbols() {
   LoadSymbol(ALT9, "/reels/melon2.png");
 }
 
+void MainState::RenderPaylineOverlay(int line) {
+  // render a payline based on it's number on the reel
+  int xoff = 50; // x offset
+  int yoff = 50; // y offset
+  int xinc = 200; // x increment
+  int yinc = 200; // y increment
+  std::array<std::array<int, 2>, 5> coords;
+  for (auto p : reel_->payLines[line]) {
+    // locate the 5 coordinates
+    //coords.push_back({p}) 
+  }
+}
+
 void MainState::LoadSymbol(Symbol type, const char* filename) {
   SDL_Surface* s = engine_->assets->LoadSurface(filename);
   reel_symbols_[type] = SDL_CreateTextureFromSurface(engine_->renderer, s);
@@ -101,48 +114,46 @@ void MainState::SetupButtons() {
   button_font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 20);
   button_font_color_ = {0,0,0,0}; //255, 255, 255, 0};
 
+  int bx = 20;
+  int by = 810;
+  int bs = 150;
 
-int bx = 20;
-int by = 810;
-int bs = 150;
+  const char* btnFile =  "/main/images/btn.png";
 
-const char* btnFile =  "/main/images/btn.png";
+  cashBtn = new UIButton(engine_->renderer, btnFile);
+  cashBtn->SetPosition(70, by);
+  cashBtn->SetFont(button_font_, button_font_color_);
+  cashBtn->SetText("CASHOUT");
 
-cashBtn = new UIButton(engine_->renderer, btnFile);
-cashBtn->SetPosition(70, by);
-cashBtn->SetFont(button_font_, button_font_color_);
-cashBtn->SetText("CASHOUT");
+  helpBtn = new UIButton(engine_->renderer, btnFile);
+  helpBtn->SetPosition(220, by);
+  helpBtn->SetFont(button_font_, button_font_color_);
+  helpBtn->SetText("HELP");
 
-helpBtn = new UIButton(engine_->renderer, btnFile);
-helpBtn->SetPosition(220, by);
-helpBtn->SetFont(button_font_, button_font_color_);
-helpBtn->SetText("HELP");
+  paysBtn = new UIButton(engine_->renderer, btnFile);
+  paysBtn->SetPosition(220, by);
+  paysBtn->SetFont(button_font_, button_font_color_);
+  paysBtn->SetText("PAYLINES");
 
-paysBtn = new UIButton(engine_->renderer, btnFile);
-paysBtn->SetPosition(220, by);
-paysBtn->SetFont(button_font_, button_font_color_);
-paysBtn->SetText("PAYLINES");
+  linesBtn = new UIButton(engine_->renderer, btnFile);
+  linesBtn->SetPosition(520, by);
+  linesBtn->SetFont(button_font_, button_font_color_);
+  linesBtn->SetText("LINES");
 
-linesBtn = new UIButton(engine_->renderer, btnFile);
-linesBtn->SetPosition(520, by);
-linesBtn->SetFont(button_font_, button_font_color_);
-linesBtn->SetText("LINES");
+  betBtn = new UIButton(engine_->renderer, btnFile);
+  betBtn->SetPosition(680, by);
+  betBtn->SetFont(button_font_, button_font_color_);
+  betBtn->SetText("BET");
 
-betBtn = new UIButton(engine_->renderer, btnFile);
-betBtn->SetPosition(680, by);
-betBtn->SetFont(button_font_, button_font_color_);
-betBtn->SetText("BET");
+  spinBtn = new UIButton(engine_->renderer, btnFile);
+  spinBtn->SetPosition(1110, by);
+  spinBtn->SetFont(button_font_, button_font_color_);
+  spinBtn->SetText("SPIN");
 
-spinBtn = new UIButton(engine_->renderer, btnFile);
-spinBtn->SetPosition(1110, by);
-spinBtn->SetFont(button_font_, button_font_color_);
-spinBtn->SetText("SPIN");
-
-maxBtn = new UIButton(engine_->renderer, btnFile);
-maxBtn->SetPosition(1252, by);
-maxBtn->SetFont(button_font_, button_font_color_);
-maxBtn->SetText("BET MAX");
-
+  maxBtn = new UIButton(engine_->renderer, btnFile);
+  maxBtn->SetPosition(1252, by);
+  maxBtn->SetFont(button_font_, button_font_color_);
+  maxBtn->SetText("BET MAX");
 }
 
 void MainState::Pause() {

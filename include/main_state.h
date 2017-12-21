@@ -34,6 +34,8 @@ class MainState : public State {
     void UpdateText(const char* text);
     void RenderMessageText();
     void SetupButtons();
+
+    void RenderPaylineOverlay(int line);
   protected:
     MainState() {}
 

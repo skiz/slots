@@ -1,0 +1,86 @@
+Open Source Casino Slots (OSCS)
+-------------------------------
+Complete open source 5 reel slot machine engine.
+Features comparable to commercial gaming systems.
+Configuration driven gaming engine.
+Single file (zip) game distribution support.
+Fully event driven design.
+USB Serial event expansion (ie arduino with lights/relays/etc).
+Configurable result negotiation.
+1080p HD w/ touchscreen support.
+Accounting/tilt system.
+possibly 3 reel and multi
+Customize all aspects of the game with config and media files.
+network daemon for remote control.
+custom denominations/currency/payouts
+
+Multiple resolutions? (ugh....)
+
+
+Next versions
+-------------
+Rotated monitor with wider reels?
+coin/cash/card/ticket/freeplay support
+Can be used as a retrofit for an existing machine.
+User menu system to select from multiple games (games can be grouped).
+
+Triggers
+ - Video player
+ - Overlay animation
+ - Animated Bin Win notification
+ - Customizable serial coms (relays, shaker, etc)
+
+Bonus Games
+ - Pick One
+ - Match 3
+ - Free Spins (alt phases, weights, triggers)
+ - Animated sequence with custom probabilities (ie fishing reel em in)
+
+
+Reel Animations
+ - Animated winning symbols
+ - Extended spin time
+
+
+
+
+
+Visual/Audio Things
+-------------------
+
+Add smoothly growing/shrinking overlays that can fade in/out
+
+reels should barely pass on stop, return and make a click sound when stopped
+
+sound notification of small win (doodah)
+
+full line specials should highlight/add entire reel circle and play an anticipation sound until next reel stops, continuing to do this.
+
+single big wins (most of board) with same symbol should make symbols glow, play anticipation, wait, and show "Huge Win"
+
+
+symbols should have transparent background
+when showing winning lines, circle the winning symbols, and draw rest of line
+when circled, flash off/on the winning symbols when counting the line credits in
+
+increment huge win numbers while playing 
+
+bell ringing on free games hit at end of play.
+animate triggered free games awarded on bonus symbols.
+pay other bets.
+switch to bonus state
+
+bonus state
+  special wins anywhere
+  additional bonuses easier to get
+
+
+wilds should be animated at end of play if they are 
+
+
+when raking in winnings, play a counter/ticking synth that goes up and down in pitch - like elect piano sound.
+
+most of this can be seen at https://www.youtube.com/watch?v=xLSVSg2PCtU
+
+
+To support payback percentages, weight the stages based on current payback.
