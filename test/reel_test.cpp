@@ -98,7 +98,7 @@ TEST(ReelTest, WildWildCherry) {
  
   r.GenerateWinningLines(20);
   ASSERT_EQ(3, r.winningLines.size());
-  ASSERT_EQ(22, r.GetCreditsWon());
+  ASSERT_EQ(162, r.GetCreditsWon());
 }
 
 TEST(ReelTest, ThreeTens) {
@@ -110,9 +110,8 @@ TEST(ReelTest, ThreeTens) {
   r.symbols[6] = TEN;
   r.symbols[7] = TEN;
   r.GenerateWinningLines(1);
-  //r.DumpLines();
   ASSERT_EQ(1, r.winningLines.size());
-  ASSERT_EQ(5, r.GetCreditsWon());
+  ASSERT_EQ(20, r.GetCreditsWon());
 
 }
 
@@ -127,7 +126,7 @@ TEST(ReelTest, FourTens) {
   r.symbols[8] = TEN;
   r.GenerateWinningLines(1);
   ASSERT_EQ(1, r.winningLines.size());
-  ASSERT_EQ(10, r.GetCreditsWon());
+  ASSERT_EQ(50, r.GetCreditsWon());
 }
 
 TEST(ReelTest, FiveTens) {
@@ -142,7 +141,7 @@ TEST(ReelTest, FiveTens) {
   r.symbols[9] = TEN;
   r.GenerateWinningLines(1);
   ASSERT_EQ(1, r.winningLines.size());
-  ASSERT_EQ(50, r.GetCreditsWon());
+  ASSERT_EQ(200, r.GetCreditsWon());
 }
 
 
@@ -158,7 +157,7 @@ TEST(ReelTest, MixedBars) {
   r.symbols[4] = BAR;
   r.GenerateWinningLines(2);
   ASSERT_EQ(1, r.winningLines.size());
-  ASSERT_EQ(10, r.GetCreditsWon());
+  ASSERT_EQ(50, r.GetCreditsWon());
 }
 
 TEST(ReelTest, NotMixedBars) {
@@ -166,9 +165,7 @@ TEST(ReelTest, NotMixedBars) {
   for (int i = 0; i < 15; i++) {
     r.symbols[i] = NOTHING;
   }
-
   r.symbols[1] = Symbol(2);
-
   r.symbols[5] = Symbol(1);
 
   r.GenerateWinningLines(20);
@@ -176,4 +173,18 @@ TEST(ReelTest, NotMixedBars) {
   ASSERT_EQ(0, r.GetCreditsWon());
 }
 
-// WildMixedBars
+TEST(ReelTest, WildMixedBars) {
+  Reel r;
+  for (int i = 0; i < 15; i++) {
+    r.symbols[i] = NOTHING;
+  }
+  r.symbols[5] = WILD;
+  r.symbols[6] = BAR;
+  r.symbols[7] = DOUBLE_BAR;
+
+  r.GenerateWinningLines(1);
+  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(5, r.GetCreditsWon());
+}
+
+

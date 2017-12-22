@@ -22,19 +22,20 @@ std::map<Symbol, int> Reel::standardReelWeights = {
   {ALT7,           0},
   {ALT8,           0},
   {ALT9,           0},
+  {FREE_SPIN,      0},
   {NOTHING,        0},
 };
 
 // Standard payout table  <count, <num, payout>>
 std::map<Symbol, std::map<int, int>> Reel::payoutTable = {
   {CHERRY,      {{1,  1}, {2, 1},{3,    2},{4,     4},{5,     5}}},
-  {BAR,                         {{3,    1},{4,     2},{5,    10}}},
-  {DOUBLE_BAR,                  {{3,    2},{4,     4},{5,    25}}},
-  {TEN,			        {{3,    5},{4,    10},{5,    50}}},
-  {JACK,		        {{3,    7},{4,    15},{5,   100}}},
-  {QUEEN,		        {{3,    8},{4,    20},{5,   250}}},
-  {KING,		        {{3,    9},{4,    25},{5,   500}}},
-  {ACE,			        {{3,   10},{4,    50},{5,  1000}}},
+  {BAR,                         {{3,    5},{4,    20},{5,    50}}},
+  {DOUBLE_BAR,                  {{3,   10},{4,    25},{5,   100}}},
+  {TEN,			        {{3,   20},{4,    50},{5,   200}}},
+  {JACK,		        {{3,   30},{4,    75},{5,   300}}},
+  {QUEEN,		        {{3,   40},{4,   100},{5,   400}}},
+  {KING,		        {{3,   60},{4,   125},{5,   500}}},
+  {ACE,			        {{3,   80},{4,   250},{5,  1000}}},
   {JACKPOT,		        {                     {5,  5000}}},
   {ALT1,                        {{3,   50},{4,   250},{5,   500}}},
   {ALT2,                        {{3,  100},{4,   500},{5,  1000}}},
@@ -45,15 +46,16 @@ std::map<Symbol, std::map<int, int>> Reel::payoutTable = {
   {ALT7,                        {{3,    2},{4,     4},{5,     6}}},
   {ALT8,                        {{3,    2},{4,     4},{5,     6}}},
   {ALT9,                        {{3,    2},{4,     4},{5,     6}}},
+  {FREE_SPIN,                   {{3,    8},{4,    12},{5,    30}}},
+  {BONUS,                       {{3,    0},{4,     0},{5,     0}}},
 };
 
 // Compatible symbols with selected payout.  Used for matching bars and
-// lowering the winning amount to only bar.
+// lowering the winning amount to only bar when mixed with double bars.
 std::map<Symbol, std::map<Symbol, Symbol>> Reel::compatibleSymbols = {
   {BAR, {{DOUBLE_BAR, BAR}}},
   {DOUBLE_BAR, {{BAR, BAR}}},
 };
-
 
 // Paylines are mapped on a 5x3 grid starting at the top left
 // and continuing to the right and are zero indexed.
@@ -70,7 +72,7 @@ std::map<int, std::array<int,5>> Reel::payLines = {
   { 2, {{10,11,12,13,14}}},
   { 3, {{ 0, 6,12, 8, 4}}},
   { 4, {{10, 6, 2, 8,14}}},
-  { 5, {{ 5, 2, 3, 4, 9}}},
+  { 5, {{ 5, 1, 2, 3, 9}}},
   { 6, {{ 5,11,12,13, 9}}},
   { 7, {{ 0, 1, 7,13,14}}},
   { 8, {{10,11, 7, 3, 4}}},

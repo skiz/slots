@@ -14,9 +14,7 @@ void Accounting::Init(Engine* e) {
   lines_ = 0;
   max_bet_ = 5;
   max_lines_ = 20;
-  //current_bet_ = 0;
   text_ = const_cast<char*>("Ready");
-  //std::cout << "Initializing Accounting... " << cents_ << std::endl;
   engine_->events->SystemSignal.connect_member(this, &Accounting::HandleEvent);
   // TODO: Load last credit state from play log (optional) in case of reset/power/etc.
 }
