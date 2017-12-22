@@ -145,7 +145,7 @@ void Reel::GenerateWinningLines(int maxLines) {
 	matches++;                            // Increment number of matches for first item
       } else if (symbols[target] == symbol
 	  || symbols[target] == WILD) {       // We have another match
-        matches++;
+	matches++;
       } else {				      // check for compatibles
 	for (auto s : compatibleSymbols) {
 	  if (symbols[target] == s.first) {   // this symbol is compatible
@@ -160,9 +160,8 @@ void Reel::GenerateWinningLines(int maxLines) {
 	  if (m != matches) break;           // break second loop if we found a match
 	}
       }
-      
-      if (m == matches || matches == 5) {    // no more matches. we are done with this line.
 
+      if (m == matches || matches == 5) {    // no more matches. we are done with this line.
 	//check for matching pay table entry
 	int line_payout = 0;
 	Symbol sym = Symbol(symbol);             // Get the actual symbol reference
@@ -177,19 +176,20 @@ void Reel::GenerateWinningLines(int maxLines) {
 	break;
       }
     }
-  }}
-
-  void Reel::DumpLines() {
-    std::cout << "Winning Lines: " << winningLines.size() << std::endl;
-    for (auto w : winningLines) {
-      std::cout << "Payline " << w.first << ": " << w.second << " Credits"<< std::endl;
-    }
-    std::cout << "Total Payout: " << GetCreditsWon() << std::endl;;
-    std::cout << symbols[0] << "\t" << symbols[1] << "\t" << symbols[2] << "\t" << symbols[3] << "\t" << symbols[4] << std::endl;
-    std::cout << symbols[5] << "\t" << symbols[6] << "\t" << symbols[7] << "\t" << symbols[8] << "\t" << symbols[9] << std::endl;
-    std::cout << symbols[10] << "\t" << symbols[11] << "\t" << symbols[12] << "\t" << symbols[13] << "\t" << symbols[14] << std::endl;
   }
+}
 
-  int Reel::GetCreditsWon() {
-    return payout;
+void Reel::DumpLines() {
+  std::cout << "Winning Lines: " << winningLines.size() << std::endl;
+  for (auto w : winningLines) {
+    std::cout << "Payline " << w.first << ": " << w.second << " Credits"<< std::endl;
   }
+  std::cout << "Total Payout: " << GetCreditsWon() << std::endl;;
+  std::cout << symbols[0] << "\t" << symbols[1] << "\t" << symbols[2] << "\t" << symbols[3] << "\t" << symbols[4] << std::endl;
+  std::cout << symbols[5] << "\t" << symbols[6] << "\t" << symbols[7] << "\t" << symbols[8] << "\t" << symbols[9] << std::endl;
+  std::cout << symbols[10] << "\t" << symbols[11] << "\t" << symbols[12] << "\t" << symbols[13] << "\t" << symbols[14] << std::endl;
+}
+
+int Reel::GetCreditsWon() {
+  return payout;
+}
