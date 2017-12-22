@@ -1,4 +1,4 @@
-//#include <iostream>
+#include <iostream>
 
 #include "accounting.h"
 #include "system_event.h"
@@ -108,8 +108,8 @@ void Accounting::InitiateSpin() {
     text_ = txtbuf;
     TriggerTextUpdate();
     cents_ += won * CENTS_PER_CREDIT;
-    //std::cout << "Winnings (cents): " << won << std::endl;
-    //reel_.DumpLines();
+    std::cout << "Winnings (cents): " << won << std::endl;
+    reel_.DumpLines();
   }
   paid_credits_ = won;
   BetUpdate.emit(Bet());

@@ -116,59 +116,63 @@ void Reel::GenerateWinningLines(int maxLines) {
   /*
    * map<int line, int payout>
    *
-   * Loop through each payline up to maxLines-1
+   * Loop through each payline up to maxLines
    *   loop through each position, holding first face until no match 
    *   (this includes wild, and if first is wild, account for this)
    *   if there is a matching result in the payout table, apply each
    *   winning line to an internal map of line -> payout.
    *
    *   Also TODO:
-   *	provide a method to get the total paid.
    *	trigger update to accounting system.
    *	Support one offs like a full house or a straight
+   *	Support compatible symbols (like bar, double bar, triple bar)
    */
 
   winningLines.clear();
   payout = 0;
-  for (auto line : payLines) {               // check every payline until stopped
-    if (line.first == maxLines) break;       // stop if we are exceeding maxLines
-    int matches = 0;                         // number of matches on this line thus far
-    int symbol = -1;                         // the current symbol we are matching against
-    for (auto target : line.second) {        // target is the line position we need to check
-      if (symbol == -1) {                    // this is our first match so its always good
-	if (symbols[target] != WILD) {       // Wilds are skipped if first symbol
-	  symbol = symbols[target];          // this is our current match
+  for (auto line : payLines) {                // check every payline until stopped
+    if (line.first == maxLines) break;        // stop if we are exceeding maxLines
+    int matches = 0;                          // number of matches on this line thus far
+    int symbol = -1;                          // the current symbol we are matching against
+    for (auto target : line.second) {         // target is the line position we need to check
+      int m = matches;                        // for tracking changes to matches
+      if (symbol == -1) {                     // this is our first match so its always good
+	if (symbols[target] != WILD) {        // Wilds are skipped if first symbol
+	  symbol = symbols[target];           // this is our current match
 	}
-	matches++;                           // Increment number of matches sinces its first
-      } else {                               // We have a symbol now, so see if it matches
-	if (symbols[target] == symbol ||
-	    symbols[target] == WILD) {       // We have another match
-	  matches++;			     // Increment our match counter
-	} else {
-	  int m = matches;
-	  for (auto s : compatibleSymbols) {
-	    if (symbols[symbol] == s.first) {  // does the current symbol match 
-	      matches++;                       // Increment out match counter
-	      symbol = s.second[symbols[target]]; // Set the symbol to desired symbol
-	      break;
+	matches++;                            // Increment number of matches for first item
+      } else if (symbols[target] == symbol
+	  || symbols[target] == WILD) {       // We have another match
+        matches++;
+      } else {				      // check for compatibles
+	for (auto s : compatibleSymbols) {
+	  if (symbols[target] == s.first) {   // this symbol is compatible
+	    for (auto p : s.second) {         // check all related for match
+	      if (p.first == symbol) {
+		symbol = p.second;            // we are only paying for the compatible value
+		matches++;
+		break;
+	      }
 	    }
 	  }
-	  if (m == matches) {                // no compatible symbol found
-     	    break;
-	  }
+	  if (m != matches) break;           // break second loop if we found a match
 	}
       }
+      
+      if (m == matches || matches == 5) {    // no more matches. we are done with this line.
 
-      //check for matching pay table entry
-      int line_payout = 0;
-      Symbol sym = Symbol(symbol);             // Get the actual symbol reference
-      std::map<int, int>::iterator it = payoutTable[sym].find(matches);
-      if(it != payoutTable[sym].end()) {
-	line_payout = it->second;              // We have a winner!
-      }
-      if (line_payout > 0) {
-	winningLines[line.first] = line_payout; // Add the winning line to the result
-	payout += line_payout;
+	//check for matching pay table entry
+	int line_payout = 0;
+	Symbol sym = Symbol(symbol);             // Get the actual symbol reference
+	std::map<int, int>::iterator it = payoutTable[sym].find(matches);
+	if(it != payoutTable[sym].end()) {
+	  line_payout = it->second;              // We have a winner!
+	}
+	if (line_payout > 0) {
+	  winningLines[line.first] = line_payout; // Add the winning line to the result
+	  payout += line_payout;
+	}
+	break;
       }
     }
   }}

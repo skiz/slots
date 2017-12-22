@@ -23,10 +23,6 @@ TEST(ReelTest, GenerateSymbols) {
   Reel r;
   r.GenerateSymbols(5, 3);
   ASSERT_EQ(r.symbols.size(), 15);
-
-  for (auto t : r.symbols) {
-   // std::cout << t.first << " = " << t.second << std::endl;
-  }
 }
 
 TEST(ReelTest, PayoutTable) {
@@ -41,7 +37,7 @@ TEST(ReelTest, VerifyAllCherriesWin) {
     r.symbols[i] = CHERRY;
   }
   r.GenerateWinningLines(20);
-  //ASSERT_EQ(250*20, r.GetCreditsWon());
+  ASSERT_EQ(5*20, r.GetCreditsWon());
 }
 
 TEST(ReelTest, VerifyAllNothing) {
@@ -78,7 +74,8 @@ TEST(ReelTest, VerifyJackpot) {
   r.symbols[3] = JACKPOT;
   r.symbols[4] = JACKPOT;
   r.GenerateWinningLines(2);
-  //ASSERT_EQ(50000, r.GetCreditsWon());
+  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(5000, r.GetCreditsWon());
 }
 
 TEST(ReelTest, WildWildCherry) {
@@ -100,10 +97,54 @@ TEST(ReelTest, WildWildCherry) {
   r.symbols[14] = CHERRY;
  
   r.GenerateWinningLines(20);
-  //r.DumpLines();
   ASSERT_EQ(3, r.winningLines.size());
   ASSERT_EQ(22, r.GetCreditsWon());
 }
+
+TEST(ReelTest, ThreeTens) {
+  Reel r;
+  for (int i = 0; i < 15; i++) {
+    r.symbols[i] = NOTHING;
+  }
+  r.symbols[5] = TEN;
+  r.symbols[6] = TEN;
+  r.symbols[7] = TEN;
+  r.GenerateWinningLines(1);
+  //r.DumpLines();
+  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(5, r.GetCreditsWon());
+
+}
+
+TEST(ReelTest, FourTens) {
+  Reel r;
+  for (int i = 0; i < 15; i++) {
+    r.symbols[i] = NOTHING;
+  }
+  r.symbols[5] = TEN;
+  r.symbols[6] = TEN;
+  r.symbols[7] = TEN;
+  r.symbols[8] = TEN;
+  r.GenerateWinningLines(1);
+  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(10, r.GetCreditsWon());
+}
+
+TEST(ReelTest, FiveTens) {
+  Reel r;
+  for (int i = 0; i < 15; i++) {
+    r.symbols[i] = NOTHING;
+  }
+  r.symbols[5] = TEN;
+  r.symbols[6] = TEN;
+  r.symbols[7] = TEN;
+  r.symbols[8] = TEN;
+  r.symbols[9] = TEN;
+  r.GenerateWinningLines(1);
+  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(50, r.GetCreditsWon());
+}
+
 
 TEST(ReelTest, MixedBars) {
   Reel r;
@@ -112,12 +153,27 @@ TEST(ReelTest, MixedBars) {
   }
   r.symbols[0] = BAR;
   r.symbols[1] = DOUBLE_BAR;
-  r.symbols[2] = BAR;
-  r.symbols[3] = DOUBLE_BAR;
+  r.symbols[2] = DOUBLE_BAR;
+  r.symbols[3] = BAR;
   r.symbols[4] = BAR;
   r.GenerateWinningLines(2);
   ASSERT_EQ(1, r.winningLines.size());
-  ASSERT_EQ(15, r.GetCreditsWon());
+  ASSERT_EQ(10, r.GetCreditsWon());
+}
+
+TEST(ReelTest, NotMixedBars) {
+  Reel r;
+  for (int i = 0; i < 15; i++) {
+    r.symbols[i] = NOTHING;
+  }
+
+  r.symbols[1] = Symbol(2);
+
+  r.symbols[5] = Symbol(1);
+
+  r.GenerateWinningLines(20);
+  ASSERT_EQ(0, r.winningLines.size());
+  ASSERT_EQ(0, r.GetCreditsWon());
 }
 
 // WildMixedBars
