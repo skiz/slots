@@ -22,8 +22,12 @@ class EventManager {
     void HandleKeyPress(int sdlkey);
     void HandleEvents();
     void AddDefaultMappings();
+    void DisableBetting();
+    void EnableBetting();
     Signal<SystemEvent> SystemSignal;
+    static std::map<SystemEvent, int> bettingEvents;
   private:
+    bool betting_enabled_ = 1;
     std::unordered_map<int, std::vector<SystemEvent>> map_;
 };
 

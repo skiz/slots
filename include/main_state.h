@@ -34,6 +34,7 @@ class MainState : public State {
     void UpdateText(const char* text);
     void RenderMessageText();
     void SetupButtons();
+    void BigWin(const unsigned int &amount);
 
     void RenderPaylineOverlay(int line);
   protected:

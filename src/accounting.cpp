@@ -5,6 +5,8 @@
 #include "engine.h"
 #include "signal.h"
 
+const unsigned int BIG_WIN = 1000;
+
 // TODO add tests for this as it should be the most tested...
 void Accounting::Init(Engine* e) {
   engine_ = e;
@@ -102,12 +104,17 @@ void Accounting::InitiateSpin() {
 
   int won = reel_.GetCreditsWon() * bet_;
   if (won > 0) {
-    sprintf(txtbuf, "You won %d credits!", won);
-    text_ = txtbuf;
-    TriggerTextUpdate();
+    if (won >= BIG_WIN) {
+      TriggerBigWin(won);
+    } else {
+      sprintf(txtbuf, "You won %d credits!", won);
+      text_ = txtbuf;
+      TriggerTextUpdate();
+    }
+
     cents_ += won * CENTS_PER_CREDIT;
-    std::cout << "Winnings (cents): " << won << std::endl;
-    reel_.DumpLines();
+    //std::cout << "Winnings (cents): " << won << std::endl;
+    // reel_.DumpLines();
   }
   paid_credits_ = won;
   BetUpdate.emit(Bet());
@@ -120,6 +127,10 @@ void Accounting::InitiateSpin() {
 
 void Accounting::TriggerCreditUpdate() {
   CreditUpdate.emit(Credits());
+}
+
+void Accounting::TriggerBigWin(const unsigned int amount) {
+  BigWin.emit(amount);
 }
 
 void Accounting::TriggerTextUpdate() {

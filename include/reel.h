@@ -37,7 +37,6 @@ class Reel {
     void SetSymbol(Symbol sym, int pos);
     void GenerateSymbols(int reels, int spots);
     int GetCreditsWon();
-    //int GetFreeSpins();
     void DumpLines();
     static std::map<Symbol, int> standardReelWeights;
     static std::map<Symbol, std::map<int, int>> payoutTable;

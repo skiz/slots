@@ -2,6 +2,7 @@
 #include "engine.h"
 #include "main_state.h"
 #include "SDL_ttf.h"
+#include "big_win_state.h"
 
 MainState MainState::state;
 
@@ -10,6 +11,9 @@ void MainState::Init(Engine* e) {
   LoadAssets();
 
   reel_ = engine_->accounting->GetReel();
+
+  // TODO: only do this if there aren't any symbols loaded
+  reel_->GenerateSymbols(5, 3);
 
   // subscribe to system events
   engine_->events->SystemSignal.connect_member(this, &MainState::HandleEvent);
@@ -23,6 +27,7 @@ void MainState::Init(Engine* e) {
   engine_->accounting->TotalUpdate.connect_member(this, &MainState::UpdateTotal);
   engine_->accounting->LinesUpdate.connect_member(this, &MainState::UpdateLines);
   engine_->accounting->ReelsUpdate.connect_member(this, &MainState::UpdateReels);
+  engine_->accounting->BigWin.connect_member(this, &MainState::BigWin);
 
   // request credits (TODO: use signals)
   UpdateCredits(engine_->accounting->Credits());
@@ -31,6 +36,8 @@ void MainState::Init(Engine* e) {
   UpdateBet(engine_->accounting->Bet());
   UpdateTotal(engine_->accounting->Total());
   UpdateLines(engine_->accounting->Lines());
+
+  engine_->events->EnableBetting();
 }
 
 void MainState::Cleanup() {
@@ -52,9 +59,9 @@ void MainState::HandleEvent(SystemEvent e) {
 void MainState::LoadAssets() {
   engine_->assets->Mount("assets/main", "/main");
 
-  SDL_Surface* s = engine_->assets->LoadSurface("/main/images/b.png");
-  bg_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
-  SDL_FreeSurface(s);
+  SDL_Surface* ss = engine_->assets->LoadSurface("/main/images/b.png");
+  bg_ = SDL_CreateTextureFromSurface(engine_->renderer, ss);
+  SDL_FreeSurface(ss);
 
   engine_->audio->PlayMusic("assets/main/sound/music2.ogg");
 
@@ -168,6 +175,11 @@ void MainState::Resume() {
 void MainState::UpdateReels() {
 }
 
+void MainState::BigWin(const unsigned int &amount) {
+  std::cout << "BIG WIN" << std::endl;
+  engine_->PushState(BigWinState::Instance());
+}
+
 void MainState::Update() {
   // This is where we will set up animations
 }
@@ -222,7 +234,7 @@ void MainState::Draw() {
   helpBtn->Render();
   //paysBtn->Render();
   SDL_RenderPresent(engine_->renderer);
-  SDL_Delay(1);
+  //SDL_Delay(1);
 }
 
 void MainState::UpdateCredits(const unsigned int &amount) {

@@ -29,6 +29,7 @@ class Accounting {
     void TriggerTotalUpdate();
     void TriggerTextUpdate();
     void TriggerUpdateReels();
+    void TriggerBigWin(unsigned int amount);
     void TriggerBetUpdate(int num);
     void TriggerLinesUpdate(int num);
     bool InsufficientFunds(int bet, int lines);
@@ -43,6 +44,7 @@ class Accounting {
     Signal<const unsigned int &> BetUpdate;
     Signal<const unsigned int &> LinesUpdate;
     Signal<const unsigned int &> TotalUpdate;
+    Signal<const unsigned int &> BigWin;
     Signal<>ReelsUpdate;
     Signal<const char*>TextUpdate;
     Reel *GetReel();
