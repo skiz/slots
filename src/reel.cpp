@@ -36,6 +36,7 @@ std::map<Symbol, std::map<int, int>> Reel::payoutTable = {
   {QUEEN,		        {{3,   40},{4,   100},{5,   400}}},
   {KING,		        {{3,   60},{4,   125},{5,   500}}},
   {ACE,			        {{3,   80},{4,   250},{5,  1000}}},
+  {WILD,		        {                     {5,  1000}}},
   {JACKPOT,		        {                     {5,  5000}}},
   {ALT1,                        {{3,   50},{4,   250},{5,   500}}},
   {ALT2,                        {{3,  100},{4,   500},{5,  1000}}},
@@ -46,7 +47,7 @@ std::map<Symbol, std::map<int, int>> Reel::payoutTable = {
   {ALT7,                        {{3,    2},{4,     4},{5,     6}}},
   {ALT8,                        {{3,    2},{4,     4},{5,     6}}},
   {ALT9,                        {{3,    2},{4,     4},{5,     6}}},
-  {FREE_SPIN,                   {{3,    8},{4,    12},{5,    30}}},
+  {FREE_SPIN,                   {{3,    0},{4,     0},{5,     0}}},
   {BONUS,                       {{3,    0},{4,     0},{5,     0}}},
 };
 
@@ -92,7 +93,10 @@ std::map<int, std::array<int,5>> Reel::payLines = {
 
 Reel::Reel() {
   random_ = &Random::GetInstance();
-  GenerateSymbols(5, 3);
+  //GenerateSymbols(5, 3);
+  for (int i = 0; i < 15; i++) {
+    symbols[i] = NOTHING;
+  }
 }
 
 Symbol Reel::GetSymbol(std::map<Symbol, int> *weightedSet) {
@@ -125,13 +129,14 @@ void Reel::GenerateWinningLines(int maxLines) {
    *   winning line to an internal map of line -> payout.
    *
    *   Also TODO:
+   *    wilds do not count for free spins or bonus.
    *	trigger update to accounting system.
    *	Support one offs like a full house or a straight
-   *	Support compatible symbols (like bar, double bar, triple bar)
    */
 
   winningLines.clear();
   payout = 0;
+  int wilds = 0;
   for (auto line : payLines) {                // check every payline until stopped
     if (line.first == maxLines) break;        // stop if we are exceeding maxLines
     int matches = 0;                          // number of matches on this line thus far
@@ -141,11 +146,17 @@ void Reel::GenerateWinningLines(int maxLines) {
       if (symbol == -1) {                     // this is our first match so its always good
 	if (symbols[target] != WILD) {        // Wilds are skipped if first symbol
 	  symbol = symbols[target];           // this is our current match
+	} else {
+	  wilds++;
 	}
 	matches++;                            // Increment number of matches for first item
-      } else if (symbols[target] == symbol
-	  || symbols[target] == WILD) {       // We have another match
+      } else if (symbols[target] == symbol) {
 	matches++;
+      } else if (symbols[target] == WILD) {       // We have another match
+	wilds++;
+        if (symbol != BONUS && symbol != FREE_SPIN) {
+	  matches++;
+	}
       } else {				      // check for compatibles
 	for (auto s : compatibleSymbols) {
 	  if (symbols[target] == s.first) {   // this symbol is compatible
@@ -162,14 +173,26 @@ void Reel::GenerateWinningLines(int maxLines) {
       }
 
       if (m == matches || matches == 5) {    // no more matches. we are done with this line.
+
+	if (matches == 5 && symbol == -1) {   // all wilds.
+	  symbol = WILD;
+	}
+
+	// dont count wilds for free spins and bonuses
+	if (wilds > 0 && (symbol == BONUS || symbol == FREE_SPIN)) {
+	  continue;
+	}
+
 	//check for matching pay table entry
 	int line_payout = 0;
+	int paid = 0;
 	Symbol sym = Symbol(symbol);             // Get the actual symbol reference
 	std::map<int, int>::iterator it = payoutTable[sym].find(matches);
 	if(it != payoutTable[sym].end()) {
+	  paid = 1;
 	  line_payout = it->second;              // We have a winner!
 	}
-	if (line_payout > 0) {
+	if (paid) {
 	  winningLines[line.first] = line_payout; // Add the winning line to the result
 	  payout += line_payout;
 	}

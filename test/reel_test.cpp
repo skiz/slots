@@ -42,18 +42,12 @@ TEST(ReelTest, VerifyAllCherriesWin) {
 
 TEST(ReelTest, VerifyAllNothing) {
   Reel r;
-  for (int i = 0; i < 15; i++) {
-    r.symbols[i] = NOTHING;
-  }
   r.GenerateWinningLines(20);
   ASSERT_EQ(0, r.GetCreditsWon());
 }
 
 TEST(ReelTest, VerifyMissedJackpot) {
   Reel r;
-  for (int i = 0; i < 15; i++) {
-    r.symbols[i] = NOTHING;
-  }
   r.symbols[0] = JACKPOT;
   r.symbols[1] = JACKPOT;
   r.symbols[2] = JACKPOT;
@@ -65,9 +59,6 @@ TEST(ReelTest, VerifyMissedJackpot) {
 
 TEST(ReelTest, VerifyJackpot) {
   Reel r;
-  for (int i = 0; i < 15; i++) {
-    r.symbols[i] = NOTHING;
-  }
   r.symbols[0] = JACKPOT;
   r.symbols[1] = JACKPOT;
   r.symbols[2] = JACKPOT;
@@ -80,32 +71,17 @@ TEST(ReelTest, VerifyJackpot) {
 
 TEST(ReelTest, WildWildCherry) {
   Reel r;
-  r.symbols[0] = BONUS;
-  r.symbols[1] = TEN;
-  r.symbols[2] = ACE;
-  r.symbols[3] = QUEEN;
-  r.symbols[4] = ACE;
   r.symbols[5] = WILD;
   r.symbols[6] = WILD;
   r.symbols[7] = CHERRY;
-  r.symbols[8] = BAR;
-  r.symbols[9] = BONUS;
-  r.symbols[10] = JACK;
-  r.symbols[11] = JACK;
-  r.symbols[12] = ACE;
-  r.symbols[13] = WILD;
-  r.symbols[14] = CHERRY;
  
-  r.GenerateWinningLines(20);
-  ASSERT_EQ(3, r.winningLines.size());
-  ASSERT_EQ(162, r.GetCreditsWon());
+  r.GenerateWinningLines(1);
+  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(2, r.GetCreditsWon());
 }
 
 TEST(ReelTest, ThreeTens) {
   Reel r;
-  for (int i = 0; i < 15; i++) {
-    r.symbols[i] = NOTHING;
-  }
   r.symbols[5] = TEN;
   r.symbols[6] = TEN;
   r.symbols[7] = TEN;
@@ -117,9 +93,6 @@ TEST(ReelTest, ThreeTens) {
 
 TEST(ReelTest, FourTens) {
   Reel r;
-  for (int i = 0; i < 15; i++) {
-    r.symbols[i] = NOTHING;
-  }
   r.symbols[5] = TEN;
   r.symbols[6] = TEN;
   r.symbols[7] = TEN;
@@ -131,9 +104,6 @@ TEST(ReelTest, FourTens) {
 
 TEST(ReelTest, FiveTens) {
   Reel r;
-  for (int i = 0; i < 15; i++) {
-    r.symbols[i] = NOTHING;
-  }
   r.symbols[5] = TEN;
   r.symbols[6] = TEN;
   r.symbols[7] = TEN;
@@ -147,9 +117,6 @@ TEST(ReelTest, FiveTens) {
 
 TEST(ReelTest, MixedBars) {
   Reel r;
-  for (int i = 0; i < 15; i++) {
-    r.symbols[i] = NOTHING;
-  }
   r.symbols[0] = BAR;
   r.symbols[1] = DOUBLE_BAR;
   r.symbols[2] = DOUBLE_BAR;
@@ -162,9 +129,6 @@ TEST(ReelTest, MixedBars) {
 
 TEST(ReelTest, NotMixedBars) {
   Reel r;
-  for (int i = 0; i < 15; i++) {
-    r.symbols[i] = NOTHING;
-  }
   r.symbols[1] = Symbol(2);
   r.symbols[5] = Symbol(1);
 
@@ -175,9 +139,6 @@ TEST(ReelTest, NotMixedBars) {
 
 TEST(ReelTest, WildMixedBars) {
   Reel r;
-  for (int i = 0; i < 15; i++) {
-    r.symbols[i] = NOTHING;
-  }
   r.symbols[5] = WILD;
   r.symbols[6] = BAR;
   r.symbols[7] = DOUBLE_BAR;
@@ -185,6 +146,65 @@ TEST(ReelTest, WildMixedBars) {
   r.GenerateWinningLines(1);
   ASSERT_EQ(1, r.winningLines.size());
   ASSERT_EQ(5, r.GetCreditsWon());
+}
+
+TEST(ReelTest, ZeroSumBonus) {
+  Reel r;
+  r.symbols[5] = BONUS;
+  r.symbols[6] = BONUS;
+  r.symbols[7] = BONUS;
+  r.GenerateWinningLines(1);
+  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(0, r.GetCreditsWon());
+}
+
+TEST(ReelTest, NoWildBonus) {
+  Reel r;
+  r.symbols[5] = BONUS;
+  r.symbols[6] = WILD;
+  r.symbols[7] = BONUS;
+
+  r.GenerateWinningLines(1);
+  ASSERT_EQ(0, r.winningLines.size());
+  ASSERT_EQ(0, r.GetCreditsWon());
+}
+
+TEST(ReelTest, NoWildFreeSpins) {
+  Reel r;
+  r.symbols[5] = FREE_SPIN;
+  r.symbols[6] = WILD;
+  r.symbols[7] = FREE_SPIN;
+  r.GenerateWinningLines(1);
+  ASSERT_EQ(0, r.winningLines.size());
+  ASSERT_EQ(0, r.GetCreditsWon());
+
+  r.symbols[5] = FREE_SPIN;
+  r.symbols[6] = WILD;
+  r.symbols[7] = WILD;;
+  r.GenerateWinningLines(1);
+  ASSERT_EQ(0, r.winningLines.size());
+  ASSERT_EQ(0, r.GetCreditsWon());
+
+  r.symbols[5] = WILD;
+  r.symbols[6] = WILD;
+  r.symbols[7] = FREE_SPIN;
+  r.GenerateWinningLines(1);
+  ASSERT_EQ(0, r.winningLines.size());
+  ASSERT_EQ(0, r.GetCreditsWon());
+
+}
+
+TEST(ReelTest, FiveWildPaysAce) {
+  Reel r;
+  r.symbols[5] = WILD;
+  r.symbols[6] = WILD;
+  r.symbols[7] = WILD;
+  r.symbols[8] = WILD;
+  r.symbols[9] = WILD;
+  r.GenerateWinningLines(1);
+  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(1000, r.GetCreditsWon());
+
 }
 
 
