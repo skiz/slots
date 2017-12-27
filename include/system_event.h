@@ -23,6 +23,7 @@ enum SystemEvent {
   POP_STATE,
   UPDATE_REELS,
   CONTINUE,
+  REELS_STOPPED,
 };
 
 #endif

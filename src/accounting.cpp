@@ -7,7 +7,6 @@
 
 const unsigned int BIG_WIN = 1000;
 
-// TODO add tests for this as it should be the most tested...
 void Accounting::Init(Engine* e) {
   engine_ = e;
   cents_ = 0;
@@ -49,6 +48,9 @@ void Accounting::HandleEvent(SystemEvent e) {
     case LINE_DOWN:
       TriggerLinesUpdate(-1);
       break;
+    case REELS_STOPPED:
+      CompleteSpin();
+      break;
     default:
       break;
   }
@@ -79,17 +81,19 @@ void Accounting::MoneyInserted(unsigned int amount) {
   }
 
   text_ = txtbuf;
-
   cents_ += amount;
-  //std::cout << cents_ << " (" << Credits() << " credits)" << std::endl;
-
   TriggerCreditUpdate();
   TriggerTextUpdate();
 }
 
 void Accounting::InitiateSpin() {
+  if (spinning_) { CompleteSpin(); return; } // for manual stop 
   if (InsufficientFunds(bet_, lines_)) return;
   if (bet_ == 0 || lines_ == 0) return;
+
+  spinning_ = true;
+  TriggerSpinStarted();
+  
   char txtbuf[50];
   sprintf(txtbuf, "Good Luck!");
   text_ = txtbuf;
@@ -102,6 +106,18 @@ void Accounting::InitiateSpin() {
   reel_.GenerateSymbols(5, 3);
   reel_.GenerateWinningLines(lines_);
 
+  BetUpdate.emit(Bet());
+  LinesUpdate.emit(Lines());
+  CreditUpdate.emit(Credits());
+  TotalUpdate.emit(Total());
+
+}
+
+void Accounting::CompleteSpin() {
+  char txtbuf[50];
+  if (!spinning_) { return; }
+  TriggerSpinStopped();
+  spinning_ = false;
   int won = reel_.GetCreditsWon() * bet_;
   if (won > 0) {
     if (won >= BIG_WIN) {
@@ -111,16 +127,13 @@ void Accounting::InitiateSpin() {
       text_ = txtbuf;
       TriggerTextUpdate();
     }
-
     cents_ += won * CENTS_PER_CREDIT;
-    //std::cout << "Winnings (cents): " << won << std::endl;
-    // reel_.DumpLines();
+  } else {
+    text_ = "Game Over";
+    TriggerTextUpdate();
   }
+  
   paid_credits_ = won;
-  BetUpdate.emit(Bet());
-  LinesUpdate.emit(Lines());
-  CreditUpdate.emit(Credits());
-  TotalUpdate.emit(Total());
   PaidUpdate.emit(Paid());
   ReelsUpdate.emit();
 }
@@ -158,16 +171,18 @@ void Accounting::TriggerBetUpdate(int num) {
     if (bet_ == 0) return;
     bet_--;
   }
-
-  // int new_bet = bet_ * lines_;
-  // cents_ += (current_bet_ - new_bet) * CENTS_PER_CREDIT;
-  // current_bet_ = new_bet;
-
-  //std::cout << "Bet updated: " << bet_ << std::endl;
   BetUpdate.emit(Bet());
   LinesUpdate.emit(Lines());
   CreditUpdate.emit(Credits());
   TotalUpdate.emit(Total());
+}
+
+void Accounting::TriggerSpinStarted() {
+  SpinStarted.emit();
+}
+
+void Accounting::TriggerSpinStopped() {
+  SpinStopped.emit();
 }
 
 void Accounting::TriggerLinesUpdate(int num) {
@@ -179,12 +194,6 @@ void Accounting::TriggerLinesUpdate(int num) {
     if (lines_ == 0) return;
     lines_--;
   }
-  
-  //int new_bet = bet_ * lines_;
-  // cents_ += (current_bet_ - new_bet) * CENTS_PER_CREDIT;
-  //current_bet_ = new_bet;
-
-  // std::cout << "Lines updated: " << lines_ << std::endl;
   BetUpdate.emit(Bet());
   LinesUpdate.emit(Lines());
   CreditUpdate.emit(Credits());

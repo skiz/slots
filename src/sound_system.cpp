@@ -15,10 +15,13 @@ SoundSystem::SoundSystem() {
 }
 
 SoundSystem::~SoundSystem() {
-  if (music_) { Mix_FreeMusic(music_); }
   for (auto& snd : sounds_) {
     Mix_FreeChunk(snd.second);
   }
+  for (auto& m : music_) {
+    Mix_FreeMusic(m.second);
+  }
+  music_.clear();
   sounds_.clear();
   Mix_Quit();
 }
@@ -65,32 +68,32 @@ void SoundSystem::PlaySound(std::string sound_path, int channel) {
   }
 }
 
-bool SoundSystem::LoadMusic(std::string& music_path) {
-  if (music_) {
-    Mix_FreeMusic(music_);
+Mix_Music* SoundSystem::LoadMusic(std::string& music_path) {
+  Mix_Music* music;
+  if (music_.count(music_path) > 0) {
+    music = music_[music_path];
+  } else {
+    music = Mix_LoadMUS(music_path.c_str());
+    if (!music) {
+      std::cerr << "Mix_LoadMUS: " << Mix_GetError() << std::endl;
+      return nullptr;
+    }
+    music_[music_path] = music;
   }
-  music_ = Mix_LoadMUS(music_path.c_str());
-  if (!music_) {
-    std::cerr << "Mix_LoadMUS: " << Mix_GetError() << std::endl;
-    return false;
-  }
-  return true;
+  return music;
 }
 
 void SoundSystem::PlayMusic(std::string music_path) {
-  Mix_HaltMusic();
-  if (LoadMusic(music_path)) {
-    if (Mix_PlayMusic(music_, -1) != 0) {
-      std::cerr << "Mix_PlayMusic: " << Mix_GetError() << std::endl;
-    }
+  Mix_Music* music = LoadMusic(music_path);
+  if (music) {
+    Mix_PlayMusic(music, -1);
   }
+  ResumeMusic();
+  
 }
 
 void SoundSystem::PauseMusic() {
- // if (Mix_PlayingMusic() != 0) {
     Mix_PauseMusic();
-//    Mix_HaltMusic();
- // }
 }
 
 void SoundSystem::ResumeMusic() {

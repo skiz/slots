@@ -29,6 +29,9 @@ void MainState::Init(Engine* e) {
   engine_->accounting->LinesUpdate.connect_member(this, &MainState::UpdateLines);
   engine_->accounting->ReelsUpdate.connect_member(this, &MainState::UpdateReels);
   engine_->accounting->BigWin.connect_member(this, &MainState::BigWin);
+  engine_->accounting->SpinStarted.connect_member(this, &MainState::SpinStarted);
+  engine_->accounting->SpinStopped.connect_member(this, &MainState::SpinStopped);
+
 
   // request credits (TODO: use signals, these should be pushed to the state)
   UpdateCredits(engine_->accounting->Credits());
@@ -41,11 +44,21 @@ void MainState::Init(Engine* e) {
   engine_->events->EnableBetting();
 
   for(int i = 0; i < 5; ++i) {
-    spinning_[i] = true;
+    spinning_[i] = false;
     vertical_offset_[i] = 0;
   }
 
   //engine_->audio->PlayMusic("assets/main/sound/music2.ogg");
+  
+  // Add gray overlay texture
+  /*
+  SDL_Surface* s;
+  s = SDL_CreateRGBSurface(0, 2000, 2000, 32, 0, 0, 0, 0);
+  SDL_Rect rect = {0,0,2000,2000};
+  SDL_FillRect(s, &rect, SDL_MapRGB(s->format, 205, 203, 206));
+  gray_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
+  SDL_FreeSurface(s);
+  */
 }
 
 void MainState::Cleanup() {
@@ -63,6 +76,48 @@ void MainState::HandleEvent(SystemEvent e) {
       std::cout << "UPDATE REELS!" << std::endl;
     default:
       break;
+  }
+}
+
+void MainState::SpinStarted() {
+  engine_->audio->PlaySound("assets/main/sound/spin.wav");
+  engine_->audio->PlayMusic("assets/main/sound/reels.wav");
+  engine_->audio->ResumeMusic();
+  for (int i = 0; i < 5; i++) {
+    spinning_[i] = true;
+    ScheduleStop(i, 2000 + i * 200);
+  }
+}
+
+void MainState::SpinStopped() {
+  engine_->audio->PauseMusic();
+  for (int i = 0; i < 5; i++) {
+    std::cout << "Force Stopping " << i << std::endl;
+    ScheduleStop(i, 0);
+  }
+}
+
+void MainState::ScheduleStop(int col, int ms) {
+  stop_timer_[col] = SDL_AddTimer(ms, &MainState::StopColumn, this);
+}
+
+Uint32 MainState::StopColumn(Uint32 interval, void *param) {
+  ((MainState *) param)->StopNext();
+  return 0L;
+}
+
+// Stops the first non-stopped column
+void MainState::StopNext() {
+  for (int i = 0; i < 5; i++) {
+    if (spinning_[i]) {
+      spinning_[i] = false;
+      SDL_RemoveTimer(stop_timer_[i]);
+      engine_->audio->PlaySound("assets/main/sound/spin.wav");
+      if (i==4) {
+	engine_->events->SystemSignal.emit(REELS_STOPPED);
+      }
+      return;
+    }
   }
 }
 
@@ -173,6 +228,18 @@ void MainState::SetupButtons() {
   maxBtn->SetText("BET MAX");
 }
 
+void MainState::StartSpin() {
+  for (int i = 0; i < 5; i++) {
+    spinning_[i] = true;
+  }
+}
+
+void MainState::StopReels() {
+  for (int i = 0; i < 5; i++) {
+    spinning_[i] = false;
+  }
+}
+
 void MainState::Pause() {
   engine_->audio->PauseMusic();
   engine_->events->DisableBetting();
@@ -181,7 +248,8 @@ void MainState::Pause() {
 void MainState::Resume() {
   std::cout << "Resuming main state" << std::endl;
   engine_->events->EnableBetting();
-  engine_->audio->PlaySound("assets/main/sound/music2.ogg");
+  //engine_->PopAsyncState();
+  //engine_->audio->PlaySound("assets/main/sound/music2.ogg");
 }
 
 // Reels were updated, lets render them.
@@ -231,6 +299,7 @@ void MainState::RenderLines() {
 }
 
 void MainState::Draw() {
+  SDL_RenderCopy(engine_->renderer, gray_, NULL, NULL);
   RenderSymbols();
   SDL_RenderCopy(engine_->renderer, bg_, NULL, NULL);
   RenderCredits();

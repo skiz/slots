@@ -29,7 +29,7 @@ void Engine::Init(int argc, char** argv) {
 
   sdl_flags += SDL_WINDOW_RESIZABLE;
 
-  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
     std::cerr << "SDL Error: " << SDL_GetError();
   } else {
     window = SDL_CreateWindow(WINDOW_TITLE,
@@ -103,28 +103,28 @@ void Engine::ChangeState(State* s) {
     states_.back()->Cleanup();
     states_.pop_back();
   }
+  s->Init(this);
   states_.push_back(s);
-  states_.back()->Init(this);
 }
 
 void Engine::PushState(State* s) {
   if (!states_.empty()) {
     states_.back()->Pause();
   }
+  s->Init(this);
   states_.push_back(s);
-  states_.back()->Init(this);
 }
 
 void Engine::PushAsyncState(State* s) {
   if (!states_.empty()) {
     states_.back()->Pause();
   }
+  s->Init(this);
   astates_.push_back(s);
-  astates_.back()->Init(this);
 }
 
 void Engine::PopAsyncState() {
-  if (!astates_.empty()) {
+  if (astates_.size() > 0) {
     astates_.back()->Cleanup();
     astates_.pop_back();
     states_.back()->Resume();

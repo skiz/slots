@@ -23,6 +23,8 @@ class MainState : public State {
     void UpdateBet(const unsigned int &amount);
     void UpdateLines(const unsigned int &amount);
     void UpdateTotal(const unsigned int &amount);
+    void StartSpin();
+    void StopReels();
     void UpdateReels();
     void RenderCredits();
     void RenderPaid();
@@ -35,6 +37,11 @@ class MainState : public State {
     void RenderMessageText();
     void SetupButtons();
     void BigWin(const unsigned int &amount);
+    void SpinStarted();
+    void SpinStopped();
+    static Uint32 StopColumn(Uint32 interval, void *param);
+    void ScheduleStop(int col, int ms);
+    void StopNext();
 
     void RenderPaylineOverlay(int line);
   protected:
@@ -60,6 +67,8 @@ class MainState : public State {
 
     SDL_Texture* reel_texture_; // temporary texture for animation
 
+    SDL_Texture* gray_;
+
     std::map<Symbol, SDL_Texture*> reel_symbols_;
     std::map<int, Symbol> reel_position_;
 
@@ -76,6 +85,8 @@ class MainState : public State {
     bool spinning_[5];
     int  vertical_offset_[5];
     int  spin_speed_ = 45;
+
+    SDL_TimerID stop_timer_[5];
 };
 
 

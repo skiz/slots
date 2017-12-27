@@ -12,8 +12,6 @@ void BigWinState::Init(Engine* e) {
   std::cout << "Event: " << event_bind_ << std::endl;
   engine_->events->DisableBetting();
 
-  StoreBackground();
-
   SDL_Surface* s = engine_->assets->LoadSurface("/main/images/bigwin.png");
   big_win_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
   SDL_FreeSurface(s);
@@ -28,50 +26,44 @@ void BigWinState::Init(Engine* e) {
 
   std::cout << "Initializing BigWin State" << std::endl;
 
-  engine_->audio->ResumeMusic();
   engine_->audio->PlayMusic("assets/main/sound/winner2.ogg");
 }
 
 void BigWinState::HandleEvent(SystemEvent e) {
-  if (exiting_) return;
+  if (exiting_) {
+    return;
+  }
 
   switch (e) {
     case CONTINUE:
-      if (continues_ == 0) {
+      continues_++; 
+      std::cout << "CONTINUE " <<  continues_ << std::endl;
+      if (continues_ == 1) {
 	engine_->audio->PlayMusic("assets/main/sound/winner3.ogg");
 	// speed up counting
 	inc_amount_ = 500;
-      } else if (continues_ == 1) {
+      } else if (continues_ == 2 && amount_ != total_) {
 	// jump to last count
 	amount_ = total_;
-      } else {
-	// take the winnings
-	 exiting_ = true;
+      } else if (continues_ >= 2 || amount_ == total_) {
+	 // take the winnings
 	 engine_->PopAsyncState();
+	 continues_ = 0;
+	 inc_amount_ = 10;
+	 amount_ = 0;
+	 total_ = 0;
+	 exiting_ = true;
+	 return;
       }
-      continues_++;
       break;
     default:
       break;
   }
 }
 
-void BigWinState::StoreBackground() {
-  /*
-  int rw, rh;
-  SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
-  SDL_Surface *ss = SDL_CreateRGBSurface(0, rw, rh, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
-  SDL_RenderReadPixels(engine_->renderer, NULL, SDL_PIXELFORMAT_ARGB8888, ss->pixels, ss->pitch);
-  bg_ = SDL_CreateTextureFromSurface(engine_->renderer, ss);
-  SDL_FreeSurface(ss);
-  */
-}
 
 void BigWinState::Cleanup() {
-  //if (event_bind_ != -1) {
-   // engine_->events->SystemSignal.disconnect(event_bind_);
-  //  event_bind_ = -1;
-  //}
+  engine_->events->SystemSignal.disconnect(event_bind_);
   engine_->events->EnableBetting();
 }
 
@@ -80,7 +72,7 @@ void BigWinState::Pause() {
 }
 
 void BigWinState::Resume() {
-  //engine_->audio->ResumeMusic();  
+  engine_->audio->ResumeMusic();  
 }
 
 void BigWinState::Update() {
@@ -88,10 +80,6 @@ void BigWinState::Update() {
 }
 
 void BigWinState::Draw() {
-  //SDL_SetRenderDrawColor(engine_->renderer, 0xFF, 0xFF, 0xFF, 0xFF );
-  //SDL_RenderClear(engine_->renderer);
-  //SDL_RenderCopy(engine_->renderer, bg_, NULL, NULL);
-
   int rw, rh;
   SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
 
@@ -126,7 +114,6 @@ void BigWinState::Draw() {
   SDL_RenderCopy(engine_->renderer, big_win_, NULL, &pos);
 
   // Render the animated amount texture
-  //
   if (frame_ % frame_inc_ == 0 && amount_ < total_) {
     amount_ += inc_amount_;
   }

@@ -14,7 +14,6 @@ class BigWinState : public State {
     void Resume();
     void Update();
     void Draw();
-    void StoreBackground();
     void HandleEvent(SystemEvent e);
     static BigWinState* Instance() {
       return &state;

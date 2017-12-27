@@ -24,6 +24,7 @@ class Accounting {
     void MoneyInserted(unsigned int amount);
     void BetMax();
     void InitiateSpin();
+    void CompleteSpin();
     void TriggerCreditUpdate();
     void TriggerPaidUpdate();
     void TriggerTotalUpdate();
@@ -32,6 +33,8 @@ class Accounting {
     void TriggerBigWin(unsigned int amount);
     void TriggerBetUpdate(int num);
     void TriggerLinesUpdate(int num);
+    void TriggerSpinStarted();
+    void TriggerSpinStopped();
     bool InsufficientFunds(int bet, int lines);
     unsigned int Credits();
     unsigned int Paid();
@@ -46,6 +49,8 @@ class Accounting {
     Signal<const unsigned int &> TotalUpdate;
     Signal<const unsigned int &> BigWin;
     Signal<>ReelsUpdate;
+    Signal<>SpinStarted;
+    Signal<>SpinStopped;
     Signal<const char*>TextUpdate;
     Reel *GetReel();
   private:
@@ -53,6 +58,8 @@ class Accounting {
     Engine* engine_;
     
     unsigned int cents_ = 0;         // available funds in cents
+
+    bool spinning_ = false;
     
     unsigned int bet_ = 0;           // visual counter
     unsigned int lines_ = 0;         // visual counter

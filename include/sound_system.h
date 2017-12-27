@@ -16,10 +16,10 @@ class SoundSystem {
   void ResumeMusic();
  private:
   bool Init();
-  bool LoadMusic(std::string& music_path);
+  Mix_Music* LoadMusic(std::string& music_path);
   Mix_Chunk* LoadSound(std::string& sound_path);
-  Mix_Music* music_ = 0;
   std::unordered_map<std::string, Mix_Chunk*> sounds_;
+  std::unordered_map<std::string, Mix_Music*> music_;
 };
 
 #endif
