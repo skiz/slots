@@ -40,6 +40,11 @@ void MainState::Init(Engine* e) {
 
   engine_->events->EnableBetting();
 
+  for(int i = 0; i < 5; ++i) {
+    spinning_[i] = true;
+    vertical_offset_[i] = 0;
+  }
+
   //engine_->audio->PlayMusic("assets/main/sound/music2.ogg");
 }
 
@@ -226,13 +231,13 @@ void MainState::RenderLines() {
 }
 
 void MainState::Draw() {
+  RenderSymbols();
   SDL_RenderCopy(engine_->renderer, bg_, NULL, NULL);
   RenderCredits();
   RenderPaid();
   RenderBet();
   RenderLines();
   RenderTotal();
-  RenderSymbols();
   RenderMessageText();
   maxBtn->Render();
   betBtn->Render();
@@ -294,12 +299,32 @@ void MainState::UpdateTotal(const unsigned int &amount) {
 }
 
 void MainState::RenderSymbols() {
-  SDL_Rect pos;
+  // We only have the final symbols at the moment, so just render those.
+  int max_height = 220 * 3;
+
+  SDL_Rect pos, t1;
+  int i = 0;
+
+  for (int c = 0; c < 5; c++) {
+    if (spinning_[c]) {
+      vertical_offset_[c] += spin_speed_;
+      if (vertical_offset_[c] >= max_height) {
+	vertical_offset_[c] = 0;
+      }
+    } else {
+      vertical_offset_[c] = 0;
+    }
+  }
+
   for (auto s : reel_->symbols) {
+    int column = s.first % 5;
     pos.w = 220;
     pos.h = 220;
-    pos.x = 87 + s.first % 5 * 263;
+    pos.x = 87 + column * 263;
     pos.y = 80 + s.first / 5 * 200;
+    pos.y = pos.y + vertical_offset_[column];
+    SDL_RenderCopy(engine_->renderer, reel_symbols_[s.second], NULL, &pos);
+    pos.y = pos.y - max_height;
     SDL_RenderCopy(engine_->renderer, reel_symbols_[s.second], NULL, &pos);
   }
 }

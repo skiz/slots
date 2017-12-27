@@ -57,7 +57,9 @@ class MainState : public State {
     TTF_Font* font_;
 
     Reel *reel_; // not owned
- 
+
+    SDL_Texture* reel_texture_; // temporary texture for animation
+
     std::map<Symbol, SDL_Texture*> reel_symbols_;
     std::map<int, Symbol> reel_position_;
 
@@ -70,6 +72,10 @@ class MainState : public State {
 
     UIButton *maxBtn, *betBtn, *spinBtn, *cashBtn;
     UIButton *linesBtn, *helpBtn, *paysBtn;
+
+    bool spinning_[5];
+    int  vertical_offset_[5];
+    int  spin_speed_ = 45;
 };
 
 
