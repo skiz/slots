@@ -14,8 +14,8 @@ static const char* WINDOW_TITLE = "Slot Machine";
 static const bool FULLSCREEN = true;
 static const bool USE_OPENGL = true;
 static const bool SHOW_FPS = false;
-static const int WINDOW_WIDTH = 1920;
-static const int WINDOW_HEIGHT = 1080;
+static const int WINDOW_WIDTH = 1440;
+static const int WINDOW_HEIGHT = 900;
 
 void Engine::Init(int argc, char** argv) {
   argc_ = argc;
@@ -115,6 +115,22 @@ void Engine::PushState(State* s) {
   states_.back()->Init(this);
 }
 
+void Engine::PushAsyncState(State* s) {
+  if (!states_.empty()) {
+    states_.back()->Pause();
+  }
+  astates_.push_back(s);
+  astates_.back()->Init(this);
+}
+
+void Engine::PopAsyncState() {
+  if (!astates_.empty()) {
+    astates_.back()->Cleanup();
+    astates_.pop_back();
+    states_.back()->Resume();
+  }
+}
+
 void Engine::PopState() {
   if (!states_.empty()) {
     states_.back()->Cleanup();
@@ -136,6 +152,9 @@ void Engine::HandleEvents() {
 void Engine::Update() {
   if (running_) {
     states_.back()->Update();
+    for (auto s : astates_) {
+      s->Update();
+    }
   }
 
   if (SHOW_FPS) {
@@ -148,6 +167,10 @@ void Engine::Update() {
 void Engine::Draw() {
   if (running_) {
     states_.back()->Draw();
+    for (auto s : astates_) {
+      s->Draw();
+    }
+    SDL_RenderPresent(renderer);
   }
   ++frameCount_;
 }

@@ -22,6 +22,7 @@ enum SystemEvent {
   QUIT,
   POP_STATE,
   UPDATE_REELS,
+  CONTINUE,
 };
 
 #endif

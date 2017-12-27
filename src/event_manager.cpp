@@ -12,6 +12,7 @@ std::map<SystemEvent, int> EventManager::bettingEvents = {
   {LINE_UP,1},
   {LINE_DOWN,1},
   {CASH_OUT,1},
+  {SPIN, 1},
 };
 
 void EventManager::Init() {
@@ -43,6 +44,7 @@ void EventManager::HandleKeyPress(int sdlkey) {
 	std::map<SystemEvent, int>::iterator it = bettingEvents.find(e);
 	if(it != bettingEvents.end()) {
 	    std::cout << "Ignoring betting event" << std::endl;
+	    SystemSignal.emit(CONTINUE);
 	    return;
 	}
       }

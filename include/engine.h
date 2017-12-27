@@ -22,6 +22,8 @@ class Engine {
     void ChangeState(State* s);
     void PushState(State* s);
     void PopState();
+    void PushAsyncState(State* s);
+    void PopAsyncState();
     void HandleEvents();
     void Update();
     void Draw();
@@ -44,6 +46,7 @@ class Engine {
     int frameCount_;
     int argc_;
     std::vector<State*> states_;
+    std::vector<State*> astates_;
     bool running_;
 };
 

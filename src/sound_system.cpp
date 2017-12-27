@@ -66,7 +66,9 @@ void SoundSystem::PlaySound(std::string sound_path, int channel) {
 }
 
 bool SoundSystem::LoadMusic(std::string& music_path) {
-  if (music_) { Mix_FreeMusic(music_); }
+  if (music_) {
+    Mix_FreeMusic(music_);
+  }
   music_ = Mix_LoadMUS(music_path.c_str());
   if (!music_) {
     std::cerr << "Mix_LoadMUS: " << Mix_GetError() << std::endl;
@@ -85,7 +87,10 @@ void SoundSystem::PlayMusic(std::string music_path) {
 }
 
 void SoundSystem::PauseMusic() {
-  Mix_PauseMusic();
+ // if (Mix_PlayingMusic() != 0) {
+    Mix_PauseMusic();
+//    Mix_HaltMusic();
+ // }
 }
 
 void SoundSystem::ResumeMusic() {

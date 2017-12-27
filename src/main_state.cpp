@@ -3,6 +3,7 @@
 #include "main_state.h"
 #include "SDL_ttf.h"
 #include "big_win_state.h"
+#include "signal.h"
 
 MainState MainState::state;
 
@@ -16,7 +17,7 @@ void MainState::Init(Engine* e) {
   reel_->GenerateSymbols(5, 3);
 
   // subscribe to system events
-  engine_->events->SystemSignal.connect_member(this, &MainState::HandleEvent);
+  //engine_->events->SystemSignal.connect_member(this, &MainState::HandleEvent);
 
   // handle credit updates
   // Text notifications should probably be outside accounting in their own module...
@@ -29,7 +30,7 @@ void MainState::Init(Engine* e) {
   engine_->accounting->ReelsUpdate.connect_member(this, &MainState::UpdateReels);
   engine_->accounting->BigWin.connect_member(this, &MainState::BigWin);
 
-  // request credits (TODO: use signals)
+  // request credits (TODO: use signals, these should be pushed to the state)
   UpdateCredits(engine_->accounting->Credits());
   UpdatePaid(engine_->accounting->Paid());
   UpdateText(engine_->accounting->Text());
@@ -38,12 +39,17 @@ void MainState::Init(Engine* e) {
   UpdateLines(engine_->accounting->Lines());
 
   engine_->events->EnableBetting();
+
+  //engine_->audio->PlayMusic("assets/main/sound/music2.ogg");
 }
 
 void MainState::Cleanup() {
   TTF_CloseFont(credit_font_);
   TTF_CloseFont(font_);
-  // TODO: disconnect slots
+
+  for (auto s : signal_bindings_) {
+    engine_->events->SystemSignal.disconnect(s);
+  }
 }
 
 void MainState::HandleEvent(SystemEvent e) {
@@ -63,7 +69,6 @@ void MainState::LoadAssets() {
   bg_ = SDL_CreateTextureFromSurface(engine_->renderer, ss);
   SDL_FreeSurface(ss);
 
-  engine_->audio->PlayMusic("assets/main/sound/music2.ogg");
 
   font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 40);
   credit_font_ = TTF_OpenFont("assets/main/fonts/digital.ttf", 65);
@@ -165,10 +170,13 @@ void MainState::SetupButtons() {
 
 void MainState::Pause() {
   engine_->audio->PauseMusic();
+  engine_->events->DisableBetting();
 }
 
 void MainState::Resume() {
-  engine_->audio->ResumeMusic();
+  std::cout << "Resuming main state" << std::endl;
+  engine_->events->EnableBetting();
+  engine_->audio->PlaySound("assets/main/sound/music2.ogg");
 }
 
 // Reels were updated, lets render them.
@@ -177,7 +185,7 @@ void MainState::UpdateReels() {
 
 void MainState::BigWin(const unsigned int &amount) {
   std::cout << "BIG WIN" << std::endl;
-  engine_->PushState(BigWinState::Instance());
+  engine_->PushAsyncState(BigWinState::Instance());
 }
 
 void MainState::Update() {
@@ -233,8 +241,6 @@ void MainState::Draw() {
   linesBtn->Render();
   helpBtn->Render();
   //paysBtn->Render();
-  SDL_RenderPresent(engine_->renderer);
-  //SDL_Delay(1);
 }
 
 void MainState::UpdateCredits(const unsigned int &amount) {
@@ -319,7 +325,6 @@ void MainState::RenderTotal() {
   total_pos.y = rh - total_pos.h - 120;
   SDL_RenderCopy(engine_->renderer, total_, NULL, &total_pos);
 }
-
 
 void MainState::UpdateText(const char* text) {
   SDL_Surface* textSurface = NULL;
