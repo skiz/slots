@@ -37,10 +37,9 @@ void BigWinState::HandleEvent(SystemEvent e) {
   switch (e) {
     case CONTINUE:
       continues_++; 
-      std::cout << "CONTINUE " <<  continues_ << std::endl;
       if (continues_ == 1) {
-	engine_->audio->PlayMusic("assets/main/sound/winner3.ogg");
 	// speed up counting
+	engine_->audio->PlayMusic("assets/main/sound/winner3.ogg");
 	inc_amount_ = 500;
       } else if (continues_ == 2 && amount_ != total_) {
 	// jump to last count

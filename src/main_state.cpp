@@ -13,7 +13,6 @@ void MainState::Init(Engine* e) {
 
   reel_ = engine_->accounting->GetReel();
 
-  // TODO: only do this if there aren't any symbols loaded
   reel_->GenerateSymbols(5, 3);
 
   // subscribe to system events
@@ -92,8 +91,7 @@ void MainState::SpinStarted() {
 void MainState::SpinStopped() {
   engine_->audio->PauseMusic();
   for (int i = 0; i < 5; i++) {
-    std::cout << "Force Stopping " << i << std::endl;
-    ScheduleStop(i, 0);
+    StopNext();
   }
 }
 
