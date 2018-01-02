@@ -138,7 +138,7 @@ void Accounting::CompleteSpin() {
   }
   
   paid_credits_ = won;
-  PaidUpdate.emit(Paid());
+  //PaidUpdate.emit(Paid());  // disabled as pay_state handles this now
   ReelsUpdate.emit();
 
   // TODO: TriggerBonus if met

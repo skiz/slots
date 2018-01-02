@@ -16,8 +16,17 @@ void PayState::Init(Engine* e) {
   total_ = 0;
   continues_ = 0;
   inc_amount_ = 1;
-
+  reel_ = engine_->accounting->GetReel();
+  //num_wins_ = reel_->GetWinningPaylinePositions().size();
   engine_->audio->PlayMusic("assets/main/sound/winner2.ogg");
+
+  /*
+  SDL_Surface* ss = engine_->assets->LoadSurface("/reels/blank.png");
+  blank_ = SDL_CreateTextureFromSurface(engine_->renderer, ss);
+  SDL_FreeSurface(ss);
+
+  winning_paylines_ = reel_->GetWinningLines();
+  */
 }
 
 void PayState::HandleEvent(SystemEvent e) {
@@ -27,7 +36,7 @@ void PayState::HandleEvent(SystemEvent e) {
       if (continues_ == 1 && amount_ != total_) {
         engine_->audio->PlayMusic("assets/main/sound/winner3.ogg");
         inc_amount_ = 10;
-      } else {
+      } else if (amount_ < total_) {
         amount_ = total_;
       }
       break;
@@ -55,7 +64,8 @@ void PayState::Resume() {
 }
 
 void PayState::Update() {
-  total_ = engine_->accounting->Paid(); 
+  total_ = engine_->accounting->Paid();
+
   if (frame_ % frame_inc_ == 0 && amount_ < total_) {
     amount_ += inc_amount_;
   }
@@ -63,8 +73,21 @@ void PayState::Update() {
     amount_ = total_;
     engine_->audio->PauseMusic();
   }
-  ++frame_;
 
+  // N frames per winning line shown
+  // but we still need to show what was won for each line too... ugh.
+  // this show_line_win is an index, but we have a map based on payline
+  //
+  /*
+  if (frame_ % 20 == 0) {
+    // FUCK!
+    payline_index_++; // this is the index of the winning line we want to show 
+    if (payline_index_ >= num_wins_) {
+      payline_index_ = 0;
+    }
+  }
+  */
+  ++frame_;
 }
 
 void PayState::Draw() {
@@ -72,14 +95,30 @@ void PayState::Draw() {
   MainState::Instance()->UpdatePaid(amount_);
   MainState::Instance()->UpdateCredits(credits);
 
+  DrawPaylines();
 
-  // This may be a problem, as we want to show payline
-  // animations until the user spins again
   if (amount_ == total_) {
     engine_->PopAsyncState();
   }
 }
 
 void PayState::DrawPaylines(){
-  
+  // Perhaps I should just add a MainState method to flash/reset...
+  // cover up the winning line symbols to emulate flashing of winning symbols 
+  //SDL_Rect pos;
+
+  //std::cout << show_win_line_ << std::endl;
+  // if(frames_ % 10 == 0) {.. //FLASH!.
+  /*
+  for (auto s  : reel_->GetWinningPositionsForPayline(winning_paylines_[payline_index_])) {
+    int column = s % 5;
+    pos.w = 220;
+    pos.h = 220;
+    pos.x = 87 + column * 263;
+    pos.y = 80 + s / 5 * 200;
+    SDL_RenderCopy(engine_->renderer, blank_, NULL, &pos);
+  }
+  */
 }
+
+

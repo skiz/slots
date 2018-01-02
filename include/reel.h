@@ -37,6 +37,9 @@ class Reel {
     Symbol GetSymbol(std::map<Symbol, int> *weightedSet);
     std::map<int, Symbol> GetSymbols();
     std::map<int, std::array<int,5>> GetPaylines();
+    std::map<int, std::vector<int>> GetWinningPaylinePositions();
+    std::vector<int> GetWinningPositionsForPayline(int payline);
+    std::vector<int> GetWinningLines();
     void SetSymbol(Symbol sym, int pos);
     void GenerateSymbols(int reels, int spots);
     int GetCreditsWon();
@@ -44,11 +47,11 @@ class Reel {
   private:
     static std::map<Symbol, int> standard_reel_weights_;
     static std::map<Symbol, std::map<int, int>> payout_table_;
-    static std::map<Symbol, std::map<Symbol, Symbol>> compatibleSymbols;
-    static std::map<int, std::array<int,5>> paylines_;
-    std::map<int, Symbol> symbols_;
-    std::map<int, int> winning_lines_;
-    std::map<int, std::vector<int>> winning_symbols_;
+    static std::map<Symbol, std::map<Symbol, Symbol>> compatible_symbols_;
+    static std::map<int, std::array<int,5>> paylines_; // symbol[count] = win
+    std::map<int, Symbol> symbols_; // keyed by reel position
+    std::map<int, int> winning_lines_; // payline -> payout
+    std::map<int, std::vector<int>> winning_symbols_; // line -> [positions]
     int payout_;
     Random* random_;
 };

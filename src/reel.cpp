@@ -1,5 +1,6 @@
 #include "reel.h"
 #include <iostream>
+#include <algorithm>
 
 std::map<Symbol, int> Reel::standard_reel_weights_ = {
   {CHERRY,     10000},
@@ -53,7 +54,7 @@ std::map<Symbol, std::map<int, int>> Reel::payout_table_ = {
 
 // Compatible symbols_ with selected payout_.  Used for matching bars and
 // lowering the winning amount to only bar when mixed with double bars.
-std::map<Symbol, std::map<Symbol, Symbol>> Reel::compatibleSymbols = {
+std::map<Symbol, std::map<Symbol, Symbol>> Reel::compatible_symbols_ = {
   {BAR, {{DOUBLE_BAR, BAR}}},
   {DOUBLE_BAR, {{BAR, BAR}}},
 };
@@ -163,13 +164,13 @@ void Reel::GenerateWinningLines(int maxLines) {
           matches++;
           syms.push_back(target);               // store matching symbol
         }
-      } else {				      // check for compatibles
-        for (auto s : compatibleSymbols) {
+      } else {				                          // check for compatibles
+        for (auto s : compatible_symbols_) {
           if (symbols_[target] == s.first) {   // this symbol is compatible
             for (auto p : s.second) {         // check all related for match
               if (p.first == symbol) {
                 symbol = p.second;            // we are only paying for the compatible value
-                syms.push_back(target);               // store matching symbol
+                syms.push_back(line.first);               // store matching symbol
                 matches++;
                 break;
               }
@@ -238,4 +239,20 @@ std::map<int, Symbol> Reel::GetSymbols() {
 
 std::map<int, std::array<int,5>> Reel::GetPaylines() {
   return paylines_;
+}
+
+std::map<int, std::vector<int>> Reel::GetWinningPaylinePositions() {
+  return winning_symbols_;
+}
+
+std::vector<int> Reel::GetWinningPositionsForPayline(int payline) {
+  return winning_symbols_.at(payline);
+}
+
+std::vector<int> Reel::GetWinningLines() {
+  std::vector<int> v;
+  for(std::map<int,int>::iterator it = winning_lines_.begin(); it != winning_lines_.end(); ++it) {
+    v.push_back(it->first);
+  }
+  return v;
 }

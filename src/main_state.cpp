@@ -88,7 +88,7 @@ void MainState::ScheduleStop(int col, int ms) {
   stop_timer_[col] = SDL_AddTimer(ms, &MainState::StopColumn, this);
 }
 
-Uint32 MainState::StopColumn(Uint32 interval, void *param) {
+Uint32 MainState::StopColumn(Uint32 /*interval*/, void *param) {
   ((MainState *) param)->StopNext();
   return 0L;
 }
@@ -157,15 +157,17 @@ void MainState::LoadReelSymbols() {
 
 void MainState::RenderPaylineOverlay(int line) {
   // render a payline based on it's number on the reel
+  /*
   int xoff = 50; // x offset
   int yoff = 50; // y offset
   int xinc = 200; // x increment
   int yinc = 200; // y increment
   std::array<std::array<int, 2>, 5> coords;
-  for (auto p : reel_->GetPaylines()[line]) {
+  */
+  //for (auto p : reel_->GetPaylines()[line]) {
     // locate the 5 coordinates
     //coords.push_back({p}) 
-  }
+  //}
 }
 
 void MainState::LoadSymbol(Symbol type, const char* filename) {
@@ -179,9 +181,7 @@ void MainState::SetupButtons() {
   button_font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 20);
   button_font_color_ = {0,0,0,0}; //255, 255, 255, 0};
 
-  int bx = 20;
   int by = 810;
-  int bs = 150;
 
   const char* btnFile =  "/main/images/btn.png";
 
@@ -246,11 +246,11 @@ void MainState::Resume() {
 void MainState::UpdateReels() {
 }
 
-void MainState::BigWin(const unsigned int &amount) {
+void MainState::BigWin(const unsigned int& /*amount*/) {
   engine_->PushAsyncState(BigWinState::Instance());
 }
 
-void MainState::Win(const unsigned int &amount) {
+void MainState::Win(const unsigned int& /*amount*/) {
   engine_->PushAsyncState(PayState::Instance());
 }
 
@@ -365,8 +365,7 @@ void MainState::RenderSymbols() {
   // We only have the final symbols at the moment, so just render those.
   int max_height = 220 * 3;
 
-  SDL_Rect pos, t1;
-  int i = 0;
+  SDL_Rect pos;
 
   for (int c = 0; c < 5; c++) {
     if (spinning_[c]) {

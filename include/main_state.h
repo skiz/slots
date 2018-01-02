@@ -66,7 +66,7 @@ class MainState : public State {
 
     Reel *reel_; // not owned
 
-    SDL_Texture* reel_texture_; // temporary texture for animation
+    //SDL_Texture* reel_texture_; // temporary texture for animation
 
     SDL_Texture* gray_;
 

@@ -73,8 +73,6 @@ void BigWinState::Draw() {
   int rw, rh;
   SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
 
-  int w, h;
-
   if  (frame_ > 100){
     frame_ = 0;
   }

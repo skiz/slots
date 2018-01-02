@@ -31,13 +31,14 @@ class PayState : public State {
     unsigned int total_ = 0;
     unsigned int amount_ = 0;
     PayState() {}
-    bool initialized = false;
-
   private:
-    Engine* engine_; // not owned
+    Reel *reel_; // not owned
+    Engine *engine_; // not owned
     static PayState state;
+    //SDL_Texture* blank_;
+    //std::vector<int> winning_paylines_; // winning paylines
+    //int num_wins_ = 0;          // number of winning paylines
+    //int payline_index_ = 0;     // payline we are currently showing
 };
 
-
 #endif
-
