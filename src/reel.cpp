@@ -31,13 +31,13 @@ std::map<Symbol, std::map<int, int>> Reel::payout_table_ = {
   {CHERRY,      {{1,  1}, {2, 1},{3,    2},{4,     4},{5,     5}}},
   {BAR,                         {{3,    5},{4,    20},{5,    50}}},
   {DOUBLE_BAR,                  {{3,   10},{4,    25},{5,   100}}},
-  {TEN,			        {{3,   20},{4,    50},{5,   200}}},
-  {JACK,		        {{3,   30},{4,    75},{5,   300}}},
-  {QUEEN,		        {{3,   40},{4,   100},{5,   400}}},
-  {KING,		        {{3,   60},{4,   125},{5,   500}}},
-  {ACE,			        {{3,   80},{4,   250},{5,  1000}}},
-  {WILD,		        {                     {5,  1000}}},
-  {JACKPOT,		        {                     {5,  5000}}},
+  {TEN,			                    {{3,   20},{4,    50},{5,   200}}},
+  {JACK,		                    {{3,   30},{4,    75},{5,   300}}},
+  {QUEEN,		                    {{3,   40},{4,   100},{5,   400}}},
+  {KING,		                    {{3,   60},{4,   125},{5,   500}}},
+  {ACE,			                    {{3,   80},{4,   250},{5,  1000}}},
+  {WILD,		                    {                     {5,  1000}}},
+  {JACKPOT,		                  {                     {5,  5000}}},
   {ALT1,                        {{3,   50},{4,   250},{5,   500}}},
   {ALT2,                        {{3,  100},{4,   500},{5,  1000}}},
   {ALT3,                        {{3,    1},{4,     2},{5,     3}}},
@@ -143,59 +143,59 @@ void Reel::GenerateWinningLines(int maxLines) {
     for (auto target : line.second) {         // target is the line position we need to check
       int m = matches;                        // for tracking changes to matches
       if (symbol == -1) {                     // this is our first match so its always good
-	if (symbols_[target] != WILD) {        // Wilds are skipped if first symbol
-	  symbol = symbols_[target];           // this is our current match
-	} else {
-	  wilds++;
-	}
-	matches++;                            // Increment number of matches for first item
+        if (symbols_[target] != WILD) {        // Wilds are skipped if first symbol
+          symbol = symbols_[target];           // this is our current match
+        } else {
+          wilds++;
+        }
+        matches++;                            // Increment number of matches for first item
       } else if (symbols_[target] == symbol) {
-	matches++;
+        matches++;
       } else if (symbols_[target] == WILD) {       // We have another match
-	wilds++;
+        wilds++;
         if (symbol != BONUS && symbol != FREE_SPIN) {
-	  matches++;
-	}
+          matches++;
+        }
       } else {				      // check for compatibles
-	for (auto s : compatibleSymbols) {
-	  if (symbols_[target] == s.first) {   // this symbol is compatible
-	    for (auto p : s.second) {         // check all related for match
-	      if (p.first == symbol) {
-		symbol = p.second;            // we are only paying for the compatible value
-		matches++;
-		break;
-	      }
-	    }
-	  }
-	  if (m != matches) break;           // break second loop if we found a match
-	}
+        for (auto s : compatibleSymbols) {
+          if (symbols_[target] == s.first) {   // this symbol is compatible
+            for (auto p : s.second) {         // check all related for match
+              if (p.first == symbol) {
+                symbol = p.second;            // we are only paying for the compatible value
+                matches++;
+                break;
+              }
+            }
+          }
+          if (m != matches) break;           // break second loop if we found a match
+        }
       }
 
       if (m == matches || matches == 5) {    // no more matches. we are done with this line.
 
-	if (matches == 5 && symbol == -1) {   // all wilds.
-	  symbol = WILD;
-	}
+        if (matches == 5 && symbol == -1) {   // all wilds.
+          symbol = WILD;
+        }
 
-	// dont count wilds for free spins and bonuses
-	if (wilds > 0 && (symbol == BONUS || symbol == FREE_SPIN)) {
-	  continue;
-	}
+        // dont count wilds for free spins and bonuses
+        if (wilds > 0 && (symbol == BONUS || symbol == FREE_SPIN)) {
+          continue;
+        }
 
-	//check for matching pay table entry
-	int line_payout_ = 0;
-	int paid = 0;
-	Symbol sym = Symbol(symbol);             // Get the actual symbol reference
-	std::map<int, int>::iterator it = payout_table_[sym].find(matches);
-	if(it != payout_table_[sym].end()) {
-	  paid = 1;
-	  line_payout_ = it->second;              // We have a winner!
-	}
-	if (paid) {
-	  winning_lines_[line.first] = line_payout_; // Add the winning line to the result
-	  payout_ += line_payout_;
-	}
-	break;
+        //check for matching pay table entry
+        int line_payout_ = 0;
+        int paid = 0;
+        Symbol sym = Symbol(symbol);             // Get the actual symbol reference
+        std::map<int, int>::iterator it = payout_table_[sym].find(matches);
+        if(it != payout_table_[sym].end()) {
+          paid = 1;
+          line_payout_ = it->second;              // We have a winner!
+        }
+        if (paid) {
+          winning_lines_[line.first] = line_payout_; // Add the winning line to the result
+          payout_ += line_payout_;
+        }
+        break;
       }
     }
   }
