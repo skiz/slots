@@ -1,7 +1,7 @@
 #include "reel.h"
 #include <iostream>
 
-std::map<Symbol, int> Reel::standardReelWeights = {
+std::map<Symbol, int> Reel::standard_reel_weights_ = {
   {CHERRY,     10000},
   {BAR,        13650},
   {DOUBLE_BAR, 13550},
@@ -26,8 +26,8 @@ std::map<Symbol, int> Reel::standardReelWeights = {
   {NOTHING,        0},
 };
 
-// Standard payout table  <count, <num, payout>>
-std::map<Symbol, std::map<int, int>> Reel::payoutTable = {
+// Standard payout_ table  <count, <num, payout_>>
+std::map<Symbol, std::map<int, int>> Reel::payout_table_ = {
   {CHERRY,      {{1,  1}, {2, 1},{3,    2},{4,     4},{5,     5}}},
   {BAR,                         {{3,    5},{4,    20},{5,    50}}},
   {DOUBLE_BAR,                  {{3,   10},{4,    25},{5,   100}}},
@@ -51,7 +51,7 @@ std::map<Symbol, std::map<int, int>> Reel::payoutTable = {
   {BONUS,                       {{3,    0},{4,     0},{5,     0}}},
 };
 
-// Compatible symbols with selected payout.  Used for matching bars and
+// Compatible symbols_ with selected payout_.  Used for matching bars and
 // lowering the winning amount to only bar when mixed with double bars.
 std::map<Symbol, std::map<Symbol, Symbol>> Reel::compatibleSymbols = {
   {BAR, {{DOUBLE_BAR, BAR}}},
@@ -67,7 +67,7 @@ std::map<Symbol, std::map<Symbol, Symbol>> Reel::compatibleSymbols = {
 //
 // These lines can be seen in assets/20-paylines.gif
 //
-std::map<int, std::array<int,5>> Reel::payLines = {
+std::map<int, std::array<int,5>> Reel::paylines_ = {
   { 0, {{ 5, 6, 7, 8, 9}}},
   { 1, {{ 0, 1, 2, 3, 4}}},
   { 2, {{10,11,12,13,14}}},
@@ -95,7 +95,7 @@ Reel::Reel() {
   random_ = &Random::GetInstance();
   //GenerateSymbols(5, 3);
   for (int i = 0; i < 15; i++) {
-    symbols[i] = NOTHING;
+    symbols_[i] = NOTHING;
   }
 }
 
@@ -114,52 +114,51 @@ Symbol Reel::GetSymbol(std::map<Symbol, int> *weightedSet) {
 
 void Reel::GenerateSymbols(int reels, int spots) {
   for (int i=0; i < reels*spots; ++i) {
-    symbols[i] = GetSymbol(&standardReelWeights);
+    symbols_[i] = GetSymbol(&standard_reel_weights_);
   }
 }
 
 void Reel::GenerateWinningLines(int maxLines) {
   /*
-   * map<int line, int payout>
+   * map<int line, int payout_>
    *
    * Loop through each payline up to maxLines
    *   loop through each position, holding first face until no match 
    *   (this includes wild, and if first is wild, account for this)
-   *   if there is a matching result in the payout table, apply each
-   *   winning line to an internal map of line -> payout.
+   *   if there is a matching result in the payout_ table, apply each
+   *   winning line to an internal map of line -> payout_.
    *
    *   Also TODO:
    *    wilds do not count for free spins or bonus.
-   *	trigger update to accounting system.
    *	Support one offs like a full house or a straight
    */
-
-  winningLines.clear();
-  payout = 0;
+  winning_symbols_.clear();
+  winning_lines_.clear();
+  payout_ = 0;
   int wilds = 0;
-  for (auto line : payLines) {                // check every payline until stopped
+  for (auto line : paylines_) {                // check every payline until stopped
     if (line.first == maxLines) break;        // stop if we are exceeding maxLines
     int matches = 0;                          // number of matches on this line thus far
     int symbol = -1;                          // the current symbol we are matching against
     for (auto target : line.second) {         // target is the line position we need to check
       int m = matches;                        // for tracking changes to matches
       if (symbol == -1) {                     // this is our first match so its always good
-	if (symbols[target] != WILD) {        // Wilds are skipped if first symbol
-	  symbol = symbols[target];           // this is our current match
+	if (symbols_[target] != WILD) {        // Wilds are skipped if first symbol
+	  symbol = symbols_[target];           // this is our current match
 	} else {
 	  wilds++;
 	}
 	matches++;                            // Increment number of matches for first item
-      } else if (symbols[target] == symbol) {
+      } else if (symbols_[target] == symbol) {
 	matches++;
-      } else if (symbols[target] == WILD) {       // We have another match
+      } else if (symbols_[target] == WILD) {       // We have another match
 	wilds++;
         if (symbol != BONUS && symbol != FREE_SPIN) {
 	  matches++;
 	}
       } else {				      // check for compatibles
 	for (auto s : compatibleSymbols) {
-	  if (symbols[target] == s.first) {   // this symbol is compatible
+	  if (symbols_[target] == s.first) {   // this symbol is compatible
 	    for (auto p : s.second) {         // check all related for match
 	      if (p.first == symbol) {
 		symbol = p.second;            // we are only paying for the compatible value
@@ -184,17 +183,17 @@ void Reel::GenerateWinningLines(int maxLines) {
 	}
 
 	//check for matching pay table entry
-	int line_payout = 0;
+	int line_payout_ = 0;
 	int paid = 0;
 	Symbol sym = Symbol(symbol);             // Get the actual symbol reference
-	std::map<int, int>::iterator it = payoutTable[sym].find(matches);
-	if(it != payoutTable[sym].end()) {
+	std::map<int, int>::iterator it = payout_table_[sym].find(matches);
+	if(it != payout_table_[sym].end()) {
 	  paid = 1;
-	  line_payout = it->second;              // We have a winner!
+	  line_payout_ = it->second;              // We have a winner!
 	}
 	if (paid) {
-	  winningLines[line.first] = line_payout; // Add the winning line to the result
-	  payout += line_payout;
+	  winning_lines_[line.first] = line_payout_; // Add the winning line to the result
+	  payout_ += line_payout_;
 	}
 	break;
       }
@@ -203,16 +202,24 @@ void Reel::GenerateWinningLines(int maxLines) {
 }
 
 void Reel::DumpLines() {
-  std::cout << "Winning Lines: " << winningLines.size() << std::endl;
-  for (auto w : winningLines) {
+  std::cout << "Winning Lines: " << winning_lines_.size() << std::endl;
+  for (auto w : winning_lines_) {
     std::cout << "Payline " << w.first << ": " << w.second << " Credits"<< std::endl;
   }
   std::cout << "Total Payout: " << GetCreditsWon() << std::endl;;
-  std::cout << symbols[0] << "\t" << symbols[1] << "\t" << symbols[2] << "\t" << symbols[3] << "\t" << symbols[4] << std::endl;
-  std::cout << symbols[5] << "\t" << symbols[6] << "\t" << symbols[7] << "\t" << symbols[8] << "\t" << symbols[9] << std::endl;
-  std::cout << symbols[10] << "\t" << symbols[11] << "\t" << symbols[12] << "\t" << symbols[13] << "\t" << symbols[14] << std::endl;
+  std::cout << symbols_[0] << "\t" << symbols_[1] << "\t" << symbols_[2] << "\t" << symbols_[3] << "\t" << symbols_[4] << std::endl;
+  std::cout << symbols_[5] << "\t" << symbols_[6] << "\t" << symbols_[7] << "\t" << symbols_[8] << "\t" << symbols_[9] << std::endl;
+  std::cout << symbols_[10] << "\t" << symbols_[11] << "\t" << symbols_[12] << "\t" << symbols_[13] << "\t" << symbols_[14] << std::endl;
 }
 
 int Reel::GetCreditsWon() {
-  return payout;
+  return payout_;
+}
+
+std::map<int, Symbol> Reel::GetSymbols() {
+  return symbols_;
+}
+
+std::map<int, std::array<int,5>> Reel::GetPaylines() {
+  return paylines_;
 }

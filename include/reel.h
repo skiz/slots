@@ -3,6 +3,7 @@
 
 #include "random.h"
 #include <map>
+#include <vector>
 
 enum Symbol {
   CHERRY,             //0
@@ -34,18 +35,21 @@ class Reel {
     Reel();
     void GenerateWinningLines(int maxLines); 
     Symbol GetSymbol(std::map<Symbol, int> *weightedSet);
+    std::map<int, Symbol> GetSymbols();
+    std::map<int, std::array<int,5>> GetPaylines();
     void SetSymbol(Symbol sym, int pos);
     void GenerateSymbols(int reels, int spots);
     int GetCreditsWon();
     void DumpLines();
-    static std::map<Symbol, int> standardReelWeights;
-    static std::map<Symbol, std::map<int, int>> payoutTable;
-    static std::map<Symbol, std::map<Symbol, Symbol>> compatibleSymbols;
-    static std::map<int, std::array<int,5>> payLines;
-    std::map<int, Symbol> symbols;
-    std::map<int, int> winningLines;
-    int payout;
   private:
+    static std::map<Symbol, int> standard_reel_weights_;
+    static std::map<Symbol, std::map<int, int>> payout_table_;
+    static std::map<Symbol, std::map<Symbol, Symbol>> compatibleSymbols;
+    static std::map<int, std::array<int,5>> paylines_;
+    std::map<int, Symbol> symbols_;
+    std::map<int, int> winning_lines_;
+    std::map<int, std::vector<int>> winning_symbols_;
+    int payout_;
     Random* random_;
 };
 

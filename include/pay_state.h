@@ -17,6 +17,7 @@ class PayState : public State {
     void Draw();
     void DrawPaid(const unsigned int amount);
     void DrawCredits(const unsigned int amount);
+    void DrawPaylines();
     void HandleEvent(SystemEvent e);
     static PayState* Instance() {
       return &state;

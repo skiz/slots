@@ -162,7 +162,7 @@ void MainState::RenderPaylineOverlay(int line) {
   int xinc = 200; // x increment
   int yinc = 200; // y increment
   std::array<std::array<int, 2>, 5> coords;
-  for (auto p : reel_->payLines[line]) {
+  for (auto p : reel_->GetPaylines()[line]) {
     // locate the 5 coordinates
     //coords.push_back({p}) 
   }
@@ -379,7 +379,7 @@ void MainState::RenderSymbols() {
     }
   }
 
-  for (auto s : reel_->symbols) {
+  for (auto s : reel_->GetSymbols()) {
     int column = s.first % 5;
     pos.w = 220;
     pos.h = 220;

@@ -56,9 +56,6 @@ void PayState::Resume() {
 
 void PayState::Update() {
   total_ = engine_->accounting->Paid(); 
-}
-
-void PayState::Draw() {
   if (frame_ % frame_inc_ == 0 && amount_ < total_) {
     amount_ += inc_amount_;
   }
@@ -68,12 +65,21 @@ void PayState::Draw() {
   }
   ++frame_;
 
+}
+
+void PayState::Draw() {
   const unsigned int credits = engine_->accounting->Credits() - total_ + amount_;
   MainState::Instance()->UpdatePaid(amount_);
   MainState::Instance()->UpdateCredits(credits);
 
+
+  // This may be a problem, as we want to show payline
+  // animations until the user spins again
   if (amount_ == total_) {
     engine_->PopAsyncState();
   }
+}
 
+void PayState::DrawPaylines(){
+  
 }
