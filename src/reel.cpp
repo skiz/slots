@@ -129,32 +129,39 @@ void Reel::GenerateWinningLines(int maxLines) {
    *   winning line to an internal map of line -> payout_.
    *
    *   Also TODO:
-   *    wilds do not count for free spins or bonus.
-   *	Support one offs like a full house or a straight
+   *   * ensure all winning_lines_ also have a representitive winning_symbols_
+   *     entry that includes the symbols that were matched for each payline. 
+   *
+   *   * wilds do not count for free spins or bonus.
+   *	 * Support one offs like a full house or a straight
    */
   winning_symbols_.clear();
   winning_lines_.clear();
   payout_ = 0;
   int wilds = 0;
-  for (auto line : paylines_) {                // check every payline until stopped
+  for (auto line : paylines_) {               // check every payline until stopped
     if (line.first == maxLines) break;        // stop if we are exceeding maxLines
     int matches = 0;                          // number of matches on this line thus far
+    std::vector<int> syms;                    // matching symbol positions for this line
     int symbol = -1;                          // the current symbol we are matching against
     for (auto target : line.second) {         // target is the line position we need to check
       int m = matches;                        // for tracking changes to matches
       if (symbol == -1) {                     // this is our first match so its always good
-        if (symbols_[target] != WILD) {        // Wilds are skipped if first symbol
-          symbol = symbols_[target];           // this is our current match
+        if (symbols_[target] != WILD) {       // Wilds are skipped if first symbol
+          symbol = symbols_[target];          // this is our current match
         } else {
           wilds++;
         }
+        syms.push_back(target);               // store matching symbol
         matches++;                            // Increment number of matches for first item
       } else if (symbols_[target] == symbol) {
+        syms.push_back(target);               // store matching symbol
         matches++;
       } else if (symbols_[target] == WILD) {       // We have another match
         wilds++;
         if (symbol != BONUS && symbol != FREE_SPIN) {
           matches++;
+          syms.push_back(target);               // store matching symbol
         }
       } else {				      // check for compatibles
         for (auto s : compatibleSymbols) {
@@ -162,6 +169,7 @@ void Reel::GenerateWinningLines(int maxLines) {
             for (auto p : s.second) {         // check all related for match
               if (p.first == symbol) {
                 symbol = p.second;            // we are only paying for the compatible value
+                syms.push_back(target);               // store matching symbol
                 matches++;
                 break;
               }
@@ -193,7 +201,9 @@ void Reel::GenerateWinningLines(int maxLines) {
         }
         if (paid) {
           winning_lines_[line.first] = line_payout_; // Add the winning line to the result
+          winning_symbols_[line.first] = syms;
           payout_ += line_payout_;
+          DumpLines();
         }
         break;
       }
@@ -205,6 +215,12 @@ void Reel::DumpLines() {
   std::cout << "Winning Lines: " << winning_lines_.size() << std::endl;
   for (auto w : winning_lines_) {
     std::cout << "Payline " << w.first << ": " << w.second << " Credits"<< std::endl;
+    std::cout << "Symbols: ";
+    for (auto s : winning_symbols_[w.first]) {
+      std::cout << s << " ";
+    }
+    std::cout << std::endl;
+
   }
   std::cout << "Total Payout: " << GetCreditsWon() << std::endl;;
   std::cout << symbols_[0] << "\t" << symbols_[1] << "\t" << symbols_[2] << "\t" << symbols_[3] << "\t" << symbols_[4] << std::endl;
