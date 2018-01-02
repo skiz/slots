@@ -24,6 +24,7 @@ enum SystemEvent {
   UPDATE_REELS,
   CONTINUE,
   REELS_STOPPED,
+  FORCE_STOP,
 };
 
 #endif

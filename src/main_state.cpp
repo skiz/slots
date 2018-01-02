@@ -47,17 +47,6 @@ void MainState::Init(Engine* e) {
     vertical_offset_[i] = 0;
   }
 
-  //engine_->audio->PlayMusic("assets/main/sound/music2.ogg");
-  
-  // Add gray overlay texture
-  /*
-  SDL_Surface* s;
-  s = SDL_CreateRGBSurface(0, 2000, 2000, 32, 0, 0, 0, 0);
-  SDL_Rect rect = {0,0,2000,2000};
-  SDL_FillRect(s, &rect, SDL_MapRGB(s->format, 205, 203, 206));
-  gray_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
-  SDL_FreeSurface(s);
-  */
 }
 
 void MainState::Cleanup() {
@@ -119,7 +108,6 @@ void MainState::StopNext() {
   }
 }
 
-
 void MainState::LoadAssets() {
   engine_->assets->Mount("assets/main", "/main");
 
@@ -127,6 +115,13 @@ void MainState::LoadAssets() {
   bg_ = SDL_CreateTextureFromSurface(engine_->renderer, ss);
   SDL_FreeSurface(ss);
 
+  // Add gray overlay texture
+  SDL_Surface* s;
+  s = SDL_CreateRGBSurface(0, 2000, 2000, 32, 0, 0, 0, 0);
+  SDL_Rect rect = {0,0,2000,2000};
+  SDL_FillRect(s, &rect, SDL_MapRGB(s->format, 205, 203, 206));
+  gray_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
+  SDL_FreeSurface(s);
 
   font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 40);
   credit_font_ = TTF_OpenFont("assets/main/fonts/digital.ttf", 65);
@@ -244,10 +239,7 @@ void MainState::Pause() {
 }
 
 void MainState::Resume() {
-  std::cout << "Resuming main state" << std::endl;
   engine_->events->EnableBetting();
-  //engine_->PopAsyncState();
-  //engine_->audio->PlaySound("assets/main/sound/music2.ogg");
 }
 
 // Reels were updated, lets render them.
@@ -255,7 +247,6 @@ void MainState::UpdateReels() {
 }
 
 void MainState::BigWin(const unsigned int &amount) {
-  std::cout << "BIG WIN" << std::endl;
   engine_->PushAsyncState(BigWinState::Instance());
 }
 

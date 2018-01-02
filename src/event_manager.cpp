@@ -43,9 +43,9 @@ void EventManager::HandleKeyPress(int sdlkey) {
       if (!betting_enabled_) {
 	std::map<SystemEvent, int>::iterator it = bettingEvents.find(e);
 	if(it != bettingEvents.end()) {
-	    SystemSignal.emit(CONTINUE);
-	    return;
+	  SystemSignal.emit(CONTINUE);
 	}
+	return;
       }
       SystemSignal.emit(e);
     }

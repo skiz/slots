@@ -8,9 +8,8 @@ BigWinState BigWinState::state;
 void BigWinState::Init(Engine* e) {
   engine_ = e;
 
-  event_bind_ = engine_->events->SystemSignal.connect_member(this, &BigWinState::HandleEvent);
-  std::cout << "Event: " << event_bind_ << std::endl;
   engine_->events->DisableBetting();
+  event_bind_ = engine_->events->SystemSignal.connect_member(this, &BigWinState::HandleEvent);
 
   SDL_Surface* s = engine_->assets->LoadSurface("/main/images/bigwin.png");
   big_win_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
@@ -24,16 +23,10 @@ void BigWinState::Init(Engine* e) {
 
   font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 120);
 
-  std::cout << "Initializing BigWin State" << std::endl;
-
   engine_->audio->PlayMusic("assets/main/sound/winner2.ogg");
 }
 
 void BigWinState::HandleEvent(SystemEvent e) {
-  if (exiting_) {
-    return;
-  }
-
   switch (e) {
     case CONTINUE:
       continues_++; 
@@ -41,17 +34,16 @@ void BigWinState::HandleEvent(SystemEvent e) {
 	// speed up counting
 	engine_->audio->PlayMusic("assets/main/sound/winner3.ogg");
 	inc_amount_ = 500;
-      } else if (continues_ == 2 && amount_ != total_) {
+      } else if (continues_ == 2 && amount_ < total_) {
 	// jump to last count
 	amount_ = total_;
-      } else if (continues_ >= 2 || amount_ == total_) {
+      } else if (amount_ == total_) {
 	 // take the winnings
-	 engine_->PopAsyncState();
 	 continues_ = 0;
 	 inc_amount_ = 10;
 	 amount_ = 0;
 	 total_ = 0;
-	 exiting_ = true;
+	 engine_->PopAsyncState();
 	 return;
       }
       break;
@@ -59,7 +51,6 @@ void BigWinState::HandleEvent(SystemEvent e) {
       break;
   }
 }
-
 
 void BigWinState::Cleanup() {
   engine_->events->SystemSignal.disconnect(event_bind_);
@@ -103,8 +94,8 @@ void BigWinState::Draw() {
   SDL_Rect pos;
   int tw, th;
   SDL_QueryTexture(big_win_, NULL, NULL, &tw, &th);
-  pos.w = size_;
-  pos.h = size_;
+  pos.w = tw * size_ / 300;
+  pos.h = th * size_ / 300;
   pos.x = rw / 2 - pos.w / 2;
   pos.y = rh / 2 - pos.h / 2;
 

@@ -87,7 +87,10 @@ void Accounting::MoneyInserted(unsigned int amount) {
 }
 
 void Accounting::InitiateSpin() {
-  if (spinning_) { CompleteSpin(); return; } // for manual stop 
+  if (spinning_) {
+    TriggerSpinStopped();
+    return;
+  } // for manual stop
   if (InsufficientFunds(bet_, lines_)) return;
   if (bet_ == 0 || lines_ == 0) return;
 
@@ -110,7 +113,6 @@ void Accounting::InitiateSpin() {
   LinesUpdate.emit(Lines());
   CreditUpdate.emit(Credits());
   TotalUpdate.emit(Total());
-
 }
 
 void Accounting::CompleteSpin() {
@@ -143,6 +145,7 @@ void Accounting::TriggerCreditUpdate() {
 }
 
 void Accounting::TriggerBigWin(const unsigned int amount) {
+  std::cout << "Triggering Big Win" << std::endl;
   BigWin.emit(amount);
 }
 
