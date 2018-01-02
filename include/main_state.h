@@ -37,6 +37,7 @@ class MainState : public State {
     void RenderMessageText();
     void SetupButtons();
     void BigWin(const unsigned int &amount);
+    void Win(const unsigned int &amount);
     void SpinStarted();
     void SpinStopped();
     static Uint32 StopColumn(Uint32 interval, void *param);

@@ -31,6 +31,7 @@ class Accounting {
     void TriggerTextUpdate();
     void TriggerUpdateReels();
     void TriggerBigWin(unsigned int amount);
+    void TriggerWin(unsigned int amount);
     void TriggerBetUpdate(int num);
     void TriggerLinesUpdate(int num);
     void TriggerSpinStarted();
@@ -48,6 +49,7 @@ class Accounting {
     Signal<const unsigned int &> LinesUpdate;
     Signal<const unsigned int &> TotalUpdate;
     Signal<const unsigned int &> BigWin;
+    Signal<const unsigned int &> Win;
     Signal<>ReelsUpdate;
     Signal<>SpinStarted;
     Signal<>SpinStopped;

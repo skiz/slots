@@ -41,11 +41,11 @@ void EventManager::HandleKeyPress(int sdlkey) {
   if (map_.count(sdlkey) > 0) {
     for (auto& e : map_[sdlkey]) {
       if (!betting_enabled_) {
-	std::map<SystemEvent, int>::iterator it = bettingEvents.find(e);
-	if(it != bettingEvents.end()) {
-	  SystemSignal.emit(CONTINUE);
-	}
-	return;
+        std::map<SystemEvent, int>::iterator it = bettingEvents.find(e);
+        if(it != bettingEvents.end()) {
+          SystemSignal.emit(CONTINUE);
+        }
+        return;
       }
       SystemSignal.emit(e);
     }
@@ -64,14 +64,14 @@ void EventManager::HandleEvents() {
   if (SDL_PollEvent(&event)) {
     switch (event.type) {
       case SDL_MOUSEBUTTONDOWN:
-	break;
+        break;
       case SDL_QUIT:
-	SystemSignal.emit(QUIT);
-	break;
+        SystemSignal.emit(QUIT);
+        break;
       case SDL_KEYDOWN:
-	HandleKeyPress(event.key.keysym.sym);
+        HandleKeyPress(event.key.keysym.sym);
       default:
-	break;
+        break;
     }
   }
 }

@@ -2,6 +2,7 @@
 #include "engine.h"
 #include "main_state.h"
 #include "SDL_ttf.h"
+#include "pay_state.h"
 #include "big_win_state.h"
 #include "signal.h"
 
@@ -21,6 +22,7 @@ void MainState::Init(Engine* e) {
   // handle credit updates
   // Text notifications should probably be outside accounting in their own module...
   engine_->accounting->CreditUpdate.connect_member(this, &MainState::UpdateCredits);
+
   engine_->accounting->PaidUpdate.connect_member(this, &MainState::UpdatePaid);
   engine_->accounting->TextUpdate.connect_member(this, &MainState::UpdateText);
   engine_->accounting->BetUpdate.connect_member(this, &MainState::UpdateBet);
@@ -28,6 +30,7 @@ void MainState::Init(Engine* e) {
   engine_->accounting->LinesUpdate.connect_member(this, &MainState::UpdateLines);
   engine_->accounting->ReelsUpdate.connect_member(this, &MainState::UpdateReels);
   engine_->accounting->BigWin.connect_member(this, &MainState::BigWin);
+  engine_->accounting->Win.connect_member(this, &MainState::Win);
   engine_->accounting->SpinStarted.connect_member(this, &MainState::SpinStarted);
   engine_->accounting->SpinStopped.connect_member(this, &MainState::SpinStopped);
 
@@ -250,6 +253,10 @@ void MainState::BigWin(const unsigned int &amount) {
   engine_->PushAsyncState(BigWinState::Instance());
 }
 
+void MainState::Win(const unsigned int &amount) {
+  engine_->PushAsyncState(PayState::Instance());
+}
+
 void MainState::Update() {
   // This is where we will set up animations
 }
@@ -316,6 +323,7 @@ void MainState::UpdateCredits(const unsigned int &amount) {
   SDL_FreeSurface(textSurface);
 }
 
+// DEPRECATED: Moved to pay state.
 void MainState::UpdatePaid(const unsigned int &amount) {
   const char* text = std::to_string(amount).c_str();
   SDL_Surface* textSurface = NULL;

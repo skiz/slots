@@ -128,6 +128,7 @@ void Accounting::CompleteSpin() {
       sprintf(txtbuf, "You won %d credits!", won);
       text_ = txtbuf;
       TriggerTextUpdate();
+      TriggerWin(won);
     }
     cents_ += won * CENTS_PER_CREDIT;
   } else {
@@ -138,6 +139,8 @@ void Accounting::CompleteSpin() {
   paid_credits_ = won;
   PaidUpdate.emit(Paid());
   ReelsUpdate.emit();
+
+  // TODO: TriggerBonus if met
 }
 
 void Accounting::TriggerCreditUpdate() {
@@ -145,8 +148,11 @@ void Accounting::TriggerCreditUpdate() {
 }
 
 void Accounting::TriggerBigWin(const unsigned int amount) {
-  std::cout << "Triggering Big Win" << std::endl;
   BigWin.emit(amount);
+}
+
+void Accounting::TriggerWin(const unsigned int amount) {
+  Win.emit(amount);
 }
 
 void Accounting::TriggerTextUpdate() {
