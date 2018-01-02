@@ -30,7 +30,7 @@ void BigWinState::HandleEvent(SystemEvent e) {
   switch (e) {
     case CONTINUE:
       continues_++; 
-      if (continues_ == 1) {
+      if (continues_ == 1 && amount_ != total_) {
 	// speed up counting
 	engine_->audio->PlayMusic("assets/main/sound/winner3.ogg");
 	inc_amount_ = 500;
