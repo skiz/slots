@@ -31,20 +31,20 @@ void BigWinState::HandleEvent(SystemEvent e) {
     case CONTINUE:
       continues_++; 
       if (continues_ == 1 && amount_ != total_) {
-	// speed up counting
-	engine_->audio->PlayMusic("assets/main/sound/winner3.ogg");
-	inc_amount_ = 500;
+        // speed up counting
+        engine_->audio->PlayMusic("assets/main/sound/winner3.ogg");
+        inc_amount_ = 500;
       } else if (continues_ == 2 && amount_ < total_) {
-	// jump to last count
-	amount_ = total_;
+        // jump to last count
+        amount_ = total_;
       } else if (amount_ == total_) {
-	 // take the winnings
-	 continues_ = 0;
-	 inc_amount_ = 10;
-	 amount_ = 0;
-	 total_ = 0;
-	 engine_->PopAsyncState();
-	 return;
+        // take the winnings
+        continues_ = 0;
+        inc_amount_ = 10;
+        amount_ = 0;
+        total_ = 0;
+        engine_->PopAsyncState();
+        return;
       }
       break;
     default:
