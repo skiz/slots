@@ -11,6 +11,7 @@ class Engine;
 const unsigned int COIN_AMOUNT = 25;
 const unsigned int BILL_AMOUNT = 10000;
 const unsigned int CENTS_PER_CREDIT = 5;
+const unsigned int BIG_WIN = 1000;
 
 /**
  * Accounting is responsible for all monetary transactions.

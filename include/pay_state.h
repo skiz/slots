@@ -32,7 +32,6 @@ class PayState : public State {
     PayState() {}
     bool initialized = false;
 
-
   private:
     Engine* engine_; // not owned
     static PayState state;

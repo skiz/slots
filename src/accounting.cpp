@@ -5,8 +5,6 @@
 #include "engine.h"
 #include "signal.h"
 
-const unsigned int BIG_WIN = 1000;
-
 void Accounting::Init(Engine* e) {
   engine_ = e;
   cents_ = 0;
@@ -87,6 +85,8 @@ void Accounting::MoneyInserted(unsigned int amount) {
 }
 
 void Accounting::InitiateSpin() {
+  paid_credits_ = 0;
+  TriggerPaidUpdate();
   if (spinning_) {
     TriggerSpinStopped();
     return;
@@ -115,6 +115,7 @@ void Accounting::InitiateSpin() {
   TotalUpdate.emit(Total());
 }
 
+// TODO: Accounting shouldn't be dealing with all this crap...
 void Accounting::CompleteSpin() {
   char txtbuf[50];
   if (!spinning_) { return; }

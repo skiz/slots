@@ -19,10 +19,7 @@ void MainState::Init(Engine* e) {
   // subscribe to system events
   //engine_->events->SystemSignal.connect_member(this, &MainState::HandleEvent);
 
-  // handle credit updates
-  // Text notifications should probably be outside accounting in their own module...
   engine_->accounting->CreditUpdate.connect_member(this, &MainState::UpdateCredits);
-
   engine_->accounting->PaidUpdate.connect_member(this, &MainState::UpdatePaid);
   engine_->accounting->TextUpdate.connect_member(this, &MainState::UpdateText);
   engine_->accounting->BetUpdate.connect_member(this, &MainState::UpdateBet);

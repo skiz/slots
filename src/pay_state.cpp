@@ -6,10 +6,6 @@
 
 PayState PayState::state;
 
-// TODO: dont show counter in screen, show it in won
-//       increment total also in sync with won counter
-//       also do this for big win and remove non visual big win stuff (2 asyncs)
-
 void PayState::Init(Engine* e) {
   engine_ = e;
 
