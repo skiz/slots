@@ -69,6 +69,9 @@ void EventManager::HandleEvents() {
         SystemSignal.emit(QUIT);
         break;
       case SDL_KEYDOWN:
+        if (event.key.repeat != 0) {
+          break;
+        }
         HandleKeyPress(event.key.keysym.sym);
       default:
         break;
