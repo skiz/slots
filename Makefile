@@ -18,6 +18,12 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
+NO_COLOR=\x1b[0m
+OK_COLOR=\x1b[32;01m
+ERROR_COLOR=\x1b[31;01m
+WARN_COLOR=\x1b[33;01m
+
+
 # Locate all test files
 TESTS = $(patsubst ${TESTSRC}/%.cpp,${TESTDIR}/%.o,$(wildcard ${TESTSRC}/*.cpp))
 
@@ -28,6 +34,10 @@ OBJS := $(filter-out ${BUILDDIR}/main.o, $(OBJS))
 # Builds the binary
 $(TARGET): $(OBJECTS)
 	$(CXX) $^ -o $(TARGET) $(LIB)
+
+todo:
+	@echo "$(WARN_COLOR)" && \
+	grep TODO -nr src include && echo "$(NO_COLOR)"
 
 # Clean targets
 clean:
