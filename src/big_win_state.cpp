@@ -24,6 +24,9 @@ void BigWinState::Init(Engine* e) {
   font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 120);
 
   engine_->audio->PlayMusic("assets/main/sound/winner2.ogg");
+
+  coin_emitter_ = new SpriteEmitter();
+  coin_emitter_->Init(engine_->renderer);
 }
 
 void BigWinState::HandleEvent(SystemEvent e) {
@@ -53,6 +56,7 @@ void BigWinState::HandleEvent(SystemEvent e) {
 }
 
 void BigWinState::Cleanup() {
+  coin_emitter_->Cleanup();
   engine_->events->SystemSignal.disconnect(event_bind_);
   engine_->events->EnableBetting();
 }
@@ -66,7 +70,8 @@ void BigWinState::Resume() {
 }
 
 void BigWinState::Update() {
-  total_ = engine_->accounting->Paid(); 
+  total_ = engine_->accounting->Paid();
+  coin_emitter_->Update();
 }
 
 void BigWinState::Draw() {
@@ -97,6 +102,7 @@ void BigWinState::Draw() {
   pos.x = rw / 2 - pos.w / 2;
   pos.y = rh / 2 - pos.h / 2;
 
+  coin_emitter_->Draw();
 
   // Copy the texture to the renderer
   SDL_RenderCopy(engine_->renderer, big_win_, NULL, &pos);

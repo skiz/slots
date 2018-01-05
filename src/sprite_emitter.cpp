@@ -30,7 +30,7 @@ void SpriteEmitter::Draw() {
 }
 
 SpriteParticle* SpriteEmitter::AddParticle() {
-  Sprite* s = sprite_factory_->Load("assets/coin3.png", 80, 80);
+  Sprite* s = sprite_factory_->Load("assets/main/images/coin3.png", 80, 80);
   s->SetFrame(RandRange::Int(0, s->LastFrame()));
   Vec2<float> pos(RandRange::Float(0, 1440), 900);
   Vec2<float> speed(RandRange::Float(-5.0f,5.0f),

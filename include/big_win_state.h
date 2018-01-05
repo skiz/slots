@@ -4,6 +4,7 @@
 #include "state.h"
 #include "SDL_ttf.h"
 #include "system_event.h"
+#include "sprite_emitter.h"
 
 class BigWinState : public State {
   public:
@@ -33,10 +34,9 @@ class BigWinState : public State {
     SDL_Texture* bg_;
     SDL_Texture* big_win_;
     SDL_Texture* counter_;
+    SpriteEmitter* coin_emitter_;
     BigWinState() {}
     bool initialized = false;
-
-
   private:
     Engine* engine_; // not owned
     static BigWinState state;
