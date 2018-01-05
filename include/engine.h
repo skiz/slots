@@ -44,7 +44,6 @@ class Engine {
     Timer fpsTimer_;
     float fps_ = 0.0;
     int frameCount_;
-    int argc_;
     std::vector<State*> states_;
     std::vector<State*> astates_;
     bool running_;

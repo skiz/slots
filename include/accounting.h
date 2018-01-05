@@ -68,14 +68,14 @@ class Accounting {
     unsigned int lines_ = 0;         // visual counter
     unsigned int max_bet_ = 0;
     unsigned int max_lines_ = 0;
-    unsigned int current_bet_ = 0;   // current wager
+    //unsigned int current_bet_ = 0;   // current wager
     unsigned int paid_credits_ = 0;  // amount paid for last spin
     char* text_;                     // text to send as message
 
     // TODO: Actual accounting info, for ya know... accounting...
-    unsigned long credits_played_ = 0;
-    unsigned long credits_lost_   = 0;
-    unsigned long games_played_   = 0;
+    //unsigned long credits_played_ = 0;
+    //unsigned long credits_lost_   = 0;
+    //unsigned long games_played_   = 0;
     // TODO: Add play log in a signed, reloadable format
 };
 

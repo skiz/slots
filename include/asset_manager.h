@@ -1,7 +1,7 @@
 #ifndef ASSET_MANAGER_H
 #define ASSET_MANAGER_H
 
-#include "SDL_Image.h"
+#include "SDL_image.h"
 
 /**
  * Handles loading and caching of assets from the filesystem

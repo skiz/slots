@@ -121,7 +121,7 @@ void Accounting::CompleteSpin() {
   if (!spinning_) { return; }
   TriggerSpinStopped();
   spinning_ = false;
-  int won = reel_.GetCreditsWon() * bet_;
+  const unsigned int won = reel_.GetCreditsWon() * bet_;
   if (won > 0) {
     if (won >= BIG_WIN) {
       TriggerBigWin(won);
@@ -133,7 +133,7 @@ void Accounting::CompleteSpin() {
     }
     cents_ += won * CENTS_PER_CREDIT;
   } else {
-    text_ = "Game Over";
+    text_ = (char*)"Game Over";
     TriggerTextUpdate();
   }
   

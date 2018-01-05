@@ -18,7 +18,9 @@ static const int WINDOW_WIDTH = 1440;
 static const int WINDOW_HEIGHT = 900;
 
 void Engine::Init(int argc, char** argv) {
-  argc_ = argc;
+  (void)argc;
+  (void)argv;
+
   int sdl_flags = 0;
   if (FULLSCREEN) {
     sdl_flags += SDL_WINDOW_FULLSCREEN;

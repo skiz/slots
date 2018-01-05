@@ -155,7 +155,7 @@ void MainState::LoadReelSymbols() {
   LoadSymbol(ALT9, "/reels/melon2.png");
 }
 
-void MainState::RenderPaylineOverlay(int line) {
+void MainState::RenderPaylineOverlay(int /*line*/) {
   // render a payline based on it's number on the reel
   /*
   int xoff = 50; // x offset

@@ -2,7 +2,7 @@
 #define MAIN_STATE_H
 
 #include "state.h"
-#include "sdl_ttf.h"
+#include "SDL_ttf.h"
 #include "ui_button.h"
 
 class MainState : public State {
