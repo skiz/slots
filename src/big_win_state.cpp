@@ -3,6 +3,8 @@
 #include "SDL_ttf.h"
 #include <iostream>
 
+// TODO: doesn't increment winnings visually like pay_state
+// TODO: replace numbers with bitmap images
 BigWinState BigWinState::state;
 
 void BigWinState::Init(Engine* e) {
@@ -11,7 +13,7 @@ void BigWinState::Init(Engine* e) {
   engine_->events->DisableBetting();
   event_bind_ = engine_->events->SystemSignal.connect_member(this, &BigWinState::HandleEvent);
 
-  SDL_Surface* s = engine_->assets->LoadSurface("/main/images/bigwin.png");
+  SDL_Surface* s = engine_->assets->LoadSurface("/main/images/bigwin2.png");
   big_win_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
   SDL_FreeSurface(s);
 
@@ -89,9 +91,9 @@ void BigWinState::Draw() {
   }
 
   if (dir_ == 0) {
-    size_ -= 10;
+    size_ -= 4;
   } else {
-    size_ += 10;
+    size_ += 4;
   }
 
   SDL_Rect pos;
