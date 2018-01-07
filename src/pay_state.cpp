@@ -97,6 +97,7 @@ void PayState::Draw() {
 
   DrawPaylines();
 
+  // Force exit when done
   if (amount_ == total_) {
     engine_->PopAsyncState();
   }

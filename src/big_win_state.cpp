@@ -2,6 +2,7 @@
 #include "big_win_state.h"
 #include "SDL_ttf.h"
 #include <iostream>
+#include "main_state.h"
 
 // TODO: doesn't increment winnings visually like pay_state
 // TODO: replace numbers with bitmap images
@@ -77,6 +78,10 @@ void BigWinState::Update() {
 }
 
 void BigWinState::Draw() {
+  const unsigned int credits = engine_->accounting->Credits() - total_ + amount_;
+  MainState::Instance()->UpdatePaid(amount_);
+  MainState::Instance()->UpdateCredits(credits);
+  
   int rw, rh;
   SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
 

@@ -24,7 +24,7 @@ class PayState : public State {
     }
   protected:
     int event_bind_ = -1;
-    int continues_ = 0;
+    int continues = 0;
     int inc_amount_ = 10;
     int frame_inc_ = 2;
     int frame_ = 0;

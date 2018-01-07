@@ -10,7 +10,7 @@ std::map<Symbol, int> Reel::standard_reel_weights_ = {
   {JACK,       13350},
   {QUEEN,      13250},
   {KING,       13150},
-  {ACE,        113050},
+  {ACE,       113050},
   {WILD,        3000},
   {BONUS,       5000},
   {JACKPOT,      200},
