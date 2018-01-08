@@ -6,6 +6,7 @@
 
 // TODO: doesn't increment winnings visually like pay_state
 // TODO: replace numbers with bitmap images
+// TODO: inherit pay state for standard stuff
 BigWinState BigWinState::state;
 
 void BigWinState::Init(Engine* e) {
@@ -30,6 +31,9 @@ void BigWinState::Init(Engine* e) {
 
   coin_emitter_ = new SpriteEmitter();
   coin_emitter_->Init(engine_->renderer);
+
+  texture_font_ = new TextureFont(engine_->renderer, "assets/main/fonts/cooper.ttf", 120);
+  texture_font_->SetBackground("assets/main/images/sym_bg.png");
 }
 
 void BigWinState::HandleEvent(SystemEvent e) {
@@ -124,20 +128,17 @@ void BigWinState::Draw() {
   }
 
   const char* text = std::to_string(amount_).c_str();
-  SDL_Surface* textSurface = NULL;
-  SDL_Color textColor = {255, 25, 25, 0};
+
   int txw, txh;
-  TTF_SizeText(font_, text, &txw, &txh);
-  textSurface = TTF_RenderText_Blended(font_, text, textColor);
-  counter_ = SDL_CreateTextureFromSurface(engine_->renderer, textSurface);
-  SDL_FreeSurface(textSurface);
+  TTF_Font* f = texture_font_->GetFont();
+  TTF_SizeText(f, text, &txw, &txh);
 
   SDL_Rect tpos;
   tpos.w = txw;
   tpos.h = txh;
   tpos.x = rw / 2 - tpos.w / 2;
   tpos.y = rh / 2 - tpos.h / 2 - 200;
-  SDL_RenderCopy(engine_->renderer, counter_, NULL, &tpos);
+  texture_font_->RenderText(text, tpos.x, tpos.y);
 
   ++frame_;
 }

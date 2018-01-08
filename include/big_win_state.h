@@ -5,6 +5,7 @@
 #include "SDL_ttf.h"
 #include "system_event.h"
 #include "sprite_emitter.h"
+#include "texture_font.h"
 
 class BigWinState : public State {
   public:
@@ -35,6 +36,7 @@ class BigWinState : public State {
     SDL_Texture* big_win_;
     SDL_Texture* counter_;
     SpriteEmitter* coin_emitter_;
+    TextureFont* texture_font_;
     BigWinState() {}
     bool initialized = false;
   private:
