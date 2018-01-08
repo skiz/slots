@@ -10,8 +10,8 @@ TEST(ReelTest, WeightedSet) {
   ResultCounter ctr;
 
   for (int i = 0; i < 10000; ++i) {
-    Symbol s = r.GetSymbol(&r.standardReelWeights);
-    ctr[s]++;
+    //Symbol s = r.GetSymbol(r.GetReelWeights());
+    //ctr[s]++;
   }
 
   for (auto t : ctr) {
@@ -22,19 +22,19 @@ TEST(ReelTest, WeightedSet) {
 TEST(ReelTest, GenerateSymbols) {
   Reel r;
   r.GenerateSymbols(5, 3);
-  ASSERT_EQ(r.symbols.size(), 15);
+  ASSERT_EQ(r.GetSymbols().size(), 15);
 }
 
 TEST(ReelTest, PayoutTable) {
   Reel r;
-  ASSERT_EQ(r.payoutTable[CHERRY][5], 5);
-  ASSERT_EQ(r.payoutTable[JACKPOT][5], 5000);
+  ASSERT_EQ(r.GetPayoutTable()[CHERRY][5], 5);
+  ASSERT_EQ(r.GetPayoutTable()[JACKPOT][5], 5000);
 }
 
 TEST(ReelTest, VerifyAllCherriesWin) {
   Reel r;
   for (int i = 0; i < 15; i++) {
-    r.symbols[i] = CHERRY;
+    r.SetSymbol(CHERRY, i);
   }
   r.GenerateWinningLines(20);
   ASSERT_EQ(5*20, r.GetCreditsWon());
@@ -48,161 +48,161 @@ TEST(ReelTest, VerifyAllNothing) {
 
 TEST(ReelTest, VerifyMissedJackpot) {
   Reel r;
-  r.symbols[0] = JACKPOT;
-  r.symbols[1] = JACKPOT;
-  r.symbols[2] = JACKPOT;
-  r.symbols[3] = JACKPOT;
-  r.symbols[4] = JACKPOT;
+  r.SetSymbol(JACKPOT, 0);
+  r.SetSymbol(JACKPOT, 1);
+  r.SetSymbol(JACKPOT, 2);
+  r.SetSymbol(JACKPOT, 3);
+  r.SetSymbol(JACKPOT, 4);
   r.GenerateWinningLines(1);
   ASSERT_EQ(0, r.GetCreditsWon());
 }
 
 TEST(ReelTest, VerifyJackpot) {
   Reel r;
-  r.symbols[0] = JACKPOT;
-  r.symbols[1] = JACKPOT;
-  r.symbols[2] = JACKPOT;
-  r.symbols[3] = JACKPOT;
-  r.symbols[4] = JACKPOT;
+  r.SetSymbol(JACKPOT, 0);
+  r.SetSymbol(JACKPOT, 1);
+  r.SetSymbol(JACKPOT, 2);
+  r.SetSymbol(JACKPOT, 3);
+  r.SetSymbol(JACKPOT, 4);
   r.GenerateWinningLines(2);
-  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(1, r.GetWinningLines().size());
   ASSERT_EQ(5000, r.GetCreditsWon());
 }
 
 TEST(ReelTest, WildWildCherry) {
   Reel r;
-  r.symbols[5] = WILD;
-  r.symbols[6] = WILD;
-  r.symbols[7] = CHERRY;
+  r.SetSymbol(WILD, 5);
+  r.SetSymbol(WILD, 6);
+  r.SetSymbol(CHERRY, 7);
  
   r.GenerateWinningLines(1);
-  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(1, r.GetWinningLines().size());
   ASSERT_EQ(2, r.GetCreditsWon());
 }
 
 TEST(ReelTest, ThreeTens) {
   Reel r;
-  r.symbols[5] = TEN;
-  r.symbols[6] = TEN;
-  r.symbols[7] = TEN;
+  r.SetSymbol(TEN, 5);
+  r.SetSymbol(TEN, 6);
+  r.SetSymbol(TEN, 7);
   r.GenerateWinningLines(1);
-  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(1, r.GetWinningLines().size());
   ASSERT_EQ(20, r.GetCreditsWon());
 
 }
 
 TEST(ReelTest, FourTens) {
   Reel r;
-  r.symbols[5] = TEN;
-  r.symbols[6] = TEN;
-  r.symbols[7] = TEN;
-  r.symbols[8] = TEN;
+  r.SetSymbol(TEN, 5);
+  r.SetSymbol(TEN, 6);
+  r.SetSymbol(TEN, 7);
+  r.SetSymbol(TEN, 8);
   r.GenerateWinningLines(1);
-  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(1, r.GetWinningLines().size());
   ASSERT_EQ(50, r.GetCreditsWon());
 }
 
 TEST(ReelTest, FiveTens) {
   Reel r;
-  r.symbols[5] = TEN;
-  r.symbols[6] = TEN;
-  r.symbols[7] = TEN;
-  r.symbols[8] = TEN;
-  r.symbols[9] = TEN;
+  r.SetSymbol(TEN, 5);
+  r.SetSymbol(TEN, 6);
+  r.SetSymbol(TEN, 7);
+  r.SetSymbol(TEN, 8);
+  r.SetSymbol(TEN, 9);
   r.GenerateWinningLines(1);
-  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(1, r.GetWinningLines().size());
   ASSERT_EQ(200, r.GetCreditsWon());
 }
 
 
 TEST(ReelTest, MixedBars) {
   Reel r;
-  r.symbols[0] = BAR;
-  r.symbols[1] = DOUBLE_BAR;
-  r.symbols[2] = DOUBLE_BAR;
-  r.symbols[3] = BAR;
-  r.symbols[4] = BAR;
+  r.SetSymbol(BAR, 0);
+  r.SetSymbol(DOUBLE_BAR, 1);
+  r.SetSymbol(DOUBLE_BAR, 2);
+  r.SetSymbol(BAR, 3);
+  r.SetSymbol(BAR, 4);
   r.GenerateWinningLines(2);
-  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(1, r.GetWinningLines().size());
   ASSERT_EQ(50, r.GetCreditsWon());
 }
 
 TEST(ReelTest, NotMixedBars) {
   Reel r;
-  r.symbols[1] = Symbol(2);
-  r.symbols[5] = Symbol(1);
+  r.SetSymbol(Symbol(2), 1);
+  r.SetSymbol(Symbol(1), 5);
 
   r.GenerateWinningLines(20);
-  ASSERT_EQ(0, r.winningLines.size());
+  ASSERT_EQ(0, r.GetWinningLines().size());
   ASSERT_EQ(0, r.GetCreditsWon());
 }
 
 TEST(ReelTest, WildMixedBars) {
   Reel r;
-  r.symbols[5] = WILD;
-  r.symbols[6] = BAR;
-  r.symbols[7] = DOUBLE_BAR;
+  r.SetSymbol(WILD, 5);
+  r.SetSymbol(BAR, 6);
+  r.SetSymbol(DOUBLE_BAR, 7);
 
   r.GenerateWinningLines(1);
-  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(1, r.GetWinningLines().size());
   ASSERT_EQ(5, r.GetCreditsWon());
 }
 
 TEST(ReelTest, ZeroSumBonus) {
   Reel r;
-  r.symbols[5] = BONUS;
-  r.symbols[6] = BONUS;
-  r.symbols[7] = BONUS;
+  r.SetSymbol(BONUS, 5);
+  r.SetSymbol(BONUS, 6);
+  r.SetSymbol(BONUS, 7);
   r.GenerateWinningLines(1);
-  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(1, r.GetWinningLines().size());
   ASSERT_EQ(0, r.GetCreditsWon());
 }
 
 TEST(ReelTest, NoWildBonus) {
   Reel r;
-  r.symbols[5] = BONUS;
-  r.symbols[6] = WILD;
-  r.symbols[7] = BONUS;
+  r.SetSymbol(BONUS, 5);
+  r.SetSymbol(WILD, 6);
+  r.SetSymbol(BONUS, 7);
 
   r.GenerateWinningLines(1);
-  ASSERT_EQ(0, r.winningLines.size());
+  ASSERT_EQ(0, r.GetWinningLines().size());
   ASSERT_EQ(0, r.GetCreditsWon());
 }
 
 TEST(ReelTest, NoWildFreeSpins) {
   Reel r;
-  r.symbols[5] = FREE_SPIN;
-  r.symbols[6] = WILD;
-  r.symbols[7] = FREE_SPIN;
+  r.SetSymbol(FREE_SPIN, 5);
+  r.SetSymbol(WILD, 6);
+  r.SetSymbol(FREE_SPIN, 7);
   r.GenerateWinningLines(1);
-  ASSERT_EQ(0, r.winningLines.size());
+  ASSERT_EQ(0, r.GetWinningLines().size());
   ASSERT_EQ(0, r.GetCreditsWon());
 
-  r.symbols[5] = FREE_SPIN;
-  r.symbols[6] = WILD;
-  r.symbols[7] = WILD;;
+  r.SetSymbol(FREE_SPIN, 5);
+  r.SetSymbol(WILD, 6);
+  r.SetSymbol(WILD, 7);
   r.GenerateWinningLines(1);
-  ASSERT_EQ(0, r.winningLines.size());
+  ASSERT_EQ(0, r.GetWinningLines().size());
   ASSERT_EQ(0, r.GetCreditsWon());
 
-  r.symbols[5] = WILD;
-  r.symbols[6] = WILD;
-  r.symbols[7] = FREE_SPIN;
+  r.SetSymbol(WILD, 5);
+  r.SetSymbol(WILD, 6);
+  r.SetSymbol(FREE_SPIN, 7);
   r.GenerateWinningLines(1);
-  ASSERT_EQ(0, r.winningLines.size());
+  ASSERT_EQ(0, r.GetWinningLines().size());
   ASSERT_EQ(0, r.GetCreditsWon());
 
 }
 
 TEST(ReelTest, FiveWildPaysAce) {
   Reel r;
-  r.symbols[5] = WILD;
-  r.symbols[6] = WILD;
-  r.symbols[7] = WILD;
-  r.symbols[8] = WILD;
-  r.symbols[9] = WILD;
+  r.SetSymbol(WILD, 5);
+  r.SetSymbol(WILD, 6);
+  r.SetSymbol(WILD, 7);
+  r.SetSymbol(WILD, 8);
+  r.SetSymbol(WILD, 9);
   r.GenerateWinningLines(1);
-  ASSERT_EQ(1, r.winningLines.size());
+  ASSERT_EQ(1, r.GetWinningLines().size());
   ASSERT_EQ(1000, r.GetCreditsWon());
 
 }
