@@ -19,6 +19,7 @@ void PayState::Init(Engine* e) {
   reel_ = engine_->accounting->GetReel();
   //num_wins_ = reel_->GetWinningPaylinePositions().size();
   engine_->audio->PlayMusic("assets/main/sound/winner2.ogg");
+  engine_->audio->PlaySound("assets/main/sound/short_win.ogg", 2);
 
   /*
   SDL_Surface* ss = engine_->assets->LoadSurface("/reels/blank.png");

@@ -21,7 +21,7 @@ class SpriteEmitter {
     SpriteFactory* sprite_factory_;
     SDL_Renderer* renderer_;  // not owned
     int next_particle_ = 0;
-    unsigned long max_particles_ = 150l;
+    unsigned long max_particles_ = 50l;
 };
 
 #endif

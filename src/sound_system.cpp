@@ -68,6 +68,10 @@ void SoundSystem::PlaySound(std::string sound_path, int channel) {
   }
 }
 
+void SoundSystem::StopSound(int channel) {
+  Mix_HaltChannel(channel);
+}
+
 Mix_Music* SoundSystem::LoadMusic(std::string& music_path) {
   Mix_Music* music;
   if (music_.count(music_path) > 0) {

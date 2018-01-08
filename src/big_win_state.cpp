@@ -28,6 +28,7 @@ void BigWinState::Init(Engine* e) {
   font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 120);
 
   engine_->audio->PlayMusic("assets/main/sound/winner2.ogg");
+  engine_->audio->PlaySound("assets/main/sound/smooth_win.ogg", 2);
 
   coin_emitter_ = new SpriteEmitter();
   coin_emitter_->Init(engine_->renderer);
@@ -63,6 +64,7 @@ void BigWinState::HandleEvent(SystemEvent e) {
 }
 
 void BigWinState::Cleanup() {
+  engine_->audio->StopSound();
   coin_emitter_->Cleanup();
   engine_->events->SystemSignal.disconnect(event_bind_);
   engine_->events->EnableBetting();
