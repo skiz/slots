@@ -35,10 +35,10 @@ class PayState : public State {
     Reel *reel_; // not owned
     Engine *engine_; // not owned
     static PayState state;
-    //SDL_Texture* blank_;
-    //std::vector<int> winning_paylines_; // winning paylines
-    //int num_wins_ = 0;          // number of winning paylines
-    //int payline_index_ = 0;     // payline we are currently showing
+    SDL_Texture* blank_;
+    std::vector<int> winning_paylines_; // winning paylines
+    int num_wins_ = 0;          // number of winning paylines
+    int payline_index_ = 0;     // payline we are currently showing
 };
 
 #endif

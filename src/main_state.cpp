@@ -101,7 +101,7 @@ void MainState::StopNext() {
       SDL_RemoveTimer(stop_timer_[i]);
       engine_->audio->PlaySound("assets/main/sound/spin.wav");
       if (i==4) {
-	engine_->events->SystemSignal.emit(REELS_STOPPED);
+        engine_->events->SystemSignal.emit(REELS_STOPPED);
       }
       return;
     }

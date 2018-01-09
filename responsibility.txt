@@ -1,0 +1,125 @@
+Responsibilities
+----------------
+
+A quick overview of class responsibilities and TODO to clean them up.
+
+TODO: Everything is assumed to leak like a seive. Comb through destructors.
+
+
+Main
+  - Just enough code to parse flags and start the game engine
+
+Engine
+  - Graphic initialiation
+  - Controls states
+  - Subsytem init and access (rendering, sound, accounting, events, etc)
+  - TODO: make FPSTimer it's own class, and be able to render FPS directly
+  - TODO: move state management out of engine. make it it's own class.
+  - TODO: rethink using this type of state system, it's not well suited.
+  - TODO: don't support event handling, use slots/signals instead (ie: QUIT)
+
+Accounting
+  - All monetary transactions and accounting
+  - TODO: add logging of transactions and game results, payouts, stats.
+  - Triggers updating of reels
+  - Handles text updated
+  - Triggers Alternate state changes
+  - Handles betting events
+  - signals for updating credits/paid/bets/lines/totals
+  - TODO: Obviously it has become the God object of antipatterns, refactor it out.
+  	- Wallet (plus failsafe)
+	- Ledger (write to disk/remote logging)
+	- Paid/Bet/Lines should be extracted to... Wager class?
+	- All events should be encapsulated in event manager.
+	- Actually accounting is doing everything _but_ accounting now.
+
+Reel
+  - Contains all possible reel symbols
+  - Provides winning positions/paylines
+  - Generates results of spins
+  - Generates paylines
+  - Allows setting of a symbol directly (for testing)
+  - Uses the RNG to generate results
+  - has defined weighted odds for resulting symbols based on RNG
+  - has payout table (TODO: move to it's own class and support config)
+  - Defines compatible symbols (ie BAR, DOUBLE_BAR)
+  - Defines possible payline combinations for lines played (TODO: Move out)
+  - Calculates winning lines from resulting symbols
+  - TODO: Make Reel extensible and configurable
+  - TODO: Support config file setting of payouts per reel
+  - TODO: Allow creating configurable reels.
+  - TODO: Again doing way too much.
+  	- Break out a superclass of a Reel
+	- Break out symbol enum to Symbols
+	- Break out payline combinations - Paylines
+	- Break out pay table - Paytable
+	- Break out symbol weights to be configurable
+	- Break out initiate/complete/stop spin to event manager
+	- Triggering events is the other 80%
+	- Responsible for dealing with state changes (BAD)
+
+EventManager
+  - Global SDL input mapping to system events (ie key 1 = 100_BILL)
+  - Triggers system events based on event mapping
+  - TODO: has notion of betting events which is of no concern.
+  - TODO: add configurable input mapping
+  - TODO: support additional system events and system states (TILT, DOOR_OPEN, COIN_BOX_OPEN)
+  - TODO: Separate user signals from system signals
+  - TODO: Log system events
+  - Should only deal with user input events (move user specific stuff to UserEvents)
+
+SoundSystem
+  - Loading and playing of sounds and music
+  - TODO: incorporate asset manager 
+
+AssetManager
+  - Loading and caching of assets (sounds, images, fonts)
+  - Accessing assets 
+  - Supports asset packages (zipfiles)
+
+Particle
+  - Individual particle for particle system
+
+Sprite
+  - Provides animated textures with frame increments
+  - TODO: add keyframes via config
+
+SpriteEmitter
+  - particle emitter that emits sprites
+
+SpriteFactory
+  - Loads and caches sprite images with white alpha key color
+  - TODO: move asset loading to asset manager
+
+SpriteNumbers
+  - TODO: Remove in favor of TextureFont
+
+Signal
+  - Signal/slot system 
+  - TODO: Refactor all usage between subsystems
+
+TextureFont
+  - bitmapped textured fonts generated from TTF
+
+Timer
+  - Generic timer utility
+
+UIButton
+  - Generates UI buttons for touchscreen support
+
+TODO:
+
+Configuration
+  - background image
+  - reel images
+  - event sounds/music
+  - state sounds/music
+  - Add support for reading configuration from asset package
+
+Enumerated Sounds (Add support) (ie: BIG_WIN_SOUND, PAY_SLOW, PAY_FAST)
+
+
+Logger
+  - 
+
+

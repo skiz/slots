@@ -204,7 +204,7 @@ void Reel::GenerateWinningLines(int maxLines) {
           winning_lines_[line.first] = line_payout_; // Add the winning line to the result
           winning_symbols_[line.first] = syms;
           payout_ += line_payout_;
-          DumpLines();
+          //DumpLines();
         }
         break;
       }
@@ -246,6 +246,7 @@ std::map<int, std::vector<int>> Reel::GetWinningPaylinePositions() {
 }
 
 std::vector<int> Reel::GetWinningPositionsForPayline(int payline) {
+  // TODO: Fix crash here.
   return winning_symbols_.at(payline);
 }
 
@@ -255,4 +256,16 @@ std::vector<int> Reel::GetWinningLines() {
     v.push_back(it->first);
   }
   return v;
+}
+
+std::map<Symbol, int> Reel::GetReelWeights() {
+  return standard_reel_weights_;
+}
+
+std::map<Symbol, std::map<int, int>> Reel::GetPayoutTable() {
+  return payout_table_;
+}
+
+void Reel::SetSymbol(Symbol sym, int pos) {
+  symbols_[pos] = sym;
 }
