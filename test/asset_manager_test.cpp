@@ -39,7 +39,9 @@ TEST_F(AssetManagerTest, LoadSurface_InvalidImage) {
 }
 
 TEST_F(AssetManagerTest, LoadSurface_ValidFile) {
-  ASSERT_NE(nullptr, a_->LoadSurface("bar.png"));
+  SDL_Surface* s = a_->LoadSurface("bar.png");
+  ASSERT_NE(nullptr, s);
+  a_->FreeSurface(s);
 }
 
 TEST_F(AssetManagerTest, LoadTexture_InvalidFile) {
@@ -50,5 +52,19 @@ TEST_F(AssetManagerTest, LoadTexture_InvalidFile) {
 TEST_F(AssetManagerTest, LoadTexture_ValidFile) {
   SDL_Texture* t = a_->LoadTexture("bar.png", renderer_);
   ASSERT_NE(nullptr, t);
+}
+
+TEST_F(AssetManagerTest, LoadSurface_NotCached) {
+  SDL_Surface* s1 = a_->LoadSurface("bar.png");
+  SDL_Surface* s2 = a_->LoadSurface("bar.png");
+  ASSERT_NE(s1, s2) << "Expected same surface pointer";
+  a_->FreeSurface(s1);
+  a_->FreeSurface(s2);
+}
+
+TEST_F(AssetManagerTest, LoadTexture_Cached) {
+  SDL_Texture* t1 = a_->LoadTexture("bar.png", renderer_);
+  SDL_Texture* t2 = a_->LoadTexture("bar.png", renderer_);
+  ASSERT_EQ(t1, t2) << "Expected same texture pointer";
 }
 

@@ -43,13 +43,21 @@ SDL_Surface* AssetManager::LoadSurface(const char* filename) {
   return s;
 }
 
+void AssetManager::FreeSurface(SDL_Surface* s) {
+  SDL_FreeSurface(s);
+}
+
 SDL_Texture* AssetManager::LoadTexture(const char* filename, SDL_Renderer* r) {
+  if (texture_cache_.count(filename) > 0) {
+    return texture_cache_.at(filename);
+  }
   SDL_Surface* s = LoadSurface(filename);
   if (s == nullptr) {
     return nullptr;
   }
   SDL_Texture* t = SDL_CreateTextureFromSurface(r, s);
   SDL_FreeSurface(s);
+  texture_cache_[filename] = t;
   return t;
 }
 
