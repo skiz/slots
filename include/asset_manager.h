@@ -2,6 +2,7 @@
 #define ASSET_MANAGER_H
 
 #include "SDL_image.h"
+#include <iostream>
 
 /**
  * Handles loading and caching of assets from the filesystem
@@ -16,9 +17,7 @@ class AssetManager {
       return instance;
     };
     ~AssetManager();
-    
     bool Mount(const char* src, const char* dest);
-    const char* GetLastError();
     SDL_Surface* LoadSurface(const char* filename);
     SDL_Texture* LoadTexture(const char* filename, SDL_Renderer* r);
     
@@ -26,6 +25,7 @@ class AssetManager {
     void operator=(AssetManager const&) = delete;
 
   private:
+    const char* GetLastError();
     AssetManager();
     static AssetManager* instance;
 };
