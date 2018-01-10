@@ -4,13 +4,13 @@
 
 std::map<Symbol, int> Reel::standard_reel_weights_ = {
   {CHERRY,     10000},
-  {BAR,        13650},
+  {BAR,        23650},
   {DOUBLE_BAR, 13550},
   {TEN,        13450},
   {JACK,       13350},
   {QUEEN,      13250},
   {KING,       13150},
-  {ACE,       113050},
+  {ACE,        13050},
   {WILD,        3000},
   {BONUS,       5000},
   {JACKPOT,      200},
@@ -204,7 +204,7 @@ void Reel::GenerateWinningLines(int maxLines) {
           winning_lines_[line.first] = line_payout_; // Add the winning line to the result
           winning_symbols_[line.first] = syms;
           payout_ += line_payout_;
-          //DumpLines();
+          DumpLines();
         }
         break;
       }
@@ -216,17 +216,18 @@ void Reel::DumpLines() {
   std::cout << "Winning Lines: " << winning_lines_.size() << std::endl;
   for (auto w : winning_lines_) {
     std::cout << "Payline " << w.first << ": " << w.second << " Credits"<< std::endl;
-    std::cout << "Symbols: ";
+    std::cout << "Winning Symbol Positions: ";
     for (auto s : winning_symbols_[w.first]) {
       std::cout << s << " ";
     }
     std::cout << std::endl;
 
   }
-  std::cout << "Total Payout: " << GetCreditsWon() << std::endl;;
+  std::cout << "Payout (without bet multiplier): " << GetCreditsWon() << std::endl;;
   std::cout << symbols_[0] << "\t" << symbols_[1] << "\t" << symbols_[2] << "\t" << symbols_[3] << "\t" << symbols_[4] << std::endl;
   std::cout << symbols_[5] << "\t" << symbols_[6] << "\t" << symbols_[7] << "\t" << symbols_[8] << "\t" << symbols_[9] << std::endl;
   std::cout << symbols_[10] << "\t" << symbols_[11] << "\t" << symbols_[12] << "\t" << symbols_[13] << "\t" << symbols_[14] << std::endl;
+  std::cout << std::endl << "---------------------" << std::endl;
 }
 
 int Reel::GetCreditsWon() {
@@ -246,7 +247,6 @@ std::map<int, std::vector<int>> Reel::GetWinningPaylinePositions() {
 }
 
 std::vector<int> Reel::GetWinningPositionsForPayline(int payline) {
-  // TODO: Fix crash here.
   return winning_symbols_.at(payline);
 }
 

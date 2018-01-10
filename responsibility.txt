@@ -76,6 +76,7 @@ AssetManager
   - Loading and caching of assets (sounds, images, fonts)
   - Accessing assets 
   - Supports asset packages (zipfiles)
+  - DONE: All file loading is done through AssetManager
 
 Particle
   - Individual particle for particle system
