@@ -65,8 +65,8 @@ void PayState::Init(Engine* e) {
   inc_amount_ = 1;
   reel_ = engine_->accounting->GetReel();
   num_wins_ = reel_->GetWinningPaylinePositions().size();
-  engine_->audio->PlayMusic("assets/main/sound/winner2.ogg");
-  engine_->audio->PlaySound("assets/main/sound/short_win.ogg", 2);
+  engine_->audio->PlayMusic("/main/sound/winner2.ogg");
+  engine_->audio->PlaySound("/main/sound/short_win.ogg", 2);
 
   SDL_Surface* ss = engine_->assets->LoadSurface("/reels/blank.png");
   blank_ = SDL_CreateTextureFromSurface(engine_->renderer, ss);
@@ -80,7 +80,7 @@ void PayState::HandleEvent(SystemEvent e) {
     case CONTINUE:
       continues_++; 
       if (continues_ == 1 && amount_ != total_) {
-        engine_->audio->PlayMusic("assets/main/sound/winner3.ogg");
+        engine_->audio->PlayMusic("/main/sound/winner3.ogg");
         inc_amount_ = 10;
       } else if (amount_ < total_) {
         amount_ = total_;

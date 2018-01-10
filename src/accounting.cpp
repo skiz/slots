@@ -71,10 +71,10 @@ void Accounting::MoneyInserted(unsigned int amount) {
 
   // TODO: this should be a signal for money inserted with amount
   if (amount > COIN_AMOUNT) {
-    engine_->audio->PlaySound("assets/main/sound/chime2.ogg");
+    engine_->audio->PlaySound("/main/sound/chime2.ogg");
     sprintf(txtbuf, "Bill Accepted $%2.2f", famt);
   } else {
-    engine_->audio->PlaySound("assets/main/sound/coin.wav");
+    engine_->audio->PlaySound("/main/sound/coin.wav");
     sprintf(txtbuf, "Coin Accepted $%2.2f", famt);
   }
 

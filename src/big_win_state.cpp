@@ -25,14 +25,15 @@ void BigWinState::Init(Engine* e) {
   exiting_ = false;
   inc_amount_ = 10;
 
-  font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 120);
+  font_ = engine_->assets->LoadFont("/main/fonts/sans.ttf", 120);
 
-  engine_->audio->PlayMusic("assets/main/sound/winner2.ogg");
-  engine_->audio->PlaySound("assets/main/sound/smooth_win.ogg", 2);
+  engine_->audio->PlayMusic("/main/sound/winner2.ogg");
+  engine_->audio->PlaySound("/main/sound/smooth_win.ogg", 2);
 
   coin_emitter_ = new SpriteEmitter();
   coin_emitter_->Init(engine_->renderer);
 
+  // TODO: use asset manager
   texture_font_ = new TextureFont(engine_->renderer, "assets/main/fonts/cooper.ttf", 120);
   texture_font_->SetBackground("assets/main/images/sym_bg.png");
 }
@@ -43,7 +44,7 @@ void BigWinState::HandleEvent(SystemEvent e) {
       continues_++; 
       if (continues_ == 1 && amount_ != total_) {
         // speed up counting
-        engine_->audio->PlayMusic("assets/main/sound/winner3.ogg");
+        engine_->audio->PlayMusic("/main/sound/winner3.ogg");
         inc_amount_ = 500;
       } else if (continues_ == 2 && amount_ < total_) {
         // jump to last count

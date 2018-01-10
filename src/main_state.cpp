@@ -50,8 +50,8 @@ void MainState::Init(Engine* e) {
 }
 
 void MainState::Cleanup() {
-  TTF_CloseFont(credit_font_);
-  TTF_CloseFont(font_);
+  //TTF_CloseFont(credit_font_);
+  //TTF_CloseFont(font_);
 
   for (auto s : signal_bindings_) {
     engine_->events->SystemSignal.disconnect(s);
@@ -68,8 +68,8 @@ void MainState::HandleEvent(SystemEvent e) {
 }
 
 void MainState::SpinStarted() {
-  engine_->audio->PlaySound("assets/main/sound/spin.wav");
-  engine_->audio->PlayMusic("assets/main/sound/reels.wav");
+  engine_->audio->PlaySound("/main/sound/spin.wav");
+  engine_->audio->PlayMusic("/main/sound/reels.wav");
   engine_->audio->ResumeMusic();
   for (int i = 0; i < 5; i++) {
     spinning_[i] = true;
@@ -99,7 +99,7 @@ void MainState::StopNext() {
     if (spinning_[i]) {
       spinning_[i] = false;
       SDL_RemoveTimer(stop_timer_[i]);
-      engine_->audio->PlaySound("assets/main/sound/spin.wav");
+      engine_->audio->PlaySound("/main/sound/spin.wav");
       if (i==4) {
         engine_->events->SystemSignal.emit(REELS_STOPPED);
       }
@@ -123,9 +123,9 @@ void MainState::LoadAssets() {
   gray_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
   SDL_FreeSurface(s);
 
-  font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 40);
-  credit_font_ = TTF_OpenFont("assets/main/fonts/digital.ttf", 65);
-
+  font_ = engine_->assets->LoadFont("/main/fonts/sans.ttf", 40);
+  credit_font_ = engine_->assets->LoadFont("/main/fonts/digital.ttf", 65);
+  button_font_ = engine_->assets->LoadFont("/main/fonts/sans.ttf", 20);
   LoadReelSymbols();
 
   SetupButtons();
@@ -178,7 +178,6 @@ void MainState::LoadSymbol(Symbol type, const char* filename) {
 
 
 void MainState::SetupButtons() {
-  button_font_ = TTF_OpenFont("assets/main/fonts/sans.ttf", 20);
   button_font_color_ = {0,0,0,0}; //255, 255, 255, 0};
 
   int by = 810;
