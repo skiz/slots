@@ -1,4 +1,5 @@
 #include "sound_system.h"
+#include "asset_manager.h"
 #include <string>
 #include <iostream>
 #include <SDL.h>
@@ -12,6 +13,7 @@ SoundSystem::SoundSystem() {
   if (!Init()) {
     std::cerr << "Unable to initialize sound system." << std::endl;
   }
+  assets_ = &AssetManager::GetInstance();
 }
 
 SoundSystem::~SoundSystem() {
@@ -47,6 +49,8 @@ bool SoundSystem::Init() {
 }
 
 Mix_Chunk* SoundSystem::LoadSound(std::string& sound_path) {
+  return assets_->LoadSound(sound_path.c_str());
+  /*
   Mix_Chunk* snd;
   if (sounds_.count(sound_path) > 0){
     snd = sounds_[sound_path];
@@ -59,6 +63,7 @@ Mix_Chunk* SoundSystem::LoadSound(std::string& sound_path) {
     sounds_[sound_path] = snd;
   }
   return snd;
+  */
 }
 
 void SoundSystem::PlaySound(std::string sound_path, int channel) {
@@ -73,6 +78,8 @@ void SoundSystem::StopSound(int channel) {
 }
 
 Mix_Music* SoundSystem::LoadMusic(std::string& music_path) {
+  return assets_->LoadMusic(music_path.c_str());
+  /*
   Mix_Music* music;
   if (music_.count(music_path) > 0) {
     music = music_[music_path];
@@ -85,6 +92,7 @@ Mix_Music* SoundSystem::LoadMusic(std::string& music_path) {
     music_[music_path] = music;
   }
   return music;
+  */
 }
 
 void SoundSystem::PlayMusic(std::string music_path) {

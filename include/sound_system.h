@@ -1,6 +1,7 @@
 #ifndef SOUND_SYSTEM_H
 #define SOUND_SYSTEM_H
 
+#include "asset_manager.h"
 #include <unordered_map>
 #include <string>
 #include <SDL.h>
@@ -21,6 +22,7 @@ class SoundSystem {
   Mix_Chunk* LoadSound(std::string& sound_path);
   std::unordered_map<std::string, Mix_Chunk*> sounds_;
   std::unordered_map<std::string, Mix_Music*> music_;
+  AssetManager* assets_;
 };
 
 #endif
