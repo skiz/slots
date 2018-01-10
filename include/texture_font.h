@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <unordered_map>
+#include "asset_manager.h"
 
 /*
  * Simple TTF based rendering support for bitmapped texture fonts.
@@ -30,6 +31,7 @@ class TextureFont {
     void PutPixel32(SDL_Surface* surface, int x, int y, Uint32 pixel);
     SDL_Texture* GenerateSymbol(const char& sym);
     void RenderSymbol(const char& sym, int x, int y);
+    AssetManager* assets_;
     SDL_Renderer* renderer_;
     SDL_Surface* bg_surface_;
     TTF_Font *font_;

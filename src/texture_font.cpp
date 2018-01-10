@@ -7,7 +7,9 @@
 
 TextureFont::TextureFont(SDL_Renderer* renderer, const char* font_path, int font_size)
   : renderer_(renderer) {
-    font_ = TTF_OpenFont(font_path, font_size);
+    assets_ = &AssetManager::GetInstance();
+    
+    font_ = assets_->LoadFont(font_path, font_size);
     if (font_ == NULL) {
       std::cout << SDL_GetError() << std::endl;
       exit(1);
@@ -15,8 +17,7 @@ TextureFont::TextureFont(SDL_Renderer* renderer, const char* font_path, int font
   }
 
 TextureFont::~TextureFont() {
-  TTF_CloseFont(font_);
-  SDL_FreeSurface(bg_surface_);
+  assets_->FreeSurface(bg_surface_);
 
   for (auto s : symbol_cache_) {
     SDL_DestroyTexture(s.second);
@@ -24,7 +25,7 @@ TextureFont::~TextureFont() {
 }
 
 void TextureFont::SetBackground(const char* bg_path) {
-  bg_surface_ = IMG_Load(bg_path);
+  bg_surface_ = assets_->LoadSurface(bg_path);
 }
 
 TTF_Font* TextureFont::GetFont() {

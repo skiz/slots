@@ -33,9 +33,8 @@ void BigWinState::Init(Engine* e) {
   coin_emitter_ = new SpriteEmitter();
   coin_emitter_->Init(engine_->renderer);
 
-  // TODO: use asset manager
-  texture_font_ = new TextureFont(engine_->renderer, "assets/main/fonts/cooper.ttf", 120);
-  texture_font_->SetBackground("assets/main/images/sym_bg.png");
+  texture_font_ = new TextureFont(engine_->renderer, "/main/fonts/cooper.ttf", 120);
+  texture_font_->SetBackground("/main/images/sym_bg.png");
 }
 
 void BigWinState::HandleEvent(SystemEvent e) {

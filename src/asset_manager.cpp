@@ -44,7 +44,7 @@ SDL_Texture* AssetManager::LoadTexture(std::string filename, SDL_Renderer* r) {
     return nullptr;
   }
   SDL_Texture* t = SDL_CreateTextureFromSurface(r, s);
-  SDL_FreeSurface(s);
+  FreeSurface(s);
   texture_cache_[filename] = t;
   return t;
 }
