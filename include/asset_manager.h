@@ -11,7 +11,8 @@
  * Handles loading and caching of assets from the filesystem.
  *
  * Surfaces are not cached, and must be deleted manually.
- * Textures are cached, and AssetManager retains ownership.
+ * Textures, Music, and Sounds are cached, and AssetManager retains ownership.
+ *
  *
  */
 class AssetManager {

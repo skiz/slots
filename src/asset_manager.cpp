@@ -1,7 +1,6 @@
 #include "asset_manager.h"
 #include <physfs.h>
 #include <iostream>
-#include <sstream>
 #include <SDL_mixer.h>
 
 AssetManager::AssetManager() {
