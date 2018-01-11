@@ -5,6 +5,7 @@
 #include "engine.h"
 #include "signal.h"
 #include "ledger_record.h"
+#include "spin_record.h"
 
 void Accounting::Init(Engine* e) {
   engine_ = e;
@@ -113,7 +114,10 @@ void Accounting::InitiateSpin() {
   reel_.GenerateWinningLines(lines_);
 
   // TODO Spin Record
-  //  SpinRecord::Create(SPIN_RECORD_MAIN, Bet(), Lines(), Total()
+  SpinRecord::Create(SPIN_RECORD_MAIN, reel_.GetSymbols(),
+      Bet(), Lines(), Total(), reel_.GetCreditsWon(),
+      reel_.GetCreditsWon() * CENTS_PER_CREDIT,
+      bet_ * lines_ * CENTS_PER_CREDIT);
 
   BetUpdate.emit(Bet());
   LinesUpdate.emit(Lines());
