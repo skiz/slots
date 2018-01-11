@@ -51,7 +51,7 @@ class Reel {
     static std::map<Symbol, std::map<int, int>> payout_table_;
     static std::map<Symbol, std::map<Symbol, Symbol>> compatible_symbols_;
     static std::map<int, std::array<int,5>> paylines_; // symbol[count] = win
-    std::map<int, Symbol> symbols_; // keyed by reel position
+    std::map<int, Symbol> symbols_; // keyed by reel position (could be a vector...)
     std::map<int, int> winning_lines_; // payline -> payout
     std::map<int, std::vector<int>> winning_symbols_; // line -> [positions]
     int payout_;

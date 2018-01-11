@@ -112,6 +112,9 @@ void Accounting::InitiateSpin() {
   reel_.GenerateSymbols(5, 3);
   reel_.GenerateWinningLines(lines_);
 
+  // TODO Spin Record
+  //  SpinRecord::Create(SPIN_RECORD_MAIN, Bet(), Lines(), Total()
+
   BetUpdate.emit(Bet());
   LinesUpdate.emit(Lines());
   CreditUpdate.emit(Credits());
