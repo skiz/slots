@@ -4,6 +4,7 @@
 #include "system_event.h"
 #include "engine.h"
 #include "signal.h"
+#include "ledger_record.h"
 
 void Accounting::Init(Engine* e) {
   engine_ = e;
@@ -29,9 +30,11 @@ void Accounting::HandleEvent(SystemEvent e) {
       BetMax();
       break;
     case COIN_IN:
+      LedgerRecord::Create(COIN_INSERTED, COIN_AMOUNT);
       MoneyInserted(COIN_AMOUNT);
       break;
     case BILL_IN:
+      LedgerRecord::Create(BILL_INSERTED, BILL_AMOUNT);
       MoneyInserted(BILL_AMOUNT);
       break;
     case BET_UP:
