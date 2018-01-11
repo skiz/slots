@@ -8,15 +8,14 @@
 #include "engine.h"
 #include "engine.h"
 #include "state.h"
-#include "timer.h"
 
 static const char* WINDOW_TITLE = "Slot Machine";
 static const bool FULLSCREEN = true;
 static const bool USE_OPENGL = true;
-static const bool SHOW_FPS = false;
 static const int WINDOW_WIDTH = 1440;
 static const int WINDOW_HEIGHT = 900;
 
+// TODO: Extract InitializeSubsystems() method
 void Engine::Init(int argc, char** argv) {
   (void)argc;
   (void)argv;
@@ -89,7 +88,6 @@ void Engine::Cleanup() {
     states_.pop_back();
   }
 
-  //assets->Cleanup();
   events->Cleanup();
   accounting->Cleanup();
 
@@ -159,11 +157,13 @@ void Engine::Update() {
     }
   }
 
+  /*
   if (SHOW_FPS) {
     if (frameCount_ % 1000 == 0) {
       std::cout << "FPS:" << fps_ << std::endl;
     }
   }
+  */
 }
 
 void Engine::Draw() {
@@ -174,19 +174,11 @@ void Engine::Draw() {
     }
     SDL_RenderPresent(renderer);
   }
-  ++frameCount_;
+  //++frameCount_;
 }
 
 bool Engine::Running() {
   return running_;
-}
-
-void Engine::StartFPSTimer() {
-  fpsTimer_.Start();
-}
-
-void Engine::UpdateFPS() {
-  fps_ = frameCount_ / (fpsTimer_.GetTicks() / 1000.f);
 }
 
 void Engine::Quit() {

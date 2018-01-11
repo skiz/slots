@@ -28,10 +28,8 @@ class Engine {
     void Update();
     void Draw();
     void Quit();
-    void StartFPSTimer();
-    void UpdateFPS();
-    bool Running();
     void HandleEvent(SystemEvent);
+    bool Running();
     
     SDL_Window* window;
     SDL_Renderer* renderer;
@@ -41,9 +39,6 @@ class Engine {
     EventManager* events;
     Accounting* accounting;
   private:
-    Timer fpsTimer_;
-    float fps_ = 0.0;
-    int frameCount_;
     std::vector<State*> states_;
     std::vector<State*> astates_;
     bool running_;

@@ -10,7 +10,7 @@ Main
   - Just enough code to parse flags and start the game engine
 
 Engine
-  - Graphic initialiation
+  - Graphic initialisation
   - Controls states
   - Subsytem init and access (rendering, sound, accounting, events, etc)
   - TODO: make FPSTimer it's own class, and be able to render FPS directly
