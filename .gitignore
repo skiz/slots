@@ -3,3 +3,4 @@ tbuild/*
 bin/slots
 bin/test
 tags
+build/SQLiteCpp/*.o
