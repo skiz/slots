@@ -34,7 +34,36 @@ Hopeful Features
 * Drop or rotate(spin) wheels
 * Close Call Spins (slow reels)
 
-RNG are selected when spin is hit (1 per reel)
+Bonus Games
+-----------
+* Locking Wilds (wild are locked in place for N games)
+* Scattered Free Spins (touch one for the number of spin swon) on max bet. 
+
+Locking wilds game:
+***>>> Get 3+ "Free Spins" from left to right.
+Need to Use a different hit sound when possible bonus/jackpot/free games may hit.
+Hit 3+ -> Bell sound, pause for second to see screen, then state change with 
+animation to show screen with "Congratulations you won X free spins".  
+"Press to start" over main reels.
+
+Screen Shows "FREE GAMES IN PLAY"
+and "GAMES REMAINING".  Keeps a tracker for "BONUS WIN" (amount won in bonus).
+Continues to show locked wilds for duration of game, skips big win states, but
+plays it's own coin emitter when won.  Automatically continues to spin is not
+initiated and free games are still left.
+After last win, plays animation transtion and show screen "Congratulations You Won X Credits"
+Credits animate in fast speed and waits for press (or timeout).
+Transitions back to main game, and animates win for last spin.
+
+
+
+
+
+
+
+
+
+
 
 
 Notes

@@ -4,11 +4,11 @@
 #include "system_event.h"
 #include "signal.h"
 #include "reel.h"
-
+#include <SQLiteCpp/SQLiteCpp.h>
 
 class Engine;
 
-const unsigned int COIN_AMOUNT = 25;
+const unsigned int COIN_AMOUNT = 100;
 const unsigned int BILL_AMOUNT = 10000;
 const unsigned int CENTS_PER_CREDIT = 5;
 const unsigned int BIG_WIN = 1000;
@@ -20,6 +20,7 @@ const unsigned int BIG_WIN = 1000;
 class Accounting {
   public:
     void Init(Engine* e);
+    void InitWithoutEngine(SQLite::Database* db);
     void Cleanup();
     void HandleEvent(SystemEvent e);
     void MoneyInserted(unsigned int amount);
@@ -77,6 +78,8 @@ class Accounting {
     //unsigned long credits_lost_   = 0;
     //unsigned long games_played_   = 0;
     // TODO: Add play log in a signed, reloadable format
+    //
+    SQLite::Database* db_;
 };
 
 #endif

@@ -4,18 +4,12 @@
 #include <iostream>
 #include <map>
 
-bool SpinRecord::Create(SpinRecordType type, std::map<int, Symbol> symbols, unsigned int bet_credits,
-    unsigned int bet_lines, unsigned int total_bet_credits, unsigned int won_credits,
-    unsigned int won_cents, unsigned int bet_cents) {
+bool SpinRecord::Create(SQLite::Database* db, SpinRecordType type,
+    std::map<int, Symbol> symbols, unsigned int bet_credits,
+    unsigned int bet_lines, unsigned int total_bet_credits,
+    unsigned int won_credits, unsigned int won_cents, unsigned int bet_cents) {
   try {
-    SQLite::Database db("/tmp/slots.db", SQLite::OPEN_READWRITE);
-  } catch (std::exception& e) {
-    Reset();
-  }
-
-  try {
-    SQLite::Database db("/tmp/slots.db", SQLite::OPEN_READWRITE);
-    SQLite::Statement query(db,
+    SQLite::Statement query(*db,
         "INSERT INTO spins (type, bet_credits, bet_lines, total_bet_credits, "
         "won_credits, won_cents, bet_cents, s0, s1, s2, s3, s4, s5, s6, "
         "s7, s8, s9, s10, s11, s12, s13, s14) VALUES (?, ?, ?, ?, ?, ?, ?, "
@@ -38,11 +32,10 @@ bool SpinRecord::Create(SpinRecordType type, std::map<int, Symbol> symbols, unsi
   return true;
 }
 
-bool SpinRecord::Reset() {
+bool SpinRecord::Reset(SQLite::Database* db) {
   try {
-    SQLite::Database db("/tmp/slots.db", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
-    db.exec("DROP TABLE IF EXISTS spins");
-    db.exec("CREATE TABLE spins "
+    db->exec("DROP TABLE IF EXISTS spins");
+    db->exec("CREATE TABLE spins "
         "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
         "type INTEGER, "
         "bet_credits UNSIGNED INTEGER, "
@@ -74,11 +67,10 @@ bool SpinRecord::Reset() {
   return true;
 }
 
-std::vector<SpinRecord> SpinRecord::List(int limit, int offset) {
+std::vector<SpinRecord> SpinRecord::List(SQLite::Database* db, int limit, int offset) {
   std::vector<SpinRecord> res;
   try {
-    SQLite::Database db("/tmp/slots.db", SQLite::OPEN_READWRITE);
-    SQLite::Statement query(db,
+    SQLite::Statement query(*db,
         "SELECT id, type, bet_credits, bet_lines, total_bet_credits, "
         "won_credits, won_cents, bet_cents, s0, s1, s2, s3, s4, s5, s6, "
         "s7, s8, s9, s10, s11, s12, s13, s14 FROM spins "

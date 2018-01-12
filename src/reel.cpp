@@ -2,22 +2,47 @@
 #include <iostream>
 #include <algorithm>
 
+/*
+// NEW FEATURES - STAY TUNED!
+enum SpinTypes {
+  STANDARD_SPIN,    // Main game spin
+  SLOW_STOP_SPIN,   // Slow down slowly - Possible Big win
+  FAST_SPIN,        // Overdrive - Possible Bonus (highlight bonus) fast spin & longer wait.
+  JACKPOT_SPIN,     // Flashing - Possible Jackpot (highlight jackpot)
+  BONUS_SPIN_WAIT,  // 
+  LOCKING_WILDS     // Wilds are locked and flashing.
+};
+
+enum ForcedResult {
+  STANDARD_GAME,      // Standard game
+  BONUS_GAME_1,       // Some kind of touch game
+  BONUS_GAME_2,       // Another touch game (3 matches)
+  FREE_SPINS_GAME,    // Free spins for X turns at current bet
+  LOCKING_WILDS_GAME, // Another 
+};
+
+std::map< > Reel::spin_type_weights_ = {
+  NEAR_MISS_
+  SLOW_SPIN_
+}
+*/
+
 std::map<Symbol, int> Reel::standard_reel_weights_ = {
-  {CHERRY,     10000},
-  {BAR,        23650},
+  {CHERRY,     13000},
+  {BAR,        13650},
   {DOUBLE_BAR, 13550},
   {TEN,        13450},
   {JACK,       13350},
   {QUEEN,      13250},
   {KING,       13150},
-  {ACE,        13050},
-  {WILD,        3000},
-  {BONUS,       5000},
+  {ACE,        10050},
+  {WILD,        6600},
+  {BONUS,      13000},
   {JACKPOT,      200},
-  {ALT1,        2500},
-  {ALT2,        1500},
-  {ALT3,       13000},
-  {ALT4,       13000},
+  {ALT1,       13500},
+  {ALT2,        8000},
+  {ALT3,       13500},
+  {ALT4,       13500},
   {ALT5,           0},
   {ALT6,           0},
   {ALT7,           0},
@@ -29,7 +54,7 @@ std::map<Symbol, int> Reel::standard_reel_weights_ = {
 
 // Standard payout_ table  <count, <num, payout_>>
 std::map<Symbol, std::map<int, int>> Reel::payout_table_ = {
-  {CHERRY,      {{1,  1}, {2, 1},{3,    2},{4,     4},{5,     5}}},
+  {CHERRY,      {{1,  1}, {2, 2},{3,    3},{4,     4},{5,     5}}},
   {BAR,                         {{3,    5},{4,    20},{5,    50}}},
   {DOUBLE_BAR,                  {{3,   10},{4,    25},{5,   100}}},
   {TEN,			                    {{3,   20},{4,    50},{5,   200}}},
@@ -204,7 +229,7 @@ void Reel::GenerateWinningLines(int maxLines) {
           winning_lines_[line.first] = line_payout_; // Add the winning line to the result
           winning_symbols_[line.first] = syms;
           payout_ += line_payout_;
-          DumpLines();
+          //DumpLines();
         }
         break;
       }

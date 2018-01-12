@@ -77,7 +77,18 @@ TEST(ReelTest, WildWildCherry) {
  
   r.GenerateWinningLines(1);
   ASSERT_EQ(1, r.GetWinningLines().size());
-  ASSERT_EQ(2, r.GetCreditsWon());
+  ASSERT_EQ(3, r.GetCreditsWon());
+}
+
+TEST(ReelTest, WildCherryCherry) {
+  Reel r;
+  r.SetSymbol(WILD, 10);
+  r.SetSymbol(CHERRY, 11);
+  r.SetSymbol(CHERRY, 12);
+ 
+  r.GenerateWinningLines(3);
+  ASSERT_EQ(1, r.GetWinningLines().size());
+  ASSERT_EQ(3, r.GetCreditsWon());
 }
 
 TEST(ReelTest, ThreeTens) {

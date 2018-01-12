@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <SQLiteCpp/SQLiteCpp.h>
 
 enum LedgerRecordType {
   UNKNOWN,
@@ -18,9 +19,9 @@ class LedgerRecord {
     LedgerRecord() {}
     ~LedgerRecord() {}
 
-    static bool Create(LedgerRecordType type, unsigned int cents);
-    static bool Reset();
-    static std::vector<LedgerRecord> List(int limit, int offset);
+    static bool Create(SQLite::Database* db, LedgerRecordType type, unsigned int cents);
+    static bool Reset(SQLite::Database* db);
+    static std::vector<LedgerRecord> List(SQLite::Database* db, int limit, int offset);
 
     int id_;
     LedgerRecordType type_;

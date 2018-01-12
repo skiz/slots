@@ -6,9 +6,11 @@
 #include "signal.h"
 #include "ledger_record.h"
 #include "spin_record.h"
+#include <SQLiteCpp/SQLiteCpp.h>
+
 
 void Accounting::Init(Engine* e) {
-  engine_ = e;
+  engine_ = e; // only needed for sound. DEPRECATE
   cents_ = 0;
   bet_ = 0;
   paid_credits_ = 0;
@@ -17,7 +19,24 @@ void Accounting::Init(Engine* e) {
   max_lines_ = 20;
   text_ = const_cast<char*>("Ready");
   engine_->events->SystemSignal.connect_member(this, &Accounting::HandleEvent);
+
+  db_ = new SQLite::Database("/tmp/slots.db", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
+
+  // TODO: Don't reset every time, only when missing...
+  // ie: SELECT name FROM sqlite_master WHERE type='table' AND name='table_name';
+  LedgerRecord::Reset(db_);
+  SpinRecord::Reset(db_);
   // TODO: Load last credit state from play log (optional) in case of reset/power/etc.
+}
+
+void Accounting::InitWithoutEngine(SQLite::Database* db) {
+  db_ = db;
+  cents_ = 0;
+  bet_ = 0;
+  paid_credits_ = 0;
+  lines_ = 0;
+  max_bet_ = 5;
+  max_lines_ = 20;
 }
 
 void Accounting::Cleanup() {}
@@ -31,11 +50,11 @@ void Accounting::HandleEvent(SystemEvent e) {
       BetMax();
       break;
     case COIN_IN:
-      LedgerRecord::Create(COIN_INSERTED, COIN_AMOUNT);
+      LedgerRecord::Create(db_, COIN_INSERTED, COIN_AMOUNT);
       MoneyInserted(COIN_AMOUNT);
       break;
     case BILL_IN:
-      LedgerRecord::Create(BILL_INSERTED, BILL_AMOUNT);
+      LedgerRecord::Create(db_, BILL_INSERTED, BILL_AMOUNT);
       MoneyInserted(BILL_AMOUNT);
       break;
     case BET_UP:
@@ -71,9 +90,10 @@ void Accounting::BetMax() {
 
 void Accounting::MoneyInserted(unsigned int amount) {
   char txtbuf[50];
-  float famt = static_cast<float>(amount) / 100;
+  //float famt = static_cast<float>(amount) / 100;
 
-  // TODO: this should be a signal for money inserted with amount
+  // TODO: this should be a signal for audio system to play sound
+  /*
   if (amount > COIN_AMOUNT) {
     engine_->audio->PlaySound("/main/sound/chime2.ogg");
     sprintf(txtbuf, "Bill Accepted $%2.2f", famt);
@@ -81,6 +101,7 @@ void Accounting::MoneyInserted(unsigned int amount) {
     engine_->audio->PlaySound("/main/sound/coin.wav");
     sprintf(txtbuf, "Coin Accepted $%2.2f", famt);
   }
+  */
 
   text_ = txtbuf;
   cents_ += amount;
@@ -113,10 +134,15 @@ void Accounting::InitiateSpin() {
   reel_.GenerateSymbols(5, 3);
   reel_.GenerateWinningLines(lines_);
 
-  // TODO Spin Record
-  SpinRecord::Create(SPIN_RECORD_MAIN, reel_.GetSymbols(),
-      Bet(), Lines(), Total(), reel_.GetCreditsWon(),
-      reel_.GetCreditsWon() * CENTS_PER_CREDIT,
+  // Record the spin history
+  SpinRecord::Create(db_, 
+      SPIN_RECORD_MAIN,
+      reel_.GetSymbols(),
+      Bet(),   // bet credits
+      Lines(), // bet lines
+      Total(), // credits * lines
+      reel_.GetCreditsWon() * bet_,
+      reel_.GetCreditsWon() * bet_ * CENTS_PER_CREDIT,
       bet_ * lines_ * CENTS_PER_CREDIT);
 
   BetUpdate.emit(Bet());

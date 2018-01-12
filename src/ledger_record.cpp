@@ -5,15 +5,9 @@
 #include <sstream>
 #include <SQLiteCpp/SQLiteCpp.h>
 
-bool LedgerRecord::Create(LedgerRecordType type, unsigned int cents) {
+bool LedgerRecord::Create(SQLite::Database* db, LedgerRecordType type, unsigned int cents) {
   try {
-    SQLite::Database db("/tmp/slots.db", SQLite::OPEN_READWRITE);
-  } catch (std::exception& e) {
-    Reset();
-  }
-  try {
-    SQLite::Database db("/tmp/slots.db", SQLite::OPEN_READWRITE);
-    SQLite::Statement query(db,
+    SQLite::Statement query(*db,
         "INSERT INTO ledger (type, amount, ticket_id) VALUES (?, ?, NULL)");
     query.bind(1, static_cast<int>(type));
     query.bind(2, cents);
@@ -25,11 +19,10 @@ bool LedgerRecord::Create(LedgerRecordType type, unsigned int cents) {
   return true;
 }
 
-bool LedgerRecord::Reset() {
+bool LedgerRecord::Reset(SQLite::Database* db) {
   try {
-    SQLite::Database db("/tmp/slots.db", SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
-    db.exec("DROP TABLE IF EXISTS ledger");
-    db.exec("CREATE TABLE ledger "
+    db->exec("DROP TABLE IF EXISTS ledger");
+    db->exec("CREATE TABLE ledger "
         "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
         "type INTEGER, "
         "amount UNSIGNED INTEGER, "
@@ -42,11 +35,10 @@ bool LedgerRecord::Reset() {
   return true;
 }
 
-std::vector<LedgerRecord> LedgerRecord::List(int limit, int offset) {
+std::vector<LedgerRecord> LedgerRecord::List(SQLite::Database* db, int limit, int offset) {
   std::vector<LedgerRecord> res;
   try {
-    SQLite::Database db("/tmp/slots.db", SQLite::OPEN_READWRITE);
-    SQLite::Statement query(db,
+    SQLite::Statement query(*db,
         "SELECT id, type, amount, ticket_id, time FROM ledger "
         " ORDER BY time DESC LIMIT ? OFFSET ?");
     query.bind(1, limit);
