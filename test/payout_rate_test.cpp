@@ -26,7 +26,7 @@ class PayoutRateTest : public ::testing::Test {
 };
 
 TEST_F(PayoutRateTest, PayoutPercentage) {
-  const unsigned int NUM_SPINS = 200000;
+  const unsigned int NUM_SPINS = 1000;
 
   for (unsigned int i = 0; i < NUM_SPINS; ++i) {
     a_.HandleEvent(BILL_IN);
