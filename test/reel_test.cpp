@@ -5,20 +5,6 @@
 
 typedef std::map<Symbol, int>  ResultCounter;
 
-TEST(ReelTest, WeightedSet) {
-  //Reel r;
-  //ResultCounter ctr;
-
-  //for (int i = 0; i < 10000; ++i) {
-    //Symbol s = r.GetSymbol(r.GetReelWeights());
-    //ctr[s]++;
-  //}
-
-  //for (auto t : ctr) {
-   // std::cout << t.first << " = " << t.second << std::endl;
-  //}
-}
-
 TEST(ReelTest, GenerateSymbols) {
   Reel r;
   r.GenerateSymbols(5, 3);
@@ -218,4 +204,16 @@ TEST(ReelTest, FiveWildPaysAce) {
 
 }
 
-
+TEST(ReelTest, BonusMapping) {
+  Reel r;
+  r.SetSymbol(BONUS, 5);
+//  r.SetSymbol(BONUS, 6);
+  r.SetSymbol(BONUS, 7);
+  r.SetSymbol(BONUS, 8);
+  r.SetSymbol(BONUS, 9);
+ // r.GenerateWinningLines(1);
+ // ASSERT_EQ(1, r.GetWinningLines().size());
+ // ASSERT_EQ(0, r.GetCreditsWon());
+ 
+  r.GenerateBonusMapping(1);
+}

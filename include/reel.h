@@ -33,7 +33,7 @@ enum Symbol {
 class Reel {
   public:
     Reel();
-    void GenerateWinningLines(int maxLines); 
+    void GenerateWinningLines(int maxLines);
     Symbol GetSymbol(std::map<Symbol, int> *weightedSet);
     std::map<int, Symbol> GetSymbols();
     std::map<int, std::array<int,5>> GetPaylines();

@@ -119,7 +119,6 @@ std::map<int, std::array<int,5>> Reel::paylines_ = {
 
 Reel::Reel() {
   random_ = &Random::GetInstance();
-  //GenerateSymbols(5, 3);
   for (int i = 0; i < 15; i++) {
     symbols_[i] = NOTHING;
   }
@@ -157,9 +156,7 @@ void Reel::GenerateWinningLines(int maxLines) {
    *   Also TODO:
    *   * ensure all winning_lines_ also have a representitive winning_symbols_
    *     entry that includes the symbols that were matched for each payline. 
-   *
-   *   * wilds do not count for free spins or bonus.
-   *	 * Support one offs like a full house or a straight
+   *	 * Support one offs like a full house or a straight if enabled
    */
   winning_symbols_.clear();
   winning_lines_.clear();

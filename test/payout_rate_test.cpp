@@ -7,6 +7,8 @@
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <iostream>
 
+#define RUN_LONGTESTS false
+
 class PayoutRateTest : public ::testing::Test {
   protected:
     SQLite::Database* db_;
@@ -25,8 +27,9 @@ class PayoutRateTest : public ::testing::Test {
     }
 };
 
+# if RUN_LONGTESTS
 TEST_F(PayoutRateTest, PayoutPercentage) {
-  const unsigned int NUM_SPINS = 1000;
+  const unsigned int NUM_SPINS = 10000;
 
   for (unsigned int i = 0; i < NUM_SPINS; ++i) {
     a_.HandleEvent(BILL_IN);
@@ -46,3 +49,4 @@ TEST_F(PayoutRateTest, PayoutPercentage) {
     std::cout << "Pay Percentage: " << query.getColumn(4) << std::endl;
   }
 }
+#endif
