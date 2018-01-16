@@ -215,5 +215,5 @@ TEST(ReelTest, BonusMapping) {
  // ASSERT_EQ(1, r.GetWinningLines().size());
  // ASSERT_EQ(0, r.GetCreditsWon());
  
-  r.GenerateBonusMapping(1);
+  //r.GenerateBonusMapping(1);
 }

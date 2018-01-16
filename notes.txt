@@ -84,3 +84,7 @@ most of this can be seen at https://www.youtube.com/watch?v=xLSVSg2PCtU
 
 
 To support payback percentages, weight the stages based on current payback.
+
+
+
+

@@ -27,6 +27,9 @@ void EventManager::Init() {
   AddMapping(SDLK_SPACE, SPIN);
 }
 
+// TODO Rename this whole class to PlayerInput which triggers
+// SystemEvents like BET_MAX_PRESSED.  EventManager should
+// only deal with sending messages to interested parties.
 void EventManager::DisableBetting() {
   betting_enabled_ = false;
 }

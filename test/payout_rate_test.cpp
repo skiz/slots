@@ -19,7 +19,7 @@ class PayoutRateTest : public ::testing::Test {
       LedgerRecord::Reset(db_);
       SpinRecord::Reset(db_);
 
-      a_.InitWithoutEngine(db_);
+      a_.Init(db_);
     }
 
     virtual void TearDown() {

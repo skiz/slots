@@ -27,11 +27,11 @@ Accounting
   - Handles betting events
   - signals for updating credits/paid/bets/lines/totals
   - TODO: Obviously it has become the God object of antipatterns, refactor it out.
-  	- Wallet (plus failsafe)
+  	- Wallet (users purse, savable/loadable via db)
 	- Ledger (write to disk/remote logging)
 	- Paid/Bet/Lines should be extracted to... Wager class?
 	- All events should be encapsulated in event manager.
-	- Actually accounting is doing everything _but_ accounting now.
+	- Actually accounting is doing everything _but_ accounting now. sigh...
 
 Reel
   - Contains all possible reel symbols
@@ -50,13 +50,15 @@ Reel
   - TODO: Allow creating configurable reels.
   - TODO: Again doing way too much.
   	- Break out a superclass of a Reel
-	- Break out symbol enum to Symbols
+	- Break out symbol enum to Symbol Class. (support animations)
 	- Break out payline combinations - Paylines
 	- Break out pay table - Paytable
 	- Break out symbol weights to be configurable
 	- Break out initiate/complete/stop spin to event manager
 	- Triggering events is the other 80%
 	- Responsible for dealing with state changes (BAD)
+	- Represents a set of reels in actuality.
+	- Responsible for calculating winning lines & payouts (meh?)
 
 EventManager
   - Global SDL input mapping to system events (ie key 1 = 100_BILL)
@@ -70,7 +72,7 @@ EventManager
 
 SoundSystem
   - Loading and playing of sounds and music
-  - TODO: incorporate asset manager 
+  - DONE: incorporate asset manager 
 
 AssetManager
   - Loading and caching of assets (sounds, images, fonts)

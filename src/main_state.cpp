@@ -5,6 +5,7 @@
 #include "pay_state.h"
 #include "big_win_state.h"
 #include "signal.h"
+#include "credits_changed_message.h"
 
 MainState MainState::state;
 
@@ -12,41 +13,39 @@ void MainState::Init(Engine* e) {
   engine_ = e;
   LoadAssets();
 
-  reel_ = engine_->accounting->GetReel();
+  reel_ = engine_->accounting->GetReel();  // Why does accounting have the reel?
 
-  reel_->GenerateSymbols(5, 3);
+  reel_->GenerateSymbols(5, 3);   // So we are the reel commander now?
 
   // subscribe to system events
   //engine_->events->SystemSignal.connect_member(this, &MainState::HandleEvent);
 
-  engine_->accounting->CreditUpdate.connect_member(this, &MainState::UpdateCredits);
-  engine_->accounting->PaidUpdate.connect_member(this, &MainState::UpdatePaid);
+  /*
+   * TODO: All of this shit should be emitted from a single EventManager
+   * and everyone that wants to send messages should call EventManager::Send()
+   * This should remove the dependency on accounting for messaging.
+   *
   engine_->accounting->TextUpdate.connect_member(this, &MainState::UpdateText);
-  engine_->accounting->BetUpdate.connect_member(this, &MainState::UpdateBet);
-  engine_->accounting->TotalUpdate.connect_member(this, &MainState::UpdateTotal);
-  engine_->accounting->LinesUpdate.connect_member(this, &MainState::UpdateLines);
+  */
+  engine_->accounting->CreditsChanged.connect_member(this, &MainState::OnCreditsChanged);
+
   engine_->accounting->ReelsUpdate.connect_member(this, &MainState::UpdateReels);
   engine_->accounting->BigWin.connect_member(this, &MainState::BigWin);
   engine_->accounting->Win.connect_member(this, &MainState::Win);
   engine_->accounting->SpinStarted.connect_member(this, &MainState::SpinStarted);
   engine_->accounting->SpinStopped.connect_member(this, &MainState::SpinStopped);
 
+  engine_->accounting->EmitCreditsChanged(); // Kindly trigger please..
 
-  // request credits (TODO: use signals, these should be pushed to the state)
-  UpdateCredits(engine_->accounting->Credits());
-  UpdatePaid(engine_->accounting->Paid());
-  UpdateText(engine_->accounting->Text());
-  UpdateBet(engine_->accounting->Bet());
-  UpdateTotal(engine_->accounting->Total());
-  UpdateLines(engine_->accounting->Lines());
+  UpdateText(engine_->accounting->Text()); // Really?!?
 
-  engine_->events->EnableBetting();
+  engine_->events->EnableBetting(); // vs EmitSystemEvent(ENABLE_BETTING); ?
 
+  // TODO: move this to it's own clearly defined method
   for(int i = 0; i < 5; ++i) {
     spinning_[i] = false;
     vertical_offset_[i] = 0;
   }
-
 }
 
 void MainState::Cleanup() {
@@ -61,6 +60,7 @@ void MainState::Cleanup() {
 void MainState::HandleEvent(SystemEvent e) {
   switch (e) {
     case UPDATE_REELS:
+      // TODO: I assume this is just left over debug?
       std::cout << "UPDATE REELS!" << std::endl;
     default:
       break;
@@ -155,6 +155,8 @@ void MainState::LoadReelSymbols() {
   LoadSymbol(ALT9, "/reels/melon2.png");
 }
 
+// TODO: Still need to get this working... Could it be an async state?
+// The animated symbols will come at some point...
 void MainState::RenderPaylineOverlay(int /*line*/) {
   // render a payline based on it's number on the reel
   /*
@@ -319,7 +321,7 @@ void MainState::UpdateCredits(const unsigned int &amount) {
   SDL_FreeSurface(textSurface);
 }
 
-// DEPRECATED: Moved to pay state.
+// TODO: Figure out what to do here. PayStates are calling this directly.
 void MainState::UpdatePaid(const unsigned int &amount) {
   const char* text = std::to_string(amount).c_str();
   SDL_Surface* textSurface = NULL;
@@ -362,6 +364,9 @@ void MainState::UpdateTotal(const unsigned int &amount) {
 
 void MainState::RenderSymbols() {
   // We only have the final symbols at the moment, so just render those.
+  // TODO: put more random symbols on the reel for visual effect.
+  // This will also need to be overridden for near miss states, as we may
+  // want to show a bunch of bonuses or wilds spinning by...
   int max_height = 220 * 3;
 
   SDL_Rect pos;
@@ -370,7 +375,7 @@ void MainState::RenderSymbols() {
     if (spinning_[c]) {
       vertical_offset_[c] += spin_speed_;
       if (vertical_offset_[c] >= max_height) {
-	vertical_offset_[c] = 0;
+        vertical_offset_[c] = 0;
       }
     } else {
       vertical_offset_[c] = 0;
@@ -432,4 +437,11 @@ void MainState::RenderMessageText() {
   SDL_RenderCopy(engine_->renderer, text_, NULL, &text_pos);
 }
 
+void MainState::OnCreditsChanged(const CreditsChangedMessage &m) {
+  UpdateCredits(m.credits_);
+  UpdateBet(m.bet_);
+  UpdateLines(m.lines_);
+  UpdateTotal(m.total_);
+  UpdatePaid(m.paid_);
+}
 

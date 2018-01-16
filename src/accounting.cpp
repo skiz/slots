@@ -27,9 +27,12 @@ void Accounting::Init(Engine* e) {
   LedgerRecord::Reset(db_);
   SpinRecord::Reset(db_);
   // TODO: Load last credit state from play log (optional) in case of reset/power/etc.
+  // Should be able to just load the last spin record (which should allow us to set the
+  // reels to the same position along with wins, credits, etc, etc. but do this outside
+  // of this class please...
 }
 
-void Accounting::InitWithoutEngine(SQLite::Database* db) {
+void Accounting::Init(SQLite::Database* db) {
   db_ = db;
   cents_ = 0;
   bet_ = 0;
@@ -51,11 +54,11 @@ void Accounting::HandleEvent(SystemEvent e) {
       break;
     case COIN_IN:
       LedgerRecord::Create(db_, COIN_INSERTED, COIN_AMOUNT);
-      MoneyInserted(COIN_AMOUNT);
+      InsertedMoney(COIN_AMOUNT);
       break;
     case BILL_IN:
       LedgerRecord::Create(db_, BILL_INSERTED, BILL_AMOUNT);
-      MoneyInserted(BILL_AMOUNT);
+      InsertedMoney(BILL_AMOUNT);
       break;
     case BET_UP:
       TriggerBetUpdate(1);
@@ -88,11 +91,12 @@ void Accounting::BetMax() {
   InitiateSpin();
 }
 
-void Accounting::MoneyInserted(unsigned int amount) {
+void Accounting::InsertedMoney(unsigned int amount) {
   char txtbuf[50];
   //float famt = static_cast<float>(amount) / 100;
 
-  // TODO: this should be a signal for audio system to play sound
+  // TODO: this should be a signal for audio system to play sound,
+  // or a completely detached observer. 
   /*
   if (amount > COIN_AMOUNT) {
     engine_->audio->PlaySound("/main/sound/chime2.ogg");
@@ -105,13 +109,17 @@ void Accounting::MoneyInserted(unsigned int amount) {
 
   text_ = txtbuf;
   cents_ += amount;
-  TriggerCreditUpdate();
-  TriggerTextUpdate();
+
+  MoneyInserted.emit(amount);
+  
+  EmitCreditsChanged();
+  //TriggerTextUpdate();
 }
 
 void Accounting::InitiateSpin() {
   paid_credits_ = 0;
-  TriggerPaidUpdate();
+  EmitCreditsChanged();
+  //TriggerPaidUpdate();
   if (spinning_) {
     TriggerSpinStopped();
     return;
@@ -129,7 +137,8 @@ void Accounting::InitiateSpin() {
 
   // remove bet from credit pool
   cents_ -= bet_ * lines_ * CENTS_PER_CREDIT;
-  CreditUpdate.emit(Credits());
+  EmitCreditsChanged();
+  //CreditUpdate.emit(Credits());
 
   reel_.GenerateSymbols(5, 3);
   reel_.GenerateWinningLines(lines_);
@@ -145,10 +154,7 @@ void Accounting::InitiateSpin() {
       reel_.GetCreditsWon() * bet_ * CENTS_PER_CREDIT,
       bet_ * lines_ * CENTS_PER_CREDIT);
 
-  BetUpdate.emit(Bet());
-  LinesUpdate.emit(Lines());
-  CreditUpdate.emit(Credits());
-  TotalUpdate.emit(Total());
+  EmitCreditsChanged();
 }
 
 // TODO: Accounting shouldn't be dealing with all this crap...
@@ -175,13 +181,14 @@ void Accounting::CompleteSpin() {
   
   paid_credits_ = won;
   ReelsUpdate.emit();
-
   // TODO: TriggerBonus if met
 }
 
+/*
 void Accounting::TriggerCreditUpdate() {
   CreditUpdate.emit(Credits());
 }
+*/
 
 void Accounting::TriggerBigWin(const unsigned int amount) {
   BigWin.emit(amount);
@@ -195,18 +202,6 @@ void Accounting::TriggerTextUpdate() {
   TextUpdate.emit(text_);
 }
 
-void Accounting::TriggerPaidUpdate() {
-  PaidUpdate.emit(Paid());
-}
-
-void Accounting::TriggerTotalUpdate() {
-  TotalUpdate.emit(Total());
-}
-
-void Accounting::TriggerUpdateReels() {
-  ReelsUpdate.emit();
-}
-
 void Accounting::TriggerBetUpdate(int num) {
   if (num == 1) { // increase
     if (InsufficientFunds(bet_+1, lines_)) return;
@@ -216,10 +211,7 @@ void Accounting::TriggerBetUpdate(int num) {
     if (bet_ == 0) return;
     bet_--;
   }
-  BetUpdate.emit(Bet());
-  LinesUpdate.emit(Lines());
-  CreditUpdate.emit(Credits());
-  TotalUpdate.emit(Total());
+  EmitCreditsChanged();
 }
 
 void Accounting::TriggerSpinStarted() {
@@ -228,6 +220,16 @@ void Accounting::TriggerSpinStarted() {
 
 void Accounting::TriggerSpinStopped() {
   SpinStopped.emit();
+}
+
+void Accounting::EmitCreditsChanged() {
+  CreditsChangedMessage m;
+  m.credits_ = Credits();
+  m.bet_ = Bet();
+  m.lines_ = Lines();
+  m.total_ = Total();
+  m.paid_ = Paid();
+  CreditsChanged.emit(m);
 }
 
 void Accounting::TriggerLinesUpdate(int num) {
@@ -239,10 +241,8 @@ void Accounting::TriggerLinesUpdate(int num) {
     if (lines_ == 0) return;
     lines_--;
   }
-  BetUpdate.emit(Bet());
-  LinesUpdate.emit(Lines());
-  CreditUpdate.emit(Credits());
-  TotalUpdate.emit(Total());
+
+  EmitCreditsChanged();
 }
 
 bool Accounting::InsufficientFunds(int bet, int lines) {

@@ -4,6 +4,7 @@
 #include "state.h"
 #include "SDL_ttf.h"
 #include "ui_button.h"
+#include "credits_changed_message.h"
 
 class MainState : public State {
   public:
@@ -18,6 +19,9 @@ class MainState : public State {
     static MainState* Instance() {
       return &state;
     }
+
+    void OnCreditsChanged(const CreditsChangedMessage &m);
+
     void UpdateCredits(const unsigned int &amount);
     void UpdatePaid(const unsigned int &amount);
     void UpdateBet(const unsigned int &amount);
