@@ -28,7 +28,6 @@ class Accounting {
     void BetMax();
     void InitiateSpin();
     void CompleteSpin();
-    void TriggerTextUpdate();
     void TriggerUpdateReels();
     void TriggerBigWin(unsigned int amount); // Implies external knowledge
     void TriggerWin(unsigned int amount);    // Implies external knowledge
@@ -47,7 +46,7 @@ class Accounting {
     unsigned int Total();
     const char* Text();
 
-    Signal<unsigned int>MoneyInserted;
+    Signal<const unsigned int &>MoneyInserted;
     Signal<const CreditsChangedMessage&> CreditsChanged;
 
     Signal<const unsigned int &> BigWin;  ///Ugh Go Away

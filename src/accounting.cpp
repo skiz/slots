@@ -92,34 +92,15 @@ void Accounting::BetMax() {
 }
 
 void Accounting::InsertedMoney(unsigned int amount) {
-  char txtbuf[50];
-  //float famt = static_cast<float>(amount) / 100;
-
-  // TODO: this should be a signal for audio system to play sound,
-  // or a completely detached observer. 
-  /*
-  if (amount > COIN_AMOUNT) {
-    engine_->audio->PlaySound("/main/sound/chime2.ogg");
-    sprintf(txtbuf, "Bill Accepted $%2.2f", famt);
-  } else {
-    engine_->audio->PlaySound("/main/sound/coin.wav");
-    sprintf(txtbuf, "Coin Accepted $%2.2f", famt);
-  }
-  */
-
-  text_ = txtbuf;
   cents_ += amount;
 
   MoneyInserted.emit(amount);
-  
   EmitCreditsChanged();
-  //TriggerTextUpdate();
 }
 
 void Accounting::InitiateSpin() {
   paid_credits_ = 0;
   EmitCreditsChanged();
-  //TriggerPaidUpdate();
   if (spinning_) {
     TriggerSpinStopped();
     return;
@@ -130,11 +111,6 @@ void Accounting::InitiateSpin() {
   spinning_ = true;
   TriggerSpinStarted();
   
-  char txtbuf[50];
-  sprintf(txtbuf, "Good Luck!");
-  text_ = txtbuf;
-  TriggerTextUpdate();
-
   // remove bet from credit pool
   cents_ -= bet_ * lines_ * CENTS_PER_CREDIT;
   EmitCreditsChanged();
@@ -159,7 +135,6 @@ void Accounting::InitiateSpin() {
 
 // TODO: Accounting shouldn't be dealing with all this crap...
 void Accounting::CompleteSpin() {
-  char txtbuf[50];
   if (!spinning_) { return; }
   TriggerSpinStopped();
   spinning_ = false;
@@ -168,27 +143,14 @@ void Accounting::CompleteSpin() {
     if (won >= BIG_WIN) {
       TriggerBigWin(won);
     } else {
-      sprintf(txtbuf, "You won %d credits!", won);
-      text_ = txtbuf;
-      TriggerTextUpdate();
       TriggerWin(won);
     }
     cents_ += won * CENTS_PER_CREDIT;
-  } else {
-    text_ = (char*)"Game Over";
-    TriggerTextUpdate();
   }
   
   paid_credits_ = won;
   ReelsUpdate.emit();
-  // TODO: TriggerBonus if met
 }
-
-/*
-void Accounting::TriggerCreditUpdate() {
-  CreditUpdate.emit(Credits());
-}
-*/
 
 void Accounting::TriggerBigWin(const unsigned int amount) {
   BigWin.emit(amount);
@@ -196,10 +158,6 @@ void Accounting::TriggerBigWin(const unsigned int amount) {
 
 void Accounting::TriggerWin(const unsigned int amount) {
   Win.emit(amount);
-}
-
-void Accounting::TriggerTextUpdate() {
-  TextUpdate.emit(text_);
 }
 
 void Accounting::TriggerBetUpdate(int num) {

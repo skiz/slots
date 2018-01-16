@@ -25,9 +25,9 @@ void MainState::Init(Engine* e) {
    * and everyone that wants to send messages should call EventManager::Send()
    * This should remove the dependency on accounting for messaging.
    *
-  engine_->accounting->TextUpdate.connect_member(this, &MainState::UpdateText);
   */
   engine_->accounting->CreditsChanged.connect_member(this, &MainState::OnCreditsChanged);
+  engine_->accounting->MoneyInserted.connect_member(this, &MainState::OnMoneyInserted);
 
   engine_->accounting->ReelsUpdate.connect_member(this, &MainState::UpdateReels);
   engine_->accounting->BigWin.connect_member(this, &MainState::BigWin);
@@ -37,9 +37,9 @@ void MainState::Init(Engine* e) {
 
   engine_->accounting->EmitCreditsChanged(); // Kindly trigger please..
 
-  UpdateText(engine_->accounting->Text()); // Really?!?
-
   engine_->events->EnableBetting(); // vs EmitSystemEvent(ENABLE_BETTING); ?
+
+  UpdateText("Play max credits for a bigger BONUS!");
 
   // TODO: move this to it's own clearly defined method
   for(int i = 0; i < 5; ++i) {
@@ -68,6 +68,8 @@ void MainState::HandleEvent(SystemEvent e) {
 }
 
 void MainState::SpinStarted() {
+
+  UpdateText("Good Luck!");
   engine_->audio->PlaySound("/main/sound/spin.wav");
   engine_->audio->PlayMusic("/main/sound/reels.wav");
   engine_->audio->ResumeMusic();
@@ -443,5 +445,15 @@ void MainState::OnCreditsChanged(const CreditsChangedMessage &m) {
   UpdateLines(m.lines_);
   UpdateTotal(m.total_);
   UpdatePaid(m.paid_);
+}
+
+void MainState::OnMoneyInserted(const unsigned int &amount) {
+  char txtbuf[50];
+  float famt = static_cast<float>(amount) / 100;
+
+  engine_->audio->PlaySound("/main/sound/chime2.ogg");
+  sprintf(txtbuf, "Bill Accepted $%2.2f", famt);
+
+  UpdateText(txtbuf);
 }
 

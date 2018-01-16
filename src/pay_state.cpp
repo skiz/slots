@@ -60,7 +60,6 @@ void PayState::Init(Engine* e) {
   event_bind_ = engine_->events->SystemSignal.connect_member(this, &PayState::HandleEvent);
 
   amount_ = 0;
-  total_ = 0;
   continues_ = 0;
   inc_amount_ = 1;
   reel_ = engine_->accounting->GetReel();
@@ -71,8 +70,6 @@ void PayState::Init(Engine* e) {
   SDL_Surface* ss = engine_->assets->LoadSurface("/reels/blank.png");
   blank_ = SDL_CreateTextureFromSurface(engine_->renderer, ss);
   SDL_FreeSurface(ss);
-
-  winning_paylines_ = reel_->GetWinningLines();
 }
 
 void PayState::HandleEvent(SystemEvent e) {
@@ -99,6 +96,7 @@ void PayState::Cleanup() {
 
   engine_->events->SystemSignal.disconnect(event_bind_);
   engine_->events->EnableBetting();
+  MainState::Instance()->UpdateText("Game Over");
 }
 
 void PayState::Pause() {
@@ -111,6 +109,11 @@ void PayState::Resume() {
 
 void PayState::Update() {
   total_ = engine_->accounting->Paid();
+
+  char txtbuf[50];
+  winning_paylines_ = reel_->GetWinningLines();
+  sprintf(txtbuf, "You won %d credits!", total_);
+  MainState::Instance()->UpdateText(txtbuf);
 
   if (frame_ % frame_inc_ == 0 && amount_ < total_) {
     amount_ += inc_amount_;
