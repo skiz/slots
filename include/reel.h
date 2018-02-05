@@ -46,7 +46,9 @@ class Reel {
     int GetCreditsWon();
     void DumpLines();
     std::map<Symbol, int> GetReelWeights();
+    uint32_t GetColorForPayline(int payline);
   private:
+    static std::array<uint32_t, 20> payline_colors_;
     static std::map<Symbol, int> standard_reel_weights_;
     static std::map<Symbol, std::map<int, int>> payout_table_;
     static std::map<Symbol, std::map<Symbol, Symbol>> compatible_symbols_;

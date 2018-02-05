@@ -116,6 +116,13 @@ std::map<int, std::array<int,5>> Reel::paylines_ = {
   {19, {{ 0,11,12,13, 4}}}
 };
 
+std::array<uint32_t, 20> Reel::payline_colors_ {
+  0xFFF8FF00, 0xFF00950A, 0xFF00EC17, 0xFF00BCFA, 0xFFCD00FF,
+  0xFF4600FF, 0xFFFF00FB, 0xFFFF9700, 0xFFFF0000, 0xFFB1A129,
+  0xFFA800FF, 0xFFFF9EFF, 0xFF00FFC1, 0xFFFFAC4C, 0xFFA80000,
+  0xFFFFE000, 0xFFE00000, 0xFF9A6534, 0xFF34961D, 0xFFF7003D
+};
+
 
 Reel::Reel() {
   random_ = &Random::GetInstance();
@@ -123,6 +130,13 @@ Reel::Reel() {
     symbols_[i] = NOTHING;
   }
 }
+
+uint32_t Reel::GetColorForPayline(int payline) {
+  if (payline < 0 || payline >= 20) {
+    return 0x0;
+  }
+  return payline_colors_[payline];
+};
 
 Symbol Reel::GetSymbol(std::map<Symbol, int> *weightedSet) {
   int sum = 0; 

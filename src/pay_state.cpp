@@ -1,10 +1,13 @@
 #include "engine.h"
 #include "pay_state.h"
 #include "SDL_ttf.h"
+#include "SDL2_gfxPrimitives.h"
 #include <iostream>
 #include "main_state.h"
 
 PayState PayState::state;
+
+// Think we need to replace async states with the notion of layers....
 
 // TODO: Don't exit pay state directly, but store pressed key
 // then replay key after exiting.  This will allow spinning directly
@@ -70,6 +73,11 @@ void PayState::Init(Engine* e) {
   SDL_Surface* ss = engine_->assets->LoadSurface("/reels/blank.png");
   blank_ = SDL_CreateTextureFromSurface(engine_->renderer, ss);
   SDL_FreeSurface(ss);
+
+  payline_index_ = 0; 
+  // highlight
+  //SDL_Texture* t = SDL_CreateTextureFromSurface(engine_->renderer, hl);
+  //SDL_FreeSurface(hl);
 }
 
 void PayState::HandleEvent(SystemEvent e) {
@@ -89,10 +97,10 @@ void PayState::HandleEvent(SystemEvent e) {
 }
 
 void PayState::Cleanup() {
-   amount_ = 0;
-   total_ = 0;
-   continues_ = 0;
-   inc_amount_ = 1;
+  amount_ = 0;
+  total_ = 0;
+  continues_ = 0;
+  inc_amount_ = 1;
 
   engine_->events->SystemSignal.disconnect(event_bind_);
   engine_->events->EnableBetting();
@@ -127,16 +135,21 @@ void PayState::Update() {
   // but we still need to show what was won for each line too... ugh.
   // this show_line_win is an index, but we have a map based on payline
   //
-  //if (frame_ % 20 == 0) {
-    // FUCK!
- //   payline_index_++; // this is the index of the winning line we want to show 
- //   if (payline_index_ >= num_wins_) {
- //     payline_index_ = 0;
- //   }
+  if (frame_ % 60 == 0) {
+  // FUCK!
+    payline_index_++; // this is the index of the winning line we want to show 
+     if (payline_index_ = num_wins_) {
+       payline_index_ = 0;
+     }
 
-    //draw squares around winning paylines
-    
-  //}
+  //draw squares around winning paylines
+
+  }
+
+  // Force exit when done
+  if (amount_ >= total_) {
+    engine_->PopAsyncState();
+  }
   ++frame_;
 }
 
@@ -146,22 +159,21 @@ void PayState::Draw() {
   MainState::Instance()->UpdateCredits(credits);
 
   DrawPaylines();
-
-  // Force exit when done
-  if (amount_ == total_) {
-    engine_->PopAsyncState();
-  }
 }
 
 void PayState::DrawPaylines(){
+  if (winning_paylines_.size() == 0) {
+    return;
+  }
   // TODO: Use a timer to itererate winning paylines
-  // Perhaps I should just add a MainState method to flash/reset...
   // cover up the winning line symbols to emulate flashing of winning symbols 
-  SDL_Rect pos;
+  //SDL_Rect pos;
 
   //std::cout << show_win_line_ << std::endl;
+  /*
   if(frame_ % 30 == 0) {
-    for (auto s  : reel_->GetWinningPositionsForPayline(winning_paylines_[payline_index_])) {
+    for (auto s  : reel_->
+        GetWinningPositionsForPayline(winning_paylines_[payline_index_])) {
       int column = s % 5;
       pos.w = 220;
       pos.h = 220;
@@ -170,6 +182,31 @@ void PayState::DrawPaylines(){
       SDL_RenderCopy(engine_->renderer, blank_, NULL, &pos);
     }
   }
+  */
+
+  SDL_Rect pos;
+  for (auto s  : reel_->
+      GetWinningPositionsForPayline(winning_paylines_[payline_index_])) {
+      int column = s % 5;
+      pos.w = 220;
+      pos.h = 220;
+      pos.x = 87 + column * 263;
+      pos.y = 80 + s / 5 * 200;
+      //SDL_RenderDrawRect(engine_->renderer, &rect); //TODO: render highlight_;
+
+      //SDL_Surface* hl = SDL_CreateRGBSurface(0, 220, 220, 32, 0, 0, 0, 0);
+      //Uint32 color = SDL_MapRGB(engine_->renderer->format, 200, 0, 0);
+//      roundedRectangleColor(engine_->renderer, pos.x, pos.y, pos.x+pos.w, pos.y+pos.h, 5,);
+
+      Uint32 color = reel_->GetColorForPayline(payline_index_);
+      Uint8 width = 4;
+      thickLineColor(engine_->renderer, pos.x, pos.y, pos.x, pos.y+pos.h, width, color);
+      thickLineColor(engine_->renderer, pos.x, pos.y, pos.x+pos.h, pos.y, width, color);
+      thickLineColor(engine_->renderer, pos.x+pos.w, pos.y+pos.h, pos.x, pos.y+pos.h, width, color);
+      thickLineColor(engine_->renderer, pos.x+pos.w, pos.y+pos.h, pos.x+pos.w, pos.y, width, color);
+      //SDL_FreeSurface(hl);
+  }
+
 }
 
 

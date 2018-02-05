@@ -120,7 +120,7 @@ void MainState::LoadAssets() {
   // Add gray overlay texture
   SDL_Surface* s;
   s = SDL_CreateRGBSurface(0, 2000, 2000, 32, 0, 0, 0, 0);
-  SDL_Rect rect = {0,0,2000,2000};
+  SDL_Rect rect = {0, 0, 2000, 2000};
   SDL_FillRect(s, &rect, SDL_MapRGB(s->format, 205, 203, 206));
   gray_ = SDL_CreateTextureFromSurface(engine_->renderer, s);
   SDL_FreeSurface(s);
