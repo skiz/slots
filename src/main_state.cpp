@@ -35,6 +35,7 @@ void MainState::Init(Engine* e) {
   engine_->accounting->Win.connect_member(this, &MainState::Win);
   engine_->accounting->SpinStarted.connect_member(this, &MainState::SpinStarted);
   engine_->accounting->SpinStopped.connect_member(this, &MainState::SpinStopped);
+  engine_->accounting->SpinComplete.connect_member(this, &MainState::SpinComplete);
 
   engine_->accounting->EmitCreditsChanged(); // Kindly trigger please..
 
@@ -69,7 +70,6 @@ void MainState::HandleEvent(SystemEvent e) {
 }
 
 void MainState::SpinStarted() {
-
   UpdateText("Good Luck!");
   engine_->audio->PlaySound("/main/sound/spin.wav");
   engine_->audio->PlayMusic("/main/sound/reels.wav");
@@ -84,6 +84,13 @@ void MainState::SpinStopped() {
   engine_->audio->PauseMusic();
   for (int i = 0; i < 5; i++) {
     StopNext();
+  }
+}
+
+void MainState::SpinComplete() {
+  if (BonusTriggered()) {
+    engine_->audio->PlaySound("/main/sound/bell.ogg", 4);
+    std::cout << "BONUS!" << std::endl;
   }
 }
 
@@ -140,8 +147,13 @@ void MainState::StopNext() {
   }
 }
 
-bool MainState::HasPossibleBonus(int col) {
-  return bonus_highlight_[col].count() > 0;
+bool MainState::HasPossibleBonus(int col_index) {
+  Highlighter::DumpBits(bonus_highlight_[col_index]);
+  return bonus_highlight_[col_index].count() > 0;
+}
+
+bool MainState::BonusTriggered() {
+  return bonus_highlight_[4].count() > 0;
 }
 
 

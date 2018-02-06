@@ -35,6 +35,7 @@ class Accounting {
     void TriggerLinesUpdate(int num);
     void TriggerSpinStarted();
     void TriggerSpinStopped();
+    void TriggerSpinComplete();
     bool InsufficientFunds(int bet, int lines);
 
     void EmitCreditsChanged();
@@ -54,6 +55,7 @@ class Accounting {
     Signal<>ReelsUpdate;
     Signal<>SpinStarted;
     Signal<>SpinStopped;
+    Signal<>SpinComplete;
     Signal<const char*>TextUpdate;
     Reel *GetReel();
   private:

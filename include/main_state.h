@@ -47,10 +47,12 @@ class MainState : public State {
     void Win(const unsigned int &amount);
     void SpinStarted();
     void SpinStopped();
+    void SpinComplete();
     static Uint32 StopColumn(Uint32 interval, void *param);
     void ScheduleStop(int col, int ms);
     void StopNext();
     bool HasPossibleBonus(int col);
+    bool BonusTriggered();
   protected:
     MainState() {}
 

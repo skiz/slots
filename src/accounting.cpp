@@ -118,6 +118,7 @@ void Accounting::InitiateSpin() {
 
   reel_.GenerateSymbols(5, 3);
   reel_.GenerateWinningLines(lines_);
+  ReelsUpdate.emit();
 
   // Record the spin history
   SpinRecord::Create(db_, 
@@ -149,7 +150,7 @@ void Accounting::CompleteSpin() {
   }
   
   paid_credits_ = won;
-  ReelsUpdate.emit();
+  TriggerSpinComplete();
 }
 
 void Accounting::TriggerBigWin(const unsigned int amount) {
@@ -178,6 +179,10 @@ void Accounting::TriggerSpinStarted() {
 
 void Accounting::TriggerSpinStopped() {
   SpinStopped.emit();
+}
+
+void Accounting::TriggerSpinComplete() {
+  SpinComplete.emit();
 }
 
 void Accounting::EmitCreditsChanged() {
