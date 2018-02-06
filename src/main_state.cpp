@@ -157,23 +157,6 @@ void MainState::LoadReelSymbols() {
   LoadSymbol(ALT9, "/reels/melon2.png");
 }
 
-// TODO: Still need to get this working... Could it be an async state?
-// The animated symbols will come at some point...
-void MainState::RenderPaylineOverlay(int /*line*/) {
-  // render a payline based on it's number on the reel
-  /*
-  int xoff = 50; // x offset
-  int yoff = 50; // y offset
-  int xinc = 200; // x increment
-  int yinc = 200; // y increment
-  std::array<std::array<int, 2>, 5> coords;
-  */
-  //for (auto p : reel_->GetPaylines()[line]) {
-    // locate the 5 coordinates
-    //coords.push_back({p}) 
-  //}
-}
-
 void MainState::LoadSymbol(Symbol type, const char* filename) {
   SDL_Surface* s = engine_->assets->LoadSurface(filename);
   reel_symbols_[type] = SDL_CreateTextureFromSurface(engine_->renderer, s);

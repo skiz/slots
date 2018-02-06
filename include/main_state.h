@@ -48,8 +48,6 @@ class MainState : public State {
     static Uint32 StopColumn(Uint32 interval, void *param);
     void ScheduleStop(int col, int ms);
     void StopNext();
-
-    void RenderPaylineOverlay(int line);
   protected:
     MainState() {}
 
