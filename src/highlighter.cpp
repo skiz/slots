@@ -2,7 +2,7 @@
 #include <array>
 #include <bitset>
 #include <iostream>
-
+#include <map>
 
 const std::array<std::bitset<15>, 20> Highlighter::paylines_ = {
   { 0b000001111100000,
@@ -61,6 +61,15 @@ std::array<std::bitset<15>, 5> Highlighter::Generate(std::bitset<15> bits,
   }
   results[4] = wins;                                   
   return results;
+}
+
+std::array<std::bitset<15>, 5> Highlighter::GenerateFromReelSymbols(
+    std::map<int, Symbol> symbols, Symbol sym, int maxLines) {
+  std::bitset<15> bits;
+  for (auto s : symbols) {
+    bits[s.first] = (s.second == sym);
+  }
+  return Generate(bits, maxLines);
 }
 
 void Highlighter::DumpBits(std::bitset<15> b) {

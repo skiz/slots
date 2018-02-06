@@ -3,6 +3,8 @@
 
 #include <array>
 #include <bitset>
+#include <map>
+#include "reel.h"
 
 /* Calculates highlights for upcoming matches.  Used when first reel hits (ie bonus)
  * so that we know what to highlight until the next reel stops. 1 for each reel stop.
@@ -14,6 +16,8 @@ class Highlighter {
   public:
     static std::array<std::bitset<15>, 5> Generate(std::bitset<15> bits,
         int maxLines);
+    static std::array<std::bitset<15>, 5> GenerateFromReelSymbols(
+        std::map<int, Symbol> symbols, Symbol sym, int maxLines);
     static void DumpBits(std::bitset<15> bits);
   private:
     static const std::array<std::bitset<15>, 20> paylines_;

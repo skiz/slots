@@ -5,6 +5,7 @@
 #include "pay_state.h"
 #include "big_win_state.h"
 #include "signal.h"
+#include "highlighter.h"
 #include "credits_changed_message.h"
 
 MainState MainState::state;
@@ -87,6 +88,10 @@ void MainState::SpinStopped() {
 }
 
 void MainState::ScheduleStop(int col, int ms) {
+  if (stop_timer_[col]) {
+    SDL_RemoveTimer(stop_timer_[col]);
+    stop_timer_[col] = 0;
+  }
   stop_timer_[col] = SDL_AddTimer(ms, &MainState::StopColumn, this);
 }
 
@@ -104,11 +109,41 @@ void MainState::StopNext() {
       engine_->audio->PlaySound("/main/sound/spin.wav");
       if (i==4) {
         engine_->events->SystemSignal.emit(REELS_STOPPED);
+        engine_->audio->StopSound(3);
+        return;
       }
+
+      if (stop_timer_[i]) {
+        SDL_RemoveTimer(stop_timer_[i]);
+        stop_timer_[i] = 0;
+      }
+
+      // If there is a chance of a bonus, reschedule 
+      // timers to spin longer and act differently.
+      if (HasPossibleBonus(i)) {
+        engine_->audio->StopSound(3); 
+        engine_->audio->PlaySound("/main/sound/bonus_2.ogg", 3);
+        for (int z=i+1; z < 5; ++z){
+          if (stop_timer_[z]) {
+            SDL_RemoveTimer(stop_timer_[z]);
+            stop_timer_[z] = 0;
+          }
+          ScheduleStop(z, 2000 + z * 200);
+        }
+        ScheduleStop(i, 4000);
+      } else {
+        engine_->audio->StopSound(3); 
+      }
+
       return;
     }
   }
 }
+
+bool MainState::HasPossibleBonus(int col) {
+  return bonus_highlight_[col].count() > 0;
+}
+
 
 void MainState::LoadAssets() {
   engine_->assets->Mount("assets/main", "/main");
@@ -230,6 +265,8 @@ void MainState::Resume() {
 
 // Reels were updated, lets render them.
 void MainState::UpdateReels() {
+  bonus_highlight_ = Highlighter::GenerateFromReelSymbols(
+      reel_->GetSymbols(), BONUS, engine_->accounting->Lines());
 }
 
 void MainState::BigWin(const unsigned int& /*amount*/) {

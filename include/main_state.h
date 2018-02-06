@@ -1,6 +1,8 @@
 #ifndef MAIN_STATE_H
 #define MAIN_STATE_H
 
+#include <array>
+#include <bitset>
 #include "state.h"
 #include "SDL_ttf.h"
 #include "ui_button.h"
@@ -48,6 +50,7 @@ class MainState : public State {
     static Uint32 StopColumn(Uint32 interval, void *param);
     void ScheduleStop(int col, int ms);
     void StopNext();
+    bool HasPossibleBonus(int col);
   protected:
     MainState() {}
 
@@ -91,6 +94,7 @@ class MainState : public State {
     int  spin_speed_ = 45;
 
     SDL_TimerID stop_timer_[5];
+    std::array<std::bitset<15>, 5> bonus_highlight_;
 };
 
 
