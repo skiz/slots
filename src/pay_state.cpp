@@ -53,9 +53,6 @@ PayState PayState::state;
 // Cleanup() will be called each time the state is exited.
 //
 
-
-
-
 void PayState::Init(Engine* e) {
   engine_ = e;
 
@@ -75,9 +72,6 @@ void PayState::Init(Engine* e) {
   SDL_FreeSurface(ss);
 
   payline_index_ = 0; 
-  // highlight
-  //SDL_Texture* t = SDL_CreateTextureFromSurface(engine_->renderer, hl);
-  //SDL_FreeSurface(hl);
 }
 
 void PayState::HandleEvent(SystemEvent e) {
@@ -138,7 +132,7 @@ void PayState::Update() {
   if (frame_ % 60 == 0) {
   // FUCK!
     payline_index_++; // this is the index of the winning line we want to show 
-     if (payline_index_ = num_wins_) {
+     if (payline_index_ == num_wins_) {
        payline_index_ = 0;
      }
 
@@ -164,26 +158,10 @@ void PayState::Draw() {
 void PayState::DrawPaylines(){
   if (winning_paylines_.size() == 0) {
     return;
-  }
-  // TODO: Use a timer to itererate winning paylines
-  // cover up the winning line symbols to emulate flashing of winning symbols 
-  //SDL_Rect pos;
+  } // shouldn't be needed
 
-  //std::cout << show_win_line_ << std::endl;
+  // Render squares around the winning symbols for the current payline
   /*
-  if(frame_ % 30 == 0) {
-    for (auto s  : reel_->
-        GetWinningPositionsForPayline(winning_paylines_[payline_index_])) {
-      int column = s % 5;
-      pos.w = 220;
-      pos.h = 220;
-      pos.x = 87 + column * 263;
-      pos.y = 80 + s / 5 * 200;
-      SDL_RenderCopy(engine_->renderer, blank_, NULL, &pos);
-    }
-  }
-  */
-
   SDL_Rect pos;
   for (auto s  : reel_->
       GetWinningPositionsForPayline(winning_paylines_[payline_index_])) {
@@ -192,11 +170,6 @@ void PayState::DrawPaylines(){
       pos.h = 220;
       pos.x = 87 + column * 263;
       pos.y = 80 + s / 5 * 200;
-      //SDL_RenderDrawRect(engine_->renderer, &rect); //TODO: render highlight_;
-
-      //SDL_Surface* hl = SDL_CreateRGBSurface(0, 220, 220, 32, 0, 0, 0, 0);
-      //Uint32 color = SDL_MapRGB(engine_->renderer->format, 200, 0, 0);
-//      roundedRectangleColor(engine_->renderer, pos.x, pos.y, pos.x+pos.w, pos.y+pos.h, 5,);
 
       Uint32 color = reel_->GetColorForPayline(payline_index_);
       Uint8 width = 4;
@@ -204,9 +177,33 @@ void PayState::DrawPaylines(){
       thickLineColor(engine_->renderer, pos.x, pos.y, pos.x+pos.h, pos.y, width, color);
       thickLineColor(engine_->renderer, pos.x+pos.w, pos.y+pos.h, pos.x, pos.y+pos.h, width, color);
       thickLineColor(engine_->renderer, pos.x+pos.w, pos.y+pos.h, pos.x+pos.w, pos.y, width, color);
-      //SDL_FreeSurface(hl);
+  }
+  */
+
+  // Render the full payline for this winning payline
+  std::array<SDL_Point, 5> pcs;
+  int i = 0;
+  for (auto s : reel_->GetPayline(winning_paylines_[payline_index_])) {
+      int column = s % 5;
+      pcs[i] = SDL_Point{
+        .x = 87 + column * 263 + 100,
+        .y = 80 + s / 5 * 200 + 100
+      };
+      ++i;
   }
 
+  Uint8 width = 10;
+  Uint32 color = reel_->GetColorForPayline(payline_index_);
+  thickLineColor(engine_->renderer, pcs[0].x-150, pcs[0].y, pcs[0].x, pcs[0].y, width, color);
+  thickLineColor(engine_->renderer, pcs[0].x, pcs[0].y, pcs[1].x, pcs[1].y, width, color);
+  thickLineColor(engine_->renderer, pcs[1].x, pcs[1].y, pcs[2].x, pcs[2].y, width, color);
+  thickLineColor(engine_->renderer, pcs[2].x, pcs[2].y, pcs[3].x, pcs[3].y, width, color);
+  thickLineColor(engine_->renderer, pcs[3].x, pcs[3].y, pcs[4].x, pcs[4].y, width, color);
+  thickLineColor(engine_->renderer, pcs[4].x, pcs[4].y, pcs[4].x+150, pcs[4].y, width, color);
+
+ // char txtbuf[50];
+ // sprintf(txtbuf, "Line pays %d credits", reel_->GetCreditsPaidForLine(payline_index_));
+ // MainState::Instance()->UpdateText(txtbuf);
 }
 
 

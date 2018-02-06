@@ -36,8 +36,9 @@ class PayState : public State {
     Engine *engine_; // not owned
     static PayState state;
     SDL_Texture* blank_;
-    SDL_Texture* highlight_; // winning symbol highlight
+    SDL_Texture* highlight_; // winning symbol highlight (DEPRECATED)
     std::vector<int> winning_paylines_; // winning paylines
+    std::unordered_map<int, std::array<SDL_Point, 5>> payline_coords_; // payline x/y centers
     int num_wins_ = 0;          // number of winning paylines
     int payline_index_ = 0;     // payline we are currently showing
 };

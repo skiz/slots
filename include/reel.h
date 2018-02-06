@@ -37,10 +37,12 @@ class Reel {
     Symbol GetSymbol(std::map<Symbol, int> *weightedSet);
     std::map<int, Symbol> GetSymbols();
     std::map<int, std::array<int,5>> GetPaylines();
+    std::array<int,5> GetPayline(int index);
     std::map<int, std::vector<int>> GetWinningPaylinePositions();
     std::map<Symbol, std::map<int, int>> GetPayoutTable();
     std::vector<int> GetWinningPositionsForPayline(int payline);
     std::vector<int> GetWinningLines();
+    int GetCreditsPaidForLine(int index);
     void SetSymbol(Symbol sym, int pos);
     void GenerateSymbols(int reels, int spots);
     int GetCreditsWon();

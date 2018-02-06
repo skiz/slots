@@ -248,6 +248,10 @@ void Reel::GenerateWinningLines(int maxLines) {
   }
 }
 
+int Reel::GetCreditsPaidForLine(int index) {
+  return winning_lines_[index];
+}
+
 void Reel::DumpLines() {
   std::cout << "Winning Lines: " << winning_lines_.size() << std::endl;
   for (auto w : winning_lines_) {
@@ -276,6 +280,10 @@ std::map<int, Symbol> Reel::GetSymbols() {
 
 std::map<int, std::array<int,5>> Reel::GetPaylines() {
   return paylines_;
+}
+
+std::array<int,5> Reel::GetPayline(int index) {
+  return paylines_[index];
 }
 
 std::map<int, std::vector<int>> Reel::GetWinningPaylinePositions() {
