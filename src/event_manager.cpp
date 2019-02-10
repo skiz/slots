@@ -23,7 +23,7 @@ void EventManager::Init() {
   AddMapping(SDLK_4, LINE_DOWN);
   AddMapping(SDLK_5, BET_UP);
   AddMapping(SDLK_6, BET_DOWN);
-  AddMapping(SDLK_RETURN, BET_MAX);
+  AddMapping(SDLK_m, BET_MAX);
   AddMapping(SDLK_SPACE, SPIN);
 }
 

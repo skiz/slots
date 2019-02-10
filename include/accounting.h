@@ -52,6 +52,8 @@ class Accounting {
 
     Signal<const unsigned int &> BigWin;  ///Ugh Go Away
     Signal<const unsigned int &> Win;     /// Bleh no!
+    Signal<const unsigned int &> LinesUpdated;
+    Signal<const unsigned int &> BetUpdated;
     Signal<>ReelsUpdate;
     Signal<>SpinStarted;
     Signal<>SpinStopped;

@@ -12,8 +12,8 @@ class SoundSystem {
   SoundSystem();
   ~SoundSystem();
   void PlayMusic(std::string music_path);
-  void PlaySound(std::string sound_path, int channel=-1);
-  void StopSound(int channel=-1); 
+  void PlaySound(std::string sound_path, int channel=-1, float speed=1.0);
+  void StopSound(int channel=-1);
   void PauseMusic();
   void ResumeMusic();
  private:

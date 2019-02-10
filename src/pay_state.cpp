@@ -161,7 +161,7 @@ void PayState::DrawPaylines(){
   } // shouldn't be needed
 
   // Render squares around the winning symbols for the current payline
-  /*
+  
   SDL_Rect pos;
   for (auto s  : reel_->
       GetWinningPositionsForPayline(winning_paylines_[payline_index_])) {
@@ -178,7 +178,7 @@ void PayState::DrawPaylines(){
       thickLineColor(engine_->renderer, pos.x+pos.w, pos.y+pos.h, pos.x, pos.y+pos.h, width, color);
       thickLineColor(engine_->renderer, pos.x+pos.w, pos.y+pos.h, pos.x+pos.w, pos.y, width, color);
   }
-  */
+  
 
   // Render the full payline for this winning payline
   std::array<SDL_Point, 5> pcs;

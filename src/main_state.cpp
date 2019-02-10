@@ -29,7 +29,8 @@ void MainState::Init(Engine* e) {
   */
   engine_->accounting->CreditsChanged.connect_member(this, &MainState::OnCreditsChanged);
   engine_->accounting->MoneyInserted.connect_member(this, &MainState::OnMoneyInserted);
-
+  engine_->accounting->LinesUpdated.connect_member(this, &MainState::OnLinesUpdated);
+  engine_->accounting->BetUpdated.connect_member(this, &MainState::OnBetUpdated);
   engine_->accounting->ReelsUpdate.connect_member(this, &MainState::UpdateReels);
   engine_->accounting->BigWin.connect_member(this, &MainState::BigWin);
   engine_->accounting->Win.connect_member(this, &MainState::Win);
@@ -477,6 +478,14 @@ void MainState::OnCreditsChanged(const CreditsChangedMessage &m) {
   UpdateLines(m.lines_);
   UpdateTotal(m.total_);
   UpdatePaid(m.paid_);
+}
+
+void MainState::OnLinesUpdated(const unsigned int &num) {
+  engine_->audio->PlaySound("/main/sound/blip1.ogg");
+}
+
+void MainState::OnBetUpdated(const unsigned int &num) {
+  engine_->audio->PlaySound("/main/sound/blip1.ogg");
 }
 
 void MainState::OnMoneyInserted(const unsigned int &amount) {

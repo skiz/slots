@@ -24,6 +24,8 @@ class MainState : public State {
 
     void OnCreditsChanged(const CreditsChangedMessage &m);
     void OnMoneyInserted(const unsigned int &amount);
+    void OnLinesUpdated(const unsigned int &num);
+    void OnBetUpdated(const unsigned int &num);
 
     void UpdateCredits(const unsigned int &amount);
     void UpdatePaid(const unsigned int &amount);

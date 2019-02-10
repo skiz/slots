@@ -44,7 +44,16 @@ Mix_Chunk* SoundSystem::LoadSound(std::string& sound_path) {
   return assets_->LoadSound(sound_path);
 }
 
+/*
 void SoundSystem::PlaySound(std::string sound_path, int channel) {
+  Mix_Chunk* snd = LoadSound(sound_path);
+  if (snd) {
+    Mix_PlayChannel(channel, snd, 0);
+  }
+}
+*/
+
+void SoundSystem::PlaySound(std::string sound_path, int channel, float speed) {
   Mix_Chunk* snd = LoadSound(sound_path);
   if (snd) {
     Mix_PlayChannel(channel, snd, 0);
@@ -64,7 +73,7 @@ void SoundSystem::PlayMusic(std::string music_path) {
   if (music) {
     Mix_PlayMusic(music, -1);
   }
-  ResumeMusic();  
+  ResumeMusic();
 }
 
 void SoundSystem::PauseMusic() {

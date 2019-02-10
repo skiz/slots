@@ -13,7 +13,8 @@ OBJECTS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=.o))
 OBJECTS += $(patsubst $(SQLITECPPDIR)/src/%,$(BUILDDIR)/SQLiteCpp/%,$(SQLITECPP_SOURCES:.cpp=.o))
 CXXFLAGS =-std=c++11 -g -Wall -Wextra #-pthread
 TESTLIB = -lgtest
-LIB = $(shell sdl2-config --libs) -lconfig++ -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx -ltinyxml2 -lphysfs -lsqlite3 -L/usr/local/opt/sqlite/lib
+## Removed -lconfig++
+LIB = $(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx -ltinyxml2 -lphysfs -lsqlite3 -L/usr/local/opt/sqlite/lib
 INC = -Iinclude $(shell sdl2-config --cflags) -I/usr/local/include -I${SQLITECPPDIR}/include
 GTEST_DIR = extern/googletest/googletest
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \

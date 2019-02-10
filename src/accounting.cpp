@@ -85,9 +85,12 @@ Reel* Accounting::GetReel() {
 }
 
 void Accounting::BetMax() {
-  if (InsufficientFunds(max_bet_, max_lines_)) return;
+  std::cout << "!!" << std::endl;
+  //if (InsufficientFunds(max_bet_, max_lines_)) return;
+  //if (InsufficientFunds(bet_+1, lines_)) return;
   lines_ = max_lines_;
   bet_ = max_bet_;
+  //EmitCreditsChanged();
   InitiateSpin();
 }
 
@@ -110,7 +113,7 @@ void Accounting::InitiateSpin() {
 
   spinning_ = true;
   TriggerSpinStarted();
-  
+
   // remove bet from credit pool
   cents_ -= bet_ * lines_ * CENTS_PER_CREDIT;
   EmitCreditsChanged();
@@ -170,6 +173,7 @@ void Accounting::TriggerBetUpdate(int num) {
     if (bet_ == 0) return;
     bet_--;
   }
+  BetUpdated.emit(num);
   EmitCreditsChanged();
 }
 
@@ -204,7 +208,7 @@ void Accounting::TriggerLinesUpdate(int num) {
     if (lines_ == 0) return;
     lines_--;
   }
-
+  LinesUpdated.emit(num);
   EmitCreditsChanged();
 }
 
