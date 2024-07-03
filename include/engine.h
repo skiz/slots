@@ -15,34 +15,35 @@ class State;
  * The engine is the core component.  It handles state changes,
  * and manages and owns all subsystems.
  */
-class Engine {
-  public:
-    void Init(int argc, char** argv);
-    void Cleanup();
-    void ChangeState(State* s);
-    void PushState(State* s);
-    void PopState();
-    void PushAsyncState(State* s);
-    void PopAsyncState();
-    void HandleEvents();
-    void Update();
-    void Draw();
-    void Quit();
-    void HandleEvent(SystemEvent);
-    bool Running();
-    
-    SDL_Window* window;
-    SDL_Renderer* renderer;
+class Engine
+{
+public:
+  void Init(int argc, char **argv);
+  void Cleanup();
+  void ChangeState(State *s);
+  void PushState(State *s);
+  void PopState();
+  void PushAsyncState(State *s);
+  void PopAsyncState();
+  void HandleEvents();
+  void Update();
+  void Draw();
+  void Quit();
+  void HandleEvent(SystemEvent);
+  bool Running();
 
-    SoundSystem* audio;
-    AssetManager* assets;
-    EventManager* events;
-    Accounting* accounting;
-  private:
-    std::vector<State*> states_;
-    std::vector<State*> astates_;
-    bool running_;
+  SDL_Window *window;
+  SDL_Renderer *renderer;
+
+  SoundSystem *audio;
+  AssetManager *assets;
+  EventManager *events;
+  Accounting *accounting;
+
+private:
+  std::vector<State *> states_;
+  std::vector<State *> astates_;
+  bool running_;
 };
 
 #endif
-

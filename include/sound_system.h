@@ -7,21 +7,22 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 
-class SoundSystem {
- public:
+class SoundSystem
+{
+public:
   SoundSystem();
   ~SoundSystem();
   void PlayMusic(std::string music_path);
-  void PlaySound(std::string sound_path, int channel=-1, float speed=1.0);
-  void StopSound(int channel=-1);
+  void PlaySound(std::string sound_path, int channel = -1, float speed = 1.0);
+  void StopSound(int channel = -1);
   void PauseMusic();
   void ResumeMusic();
- private:
+
+private:
   bool Init();
-  Mix_Music* LoadMusic(std::string& music_path);
-  Mix_Chunk* LoadSound(std::string& sound_path);
-  AssetManager* assets_;
+  Mix_Music *LoadMusic(std::string &music_path);
+  Mix_Chunk *LoadSound(std::string &sound_path);
+  AssetManager *assets_;
 };
 
 #endif
-

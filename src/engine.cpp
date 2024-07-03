@@ -6,33 +6,38 @@
 #include "SDL_mixer.h"
 #include "SDL_ttf.h"
 #include "engine.h"
-#include "engine.h"
 #include "state.h"
 
-static const char* WINDOW_TITLE = "Slot Machine";
-static const bool FULLSCREEN = true;
+static const char *WINDOW_TITLE = "Slot Machine";
+static const bool FULLSCREEN = false;
 static const bool USE_OPENGL = true;
 static const int WINDOW_WIDTH = 1440;
 static const int WINDOW_HEIGHT = 900;
 
 // TODO: Extract InitializeSubsystems() method
-void Engine::Init(int argc, char** argv) {
+void Engine::Init(int argc, char **argv)
+{
   (void)argc;
   (void)argv;
 
   int sdl_flags = 0;
-  if (FULLSCREEN) {
+  if (FULLSCREEN)
+  {
     sdl_flags += SDL_WINDOW_FULLSCREEN;
   }
-  if (USE_OPENGL) {
+  if (USE_OPENGL)
+  {
     sdl_flags += SDL_WINDOW_OPENGL;
   }
 
   sdl_flags += SDL_WINDOW_RESIZABLE;
 
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0) {
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
+  {
     std::cerr << "SDL Error: " << SDL_GetError();
-  } else {
+  }
+  else
+  {
     window = SDL_CreateWindow(WINDOW_TITLE,
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
@@ -47,13 +52,15 @@ void Engine::Init(int argc, char** argv) {
 
   int img_flags = IMG_INIT_JPG | IMG_INIT_PNG;
   int img_init = IMG_Init(img_flags);
-  if ((img_init & img_flags) != img_flags) {
+  if ((img_init & img_flags) != img_flags)
+  {
     std::cerr << "IMG_Init: " << IMG_GetError() << std::endl;
   }
 
   audio = new SoundSystem();
 
-  if (TTF_Init() != 0){
+  if (TTF_Init() != 0)
+  {
     std::cerr << "TTF_Init: " << TTF_GetError() << std::endl;
   }
 
@@ -69,21 +76,25 @@ void Engine::Init(int argc, char** argv) {
   running_ = true;
 }
 
-void Engine::HandleEvent(SystemEvent e) {
-  switch (e) {
-    case QUIT:
-      Quit();
-      break;
-    case POP_STATE:
-      PopState();
-      break;
-    default:
-      break;
+void Engine::HandleEvent(SystemEvent e)
+{
+  switch (e)
+  {
+  case QUIT:
+    Quit();
+    break;
+  case POP_STATE:
+    PopState();
+    break;
+  default:
+    break;
   }
 }
 
-void Engine::Cleanup() {
-  while (!states_.empty()) {
+void Engine::Cleanup()
+{
+  while (!states_.empty())
+  {
     states_.back()->Cleanup();
     states_.pop_back();
   }
@@ -92,14 +103,16 @@ void Engine::Cleanup() {
   accounting->Cleanup();
 
   TTF_Quit();
-  
+
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
 }
 
-void Engine::ChangeState(State* s) {
-  if (!states_.empty()) {
+void Engine::ChangeState(State *s)
+{
+  if (!states_.empty())
+  {
     states_.back()->Cleanup();
     states_.pop_back();
   }
@@ -107,52 +120,68 @@ void Engine::ChangeState(State* s) {
   states_.push_back(s);
 }
 
-void Engine::PushState(State* s) {
-  if (!states_.empty()) {
+void Engine::PushState(State *s)
+{
+  if (!states_.empty())
+  {
     states_.back()->Pause();
   }
   s->Init(this);
   states_.push_back(s);
 }
 
-void Engine::PushAsyncState(State* s) {
-  if (!states_.empty()) {
+void Engine::PushAsyncState(State *s)
+{
+  if (!states_.empty())
+  {
     states_.back()->Pause();
   }
   s->Init(this);
   astates_.push_back(s);
 }
 
-void Engine::PopAsyncState() {
-  if (astates_.size() > 0) {
+void Engine::PopAsyncState()
+{
+  if (astates_.size() > 0)
+  {
     astates_.back()->Cleanup();
     astates_.pop_back();
     states_.back()->Resume();
   }
 }
 
-void Engine::PopState() {
-  if (!states_.empty()) {
+void Engine::PopState()
+{
+  if (!states_.empty())
+  {
     states_.back()->Cleanup();
     states_.pop_back();
   }
-  if (!states_.empty()) {
+  if (!states_.empty())
+  {
     states_.back()->Resume();
-  } else {
+  }
+  else
+  {
     running_ = false;
   }
 }
 
-void Engine::HandleEvents() {
-  if (running_) {
+void Engine::HandleEvents()
+{
+  if (running_)
+  {
     events->HandleEvents();
   }
 }
 
-void Engine::Update() {
-  if (running_) {
+void Engine::Update()
+{
+  if (running_)
+  {
     states_.back()->Update();
-    for (auto s : astates_) {
+    for (auto s : astates_)
+    {
       s->Update();
     }
   }
@@ -166,10 +195,13 @@ void Engine::Update() {
   */
 }
 
-void Engine::Draw() {
-  if (running_) {
+void Engine::Draw()
+{
+  if (running_)
+  {
     states_.back()->Draw();
-    for (auto s : astates_) {
+    for (auto s : astates_)
+    {
       s->Draw();
     }
     SDL_RenderPresent(renderer);
@@ -177,10 +209,12 @@ void Engine::Draw() {
   //++frameCount_;
 }
 
-bool Engine::Running() {
+bool Engine::Running()
+{
   return running_;
 }
 
-void Engine::Quit() {
+void Engine::Quit()
+{
   running_ = false;
 }

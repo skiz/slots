@@ -10,23 +10,24 @@
 
 MainState MainState::state;
 
-void MainState::Init(Engine* e) {
+void MainState::Init(Engine *e)
+{
   engine_ = e;
   LoadAssets();
 
-  reel_ = engine_->accounting->GetReel();  // Why does accounting have the reel?
+  reel_ = engine_->accounting->GetReel(); // Why does accounting have the reel?
 
-  reel_->GenerateSymbols(5, 3);   // So we are the reel commander now?
+  reel_->GenerateSymbols(5, 3); // So we are the reel commander now?
 
   // subscribe to system events
-  //engine_->events->SystemSignal.connect_member(this, &MainState::HandleEvent);
+  // engine_->events->SystemSignal.connect_member(this, &MainState::HandleEvent);
 
   /*
    * TODO: All of this shit should be emitted from a single EventManager
    * and everyone that wants to send messages should call EventManager::Send()
    * This should remove the dependency on accounting for messaging.
    *
-  */
+   */
   engine_->accounting->CreditsChanged.connect_member(this, &MainState::OnCreditsChanged);
   engine_->accounting->MoneyInserted.connect_member(this, &MainState::OnMoneyInserted);
   engine_->accounting->LinesUpdated.connect_member(this, &MainState::OnLinesUpdated);
@@ -45,102 +46,129 @@ void MainState::Init(Engine* e) {
   UpdateText("Play max credits for a bigger BONUS!");
 
   // TODO: move this to it's own clearly defined method
-  for(int i = 0; i < 5; ++i) {
+  for (int i = 0; i < 5; ++i)
+  {
     spinning_[i] = false;
     vertical_offset_[i] = 0;
   }
 }
 
-void MainState::Cleanup() {
-  //TTF_CloseFont(credit_font_);
-  //TTF_CloseFont(font_);
+void MainState::Cleanup()
+{
+  // TTF_CloseFont(credit_font_);
+  // TTF_CloseFont(font_);
 
-  for (auto s : signal_bindings_) {
+  for (auto s : signal_bindings_)
+  {
     engine_->events->SystemSignal.disconnect(s);
   }
 }
 
-void MainState::HandleEvent(SystemEvent e) {
-  switch (e) {
-    case UPDATE_REELS:
-      // TODO: I assume this is just left over debug?
-      std::cout << "UPDATE REELS!" << std::endl;
-    default:
-      break;
+void MainState::HandleEvent(SystemEvent e)
+{
+  switch (e)
+  {
+  case UPDATE_REELS:
+    // TODO: I assume this is just left over debug?
+    std::cout << "UPDATE REELS!" << std::endl;
+  default:
+    break;
   }
 }
 
-void MainState::SpinStarted() {
+void MainState::SpinStarted()
+{
+  // Stop any bonus bells
+  engine_->audio->StopSound(4);
+
   UpdateText("Good Luck!");
   engine_->audio->PlaySound("/main/sound/spin.wav");
   engine_->audio->PlayMusic("/main/sound/reels.wav");
   engine_->audio->ResumeMusic();
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 5; i++)
+  {
     spinning_[i] = true;
     ScheduleStop(i, 2000 + i * 200);
   }
 }
 
-void MainState::SpinStopped() {
+void MainState::SpinStopped()
+{
   engine_->audio->PauseMusic();
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 5; i++)
+  {
     StopNext();
   }
 }
 
-void MainState::SpinComplete() {
-  if (BonusTriggered()) {
+void MainState::SpinComplete()
+{
+  if (BonusTriggered())
+  {
     engine_->audio->PlaySound("/main/sound/bell.ogg", 4);
     std::cout << "BONUS!" << std::endl;
   }
 }
 
-void MainState::ScheduleStop(int col, int ms) {
-  if (stop_timer_[col]) {
+void MainState::ScheduleStop(int col, int ms)
+{
+  if (stop_timer_[col])
+  {
     SDL_RemoveTimer(stop_timer_[col]);
     stop_timer_[col] = 0;
   }
   stop_timer_[col] = SDL_AddTimer(ms, &MainState::StopColumn, this);
 }
 
-Uint32 MainState::StopColumn(Uint32 /*interval*/, void *param) {
-  ((MainState *) param)->StopNext();
+Uint32 MainState::StopColumn(Uint32 /*interval*/, void *param)
+{
+  ((MainState *)param)->StopNext();
   return 0L;
 }
 
 // Stops the first non-stopped column
-void MainState::StopNext() {
-  for (int i = 0; i < 5; i++) {
-    if (spinning_[i]) {
+void MainState::StopNext()
+{
+  for (int i = 0; i < 5; i++)
+  {
+    if (spinning_[i])
+    {
       spinning_[i] = false;
       SDL_RemoveTimer(stop_timer_[i]);
       engine_->audio->PlaySound("/main/sound/spin.wav");
-      if (i==4) {
+      if (i == 4)
+      {
         engine_->events->SystemSignal.emit(REELS_STOPPED);
         engine_->audio->StopSound(3);
         return;
       }
 
-      if (stop_timer_[i]) {
+      if (stop_timer_[i])
+      {
         SDL_RemoveTimer(stop_timer_[i]);
         stop_timer_[i] = 0;
       }
 
-      // If there is a chance of a bonus, reschedule 
+      // If there is a chance of a bonus, reschedule
       // timers to spin longer and act differently.
-      if (HasPossibleBonus(i)) {
-        engine_->audio->StopSound(3); 
+      if (HasPossibleBonus(i))
+      {
+        engine_->audio->StopSound(3);
         engine_->audio->PlaySound("/main/sound/bonus_2.ogg", 3);
-        for (int z=i+1; z < 5; ++z){
-          if (stop_timer_[z]) {
+        for (int z = i + 1; z < 5; ++z)
+        {
+          if (stop_timer_[z])
+          {
             SDL_RemoveTimer(stop_timer_[z]);
             stop_timer_[z] = 0;
           }
           ScheduleStop(z, 2000 + z * 200);
         }
         ScheduleStop(i, 4000);
-      } else {
-        engine_->audio->StopSound(3); 
+      }
+      else
+      {
+        engine_->audio->StopSound(3);
       }
 
       return;
@@ -148,25 +176,27 @@ void MainState::StopNext() {
   }
 }
 
-bool MainState::HasPossibleBonus(int col_index) {
-  Highlighter::DumpBits(bonus_highlight_[col_index]);
+bool MainState::HasPossibleBonus(int col_index)
+{
+  // Highlighter::DumpBits(bonus_highlight_[col_index]);
   return bonus_highlight_[col_index].count() > 0;
 }
 
-bool MainState::BonusTriggered() {
+bool MainState::BonusTriggered()
+{
   return bonus_highlight_[4].count() > 0;
 }
 
-
-void MainState::LoadAssets() {
+void MainState::LoadAssets()
+{
   engine_->assets->Mount("assets/main", "/main");
 
-  SDL_Surface* ss = engine_->assets->LoadSurface("/main/images/b.png");
+  SDL_Surface *ss = engine_->assets->LoadSurface("/main/images/b.png");
   bg_ = SDL_CreateTextureFromSurface(engine_->renderer, ss);
   SDL_FreeSurface(ss);
 
   // Add gray overlay texture
-  SDL_Surface* s;
+  SDL_Surface *s;
   s = SDL_CreateRGBSurface(0, 2000, 2000, 32, 0, 0, 0, 0);
   SDL_Rect rect = {0, 0, 2000, 2000};
   SDL_FillRect(s, &rect, SDL_MapRGB(s->format, 205, 203, 206));
@@ -181,7 +211,8 @@ void MainState::LoadAssets() {
   SetupButtons();
 }
 
-void MainState::LoadReelSymbols() {
+void MainState::LoadReelSymbols()
+{
   engine_->assets->Mount("assets/reels", "/reels");
   LoadSymbol(CHERRY, "/reels/cherry.png");
   LoadSymbol(BAR, "/reels/bar.png");
@@ -205,19 +236,20 @@ void MainState::LoadReelSymbols() {
   LoadSymbol(ALT9, "/reels/melon2.png");
 }
 
-void MainState::LoadSymbol(Symbol type, const char* filename) {
-  SDL_Surface* s = engine_->assets->LoadSurface(filename);
+void MainState::LoadSymbol(Symbol type, const char *filename)
+{
+  SDL_Surface *s = engine_->assets->LoadSurface(filename);
   reel_symbols_[type] = SDL_CreateTextureFromSurface(engine_->renderer, s);
   SDL_FreeSurface(s);
 }
 
-
-void MainState::SetupButtons() {
-  button_font_color_ = {0,0,0,0}; //255, 255, 255, 0};
+void MainState::SetupButtons()
+{
+  button_font_color_ = {0, 0, 0, 0}; // 255, 255, 255, 0};
 
   int by = 810;
 
-  const char* btnFile =  "/main/images/btn.png";
+  const char *btnFile = "/main/images/btn.png";
 
   cashBtn = new UIButton(engine_->renderer, btnFile);
   cashBtn->SetPosition(70, by);
@@ -255,46 +287,57 @@ void MainState::SetupButtons() {
   maxBtn->SetText("BET MAX");
 }
 
-void MainState::StartSpin() {
-  for (int i = 0; i < 5; i++) {
+void MainState::StartSpin()
+{
+  for (int i = 0; i < 5; i++)
+  {
     spinning_[i] = true;
   }
 }
 
-void MainState::StopReels() {
-  for (int i = 0; i < 5; i++) {
+void MainState::StopReels()
+{
+  for (int i = 0; i < 5; i++)
+  {
     spinning_[i] = false;
   }
 }
 
-void MainState::Pause() {
+void MainState::Pause()
+{
   engine_->audio->PauseMusic();
   engine_->events->DisableBetting();
 }
 
-void MainState::Resume() {
+void MainState::Resume()
+{
   engine_->events->EnableBetting();
 }
 
 // Reels were updated, lets render them.
-void MainState::UpdateReels() {
+void MainState::UpdateReels()
+{
   bonus_highlight_ = Highlighter::GenerateFromReelSymbols(
       reel_->GetSymbols(), BONUS, engine_->accounting->Lines());
 }
 
-void MainState::BigWin(const unsigned int& /*amount*/) {
+void MainState::BigWin(const unsigned int & /*amount*/)
+{
   engine_->PushAsyncState(BigWinState::Instance());
 }
 
-void MainState::Win(const unsigned int& /*amount*/) {
+void MainState::Win(const unsigned int & /*amount*/)
+{
   engine_->PushAsyncState(PayState::Instance());
 }
 
-void MainState::Update() {
+void MainState::Update()
+{
   // This is where we will set up animations
 }
 
-void MainState::RenderCredits() {
+void MainState::RenderCredits()
+{
   int rw, rh;
   SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
   SDL_Rect credit_pos;
@@ -305,7 +348,8 @@ void MainState::RenderCredits() {
   SDL_RenderCopy(engine_->renderer, credits_, NULL, &credit_pos);
 }
 
-void MainState::RenderBet() {
+void MainState::RenderBet()
+{
   int rw, rh;
   SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
   SDL_Rect bet_pos;
@@ -316,7 +360,8 @@ void MainState::RenderBet() {
   SDL_RenderCopy(engine_->renderer, bet_, NULL, &bet_pos);
 }
 
-void MainState::RenderLines() {
+void MainState::RenderLines()
+{
   int rw, rh;
   SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
   SDL_Rect lines_pos;
@@ -324,10 +369,11 @@ void MainState::RenderLines() {
   lines_pos.h = lines_height_;
   lines_pos.x = 600 - lines_width_;
   lines_pos.y = rh - lines_pos.h - 120;
-  SDL_RenderCopy(engine_->renderer, lines_, NULL, &lines_pos);	
+  SDL_RenderCopy(engine_->renderer, lines_, NULL, &lines_pos);
 }
 
-void MainState::Draw() {
+void MainState::Draw()
+{
   SDL_RenderCopy(engine_->renderer, gray_, NULL, NULL);
   RenderSymbols();
   SDL_RenderCopy(engine_->renderer, bg_, NULL, NULL);
@@ -343,12 +389,13 @@ void MainState::Draw() {
   cashBtn->Render();
   linesBtn->Render();
   helpBtn->Render();
-  //paysBtn->Render();
+  // paysBtn->Render();
 }
 
-void MainState::UpdateCredits(const unsigned int &amount) {
-  const char* text = std::to_string(amount).c_str();
-  SDL_Surface* textSurface = NULL;
+void MainState::UpdateCredits(const unsigned int &amount)
+{
+  const char *text = std::to_string(amount).c_str();
+  SDL_Surface *textSurface = NULL;
   SDL_Color textColor = {255, 25, 25, 0};
   TTF_SizeText(credit_font_, text, &credit_width_, &credit_height_);
   textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
@@ -357,9 +404,10 @@ void MainState::UpdateCredits(const unsigned int &amount) {
 }
 
 // TODO: Figure out what to do here. PayStates are calling this directly.
-void MainState::UpdatePaid(const unsigned int &amount) {
-  const char* text = std::to_string(amount).c_str();
-  SDL_Surface* textSurface = NULL;
+void MainState::UpdatePaid(const unsigned int &amount)
+{
+  const char *text = std::to_string(amount).c_str();
+  SDL_Surface *textSurface = NULL;
   SDL_Color textColor = {255, 25, 25, 0};
   TTF_SizeText(credit_font_, text, &paid_width_, &paid_height_);
   textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
@@ -367,9 +415,10 @@ void MainState::UpdatePaid(const unsigned int &amount) {
   SDL_FreeSurface(textSurface);
 }
 
-void MainState::UpdateBet(const unsigned int &amount) {
-  const char* text = std::to_string(amount).c_str();
-  SDL_Surface* textSurface = NULL;
+void MainState::UpdateBet(const unsigned int &amount)
+{
+  const char *text = std::to_string(amount).c_str();
+  SDL_Surface *textSurface = NULL;
   SDL_Color textColor = {255, 25, 25, 0};
   TTF_SizeText(credit_font_, text, &bet_width_, &bet_height_);
   textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
@@ -377,9 +426,10 @@ void MainState::UpdateBet(const unsigned int &amount) {
   SDL_FreeSurface(textSurface);
 }
 
-void MainState::UpdateLines(const unsigned int &amount) {
-  const char* text = std::to_string(amount).c_str();
-  SDL_Surface* textSurface = NULL;
+void MainState::UpdateLines(const unsigned int &amount)
+{
+  const char *text = std::to_string(amount).c_str();
+  SDL_Surface *textSurface = NULL;
   SDL_Color textColor = {255, 25, 25, 0};
   TTF_SizeText(credit_font_, text, &lines_width_, &lines_height_);
   textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
@@ -387,9 +437,10 @@ void MainState::UpdateLines(const unsigned int &amount) {
   SDL_FreeSurface(textSurface);
 }
 
-void MainState::UpdateTotal(const unsigned int &amount) {
-  const char* text = std::to_string(amount).c_str();
-  SDL_Surface* textSurface = NULL;
+void MainState::UpdateTotal(const unsigned int &amount)
+{
+  const char *text = std::to_string(amount).c_str();
+  SDL_Surface *textSurface = NULL;
   SDL_Color textColor = {255, 25, 25, 0};
   TTF_SizeText(credit_font_, text, &total_width_, &total_height_);
   textSurface = TTF_RenderText_Blended(credit_font_, text, textColor);
@@ -397,7 +448,8 @@ void MainState::UpdateTotal(const unsigned int &amount) {
   SDL_FreeSurface(textSurface);
 }
 
-void MainState::RenderSymbols() {
+void MainState::RenderSymbols()
+{
   // We only have the final symbols at the moment, so just render those.
   // TODO: put more random symbols on the reel for visual effect.
   // This will also need to be overridden for near miss states, as we may
@@ -406,18 +458,24 @@ void MainState::RenderSymbols() {
 
   SDL_Rect pos;
 
-  for (int c = 0; c < 5; c++) {
-    if (spinning_[c]) {
+  for (int c = 0; c < 5; c++)
+  {
+    if (spinning_[c])
+    {
       vertical_offset_[c] += spin_speed_;
-      if (vertical_offset_[c] >= max_height) {
+      if (vertical_offset_[c] >= max_height)
+      {
         vertical_offset_[c] = 0;
       }
-    } else {
+    }
+    else
+    {
       vertical_offset_[c] = 0;
     }
   }
 
-  for (auto s : reel_->GetSymbols()) {
+  for (auto s : reel_->GetSymbols())
+  {
     int column = s.first % 5;
     pos.w = 220;
     pos.h = 220;
@@ -430,7 +488,8 @@ void MainState::RenderSymbols() {
   }
 }
 
-void MainState::RenderPaid() {
+void MainState::RenderPaid()
+{
   int rw, rh;
   SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
   SDL_Rect paid_pos;
@@ -441,7 +500,8 @@ void MainState::RenderPaid() {
   SDL_RenderCopy(engine_->renderer, paid_, NULL, &paid_pos);
 }
 
-void MainState::RenderTotal() {
+void MainState::RenderTotal()
+{
   int rw, rh;
   SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
   SDL_Rect total_pos;
@@ -452,8 +512,9 @@ void MainState::RenderTotal() {
   SDL_RenderCopy(engine_->renderer, total_, NULL, &total_pos);
 }
 
-void MainState::UpdateText(const char* text) {
-  SDL_Surface* textSurface = NULL;
+void MainState::UpdateText(const char *text)
+{
+  SDL_Surface *textSurface = NULL;
   SDL_Color textColor = {255, 255, 255, 0};
   TTF_SizeText(font_, text, &text_width_, &text_height_);
   textSurface = TTF_RenderText_Blended(font_, text, textColor);
@@ -461,18 +522,20 @@ void MainState::UpdateText(const char* text) {
   SDL_FreeSurface(textSurface);
 }
 
-void MainState::RenderMessageText() {
+void MainState::RenderMessageText()
+{
   int rw, rh;
   SDL_GetRendererOutputSize(engine_->renderer, &rw, &rh);
   SDL_Rect text_pos;
   text_pos.w = text_width_;
   text_pos.h = text_height_;
-  text_pos.x = rw/2 - text_width_/2;
+  text_pos.x = rw / 2 - text_width_ / 2;
   text_pos.y = 10;
   SDL_RenderCopy(engine_->renderer, text_, NULL, &text_pos);
 }
 
-void MainState::OnCreditsChanged(const CreditsChangedMessage &m) {
+void MainState::OnCreditsChanged(const CreditsChangedMessage &m)
+{
   UpdateCredits(m.credits_);
   UpdateBet(m.bet_);
   UpdateLines(m.lines_);
@@ -480,15 +543,26 @@ void MainState::OnCreditsChanged(const CreditsChangedMessage &m) {
   UpdatePaid(m.paid_);
 }
 
-void MainState::OnLinesUpdated(const unsigned int &num) {
+void MainState::OnLinesUpdated(const unsigned int &num)
+{
+  char txtbuf[50];
+  sprintf(txtbuf, "Playing %d lines", num);
+  UpdateText(txtbuf);
+
   engine_->audio->PlaySound("/main/sound/blip1.ogg");
 }
 
-void MainState::OnBetUpdated(const unsigned int &num) {
+void MainState::OnBetUpdated(const unsigned int &num)
+{
+  char txtbuf[50];
+  sprintf(txtbuf, "Betting %d credits", num);
+  UpdateText(txtbuf);
+
   engine_->audio->PlaySound("/main/sound/blip1.ogg");
 }
 
-void MainState::OnMoneyInserted(const unsigned int &amount) {
+void MainState::OnMoneyInserted(const unsigned int &amount)
+{
   char txtbuf[50];
   float famt = static_cast<float>(amount) / 100;
 
@@ -497,4 +571,3 @@ void MainState::OnMoneyInserted(const unsigned int &amount) {
 
   UpdateText(txtbuf);
 }
-
