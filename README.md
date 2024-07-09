@@ -4,6 +4,8 @@ Multi reel slot machine designed for Raspberry Pi
 
 Written in SDL C++
 
+Warning: This does compile and run, however it is not currently in a publicly usable state. It's a POC.
+
 Completed Features
 ------------------
 * Full 1080p
